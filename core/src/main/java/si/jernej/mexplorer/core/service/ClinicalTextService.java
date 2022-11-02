@@ -12,8 +12,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.Dependent;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -28,10 +29,13 @@ import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextResultDto;
 import si.jernej.mexplorer.processorapi.v1.model.DataRangeSpecDto;
 
-@Dependent
+@Stateless
 public class ClinicalTextService
 {
     private static final Logger logger = LoggerFactory.getLogger(ClinicalTextService.class);
+
+    @PersistenceContext
+    private EntityManager em;  // TODO remove (use manager)
 
     /**
      * Extract clinical text given specified configuration.
@@ -39,7 +43,7 @@ public class ClinicalTextService
      * @param clinicalTextConfigDto configuration for extracting clinical text
      * @return extracted clinical text for each specified root entity
      */
-    public Map<Object, List<ImmutablePair<String, Timestamp>>> extractClinicalText(ClinicalTextConfigDto clinicalTextConfigDto, EntityManager em)
+    public Map<Object, List<ImmutablePair<String, Timestamp>>> extractClinicalText(ClinicalTextConfigDto clinicalTextConfigDto)
     {
         logger.info(".extractClinicalText extracting clinical text");
         logger.info(".extractClinicalText root entity name: {}, root entity ID property {}, number of IDs {}",
