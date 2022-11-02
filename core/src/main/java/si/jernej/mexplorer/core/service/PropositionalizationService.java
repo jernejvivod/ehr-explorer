@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
@@ -23,7 +23,7 @@ import si.jernej.mexplorer.processorapi.v1.model.ConcatenationSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.WordificationConfigDto;
 import si.jernej.mexplorer.processorapi.v1.model.WordificationResultDto;
 
-@Dependent
+@Stateless
 public class PropositionalizationService
 {
     @Inject
@@ -61,11 +61,11 @@ public class PropositionalizationService
 
         if (!entityNameToAttributes.containsKey(rootEntityName))
         {
-            throw new ValidationCoreException(String.format("Unknown entity '%s'", rootEntityName));
+            throw new ValidationCoreException("Unknown entity '%s'".formatted(rootEntityName));
         }
         if (entityNameToAttributes.containsKey(rootEntityName) && !entityNameToAttributes.get(rootEntityName).contains(idPropertyName))
         {
-            throw new ValidationCoreException(String.format("Unknown property name '%s'", idPropertyName));
+            throw new ValidationCoreException("Unknown property name '%s'".formatted(idPropertyName));
         }
 
         // get list of root entities and their IDfaun fulls

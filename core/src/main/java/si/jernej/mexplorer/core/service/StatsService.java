@@ -2,21 +2,24 @@ package si.jernej.mexplorer.core.service;
 
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
+import javax.ejb.Stateless;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 import si.jernej.mexplorer.processorapi.v1.model.ColumnStatsDto;
 
-@Dependent
+@Stateless
 public class StatsService
 {
-
     public List<ColumnStatsDto> allStats()
     {
-        return null;
+        // TODO implement
+        throw new NotImplementedException("To be implemented");
     }
 
     public List<ColumnStatsDto> tableStats(String tableName)
     {
-        return null;
+        // TODO implement
+        throw new NotImplementedException("To be implemented");
     }
 }

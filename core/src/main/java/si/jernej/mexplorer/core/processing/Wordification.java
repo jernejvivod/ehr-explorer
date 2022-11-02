@@ -23,6 +23,7 @@ import javax.ws.rs.InternalServerErrorException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
+import si.jernej.mexplorer.core.util.EntityUtils;
 
 @Stateless
 public class Wordification

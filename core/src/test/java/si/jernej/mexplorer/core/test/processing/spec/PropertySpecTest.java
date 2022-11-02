@@ -9,7 +9,6 @@ import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 
 class PropertySpecTest
 {
-
     @Test
     void testPropertySpec()
     {

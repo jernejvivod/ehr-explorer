@@ -2,12 +2,12 @@ package si.jernej.mexplorer.core.manager;
 
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.Metamodel;
 
-@Stateless
+@Dependent
 public class MimicEntityManager
 {
     @PersistenceContext

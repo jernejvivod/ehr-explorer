@@ -79,7 +79,7 @@ class ClinicalTextServiceTest extends ATestBase
         rootEntitiesSpecDto.setIds(List.of());
         clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto, em);
+        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
         Assertions.assertTrue(rootEntityIdTotextsAndChartTimes.isEmpty());
         Assertions.assertTrue(clinicalTextService.joinClinicalTextForEntity(rootEntityIdTotextsAndChartTimes).isEmpty());
     }
@@ -96,7 +96,7 @@ class ClinicalTextServiceTest extends ATestBase
         rootEntitiesSpecDto.setIds(List.of(rootEntityId));
         clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
 
-        var rootEntityIdToTextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto, em);
+        var rootEntityIdToTextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
         Assertions.assertNotNull(rootEntityIdToTextsAndChartTimes);
         Assertions.assertTrue(rootEntityIdToTextsAndChartTimes.isEmpty());
     }
@@ -113,7 +113,7 @@ class ClinicalTextServiceTest extends ATestBase
         rootEntitiesSpecDto.setIds(List.of(rootEntityId));
         clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto, em);
+        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
         Assertions.assertNotNull(rootEntityIdTotextsAndChartTimes);
         Assertions.assertFalse(rootEntityIdTotextsAndChartTimes.isEmpty());
         Assertions.assertEquals(1, rootEntityIdTotextsAndChartTimes.size());
@@ -145,7 +145,7 @@ class ClinicalTextServiceTest extends ATestBase
 
         clinicalTextConfigDto.setDataRangeSpec(dataRangeSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto, em);
+        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
         Assertions.assertNotNull(rootEntityIdTotextsAndChartTimes);
         Assertions.assertFalse(rootEntityIdTotextsAndChartTimes.isEmpty());
         Assertions.assertEquals(1, rootEntityIdTotextsAndChartTimes.size());
@@ -172,7 +172,7 @@ class ClinicalTextServiceTest extends ATestBase
         rootEntitiesSpecDto.setIds(List.of(rootEntityId1, rootEntityId2));
         clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto, em);
+        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
         Assertions.assertNotNull(rootEntityIdTotextsAndChartTimes);
         Assertions.assertFalse(rootEntityIdTotextsAndChartTimes.isEmpty());
         Assertions.assertEquals(2, rootEntityIdTotextsAndChartTimes.size());
@@ -217,7 +217,7 @@ class ClinicalTextServiceTest extends ATestBase
         dataRangeSpecDto.setFirstMinutes(1440);
         clinicalTextConfigDto.setDataRangeSpec(dataRangeSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto, em);
+        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
         Assertions.assertNotNull(rootEntityIdTotextsAndChartTimes);
         Assertions.assertFalse(rootEntityIdTotextsAndChartTimes.isEmpty());
         Assertions.assertEquals(2, rootEntityIdTotextsAndChartTimes.size());
