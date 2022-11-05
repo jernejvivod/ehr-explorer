@@ -1,6 +1,5 @@
 package si.jernej.mexplorer.core.v1.endpoint;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.ejb.Stateless;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import si.jernej.mexplorer.core.service.ClinicalTextService;
 import si.jernej.mexplorer.processorapi.v1.api.ClinicalTextApi;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
-import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextResultDto;
 
 @Stateless
 public class ClinicalTextApiImpl implements ClinicalTextApi
@@ -29,9 +27,6 @@ public class ClinicalTextApiImpl implements ClinicalTextApi
     public Response clinicalText(ClinicalTextConfigDto clinicalTextConfigDto)
     {
         logger.info("extracting clinical text");
-        Set<ClinicalTextResultDto> extractedText = clinicalTextService.joinClinicalTextForEntity(
-                clinicalTextService.extractClinicalText(clinicalTextConfigDto)
-        );
-        return Response.ok().entity(extractedText).build();
+        return Response.ok().entity(clinicalTextService.extractClinicalText(clinicalTextConfigDto)).build();
     }
 }

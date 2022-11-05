@@ -304,8 +304,25 @@ components:
     ClinicalTextConfig:
       type: object
       required:
+        - clinical_text_entity_name
+        - text_property_name
+        - clinical_text_enity_id_property_name
+        - date_time_properties_names
         - root_entities_spec
       properties:
+        clinical_text_entity_name:
+          type: string
+          example: NoteEventsEntity
+        text_property_name:
+          type: string
+          example: text
+        clinical_text_entity_id_property_name:
+          type: string
+          example: rowId
+        date_time_properties_names:
+          type: array
+          items:
+            type: string
         root_entities_spec:
           $ref: '#/components/schemas/RootEntitiesSpec'
         data_range_spec:

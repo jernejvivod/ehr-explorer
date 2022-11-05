@@ -68,12 +68,12 @@ public class PropositionalizationService
             throw new ValidationCoreException("Unknown property name '%s'".formatted(idPropertyName));
         }
 
-        // get list of root entities and their IDfaun fulls
+        // get list of root entities and their IDs
         List<Object[]> rootEntitiesWithIds = mimicEntityManager.getEntitiesAndIds(
                 idPropertyName,
                 rootEntityName,
                 wordificationConfigDto.getRootEntitiesSpec().getIds()
-        );
+        ).toList();
 
         // get PropertySpec, ValueTransformer and CompositeColumnCreator instances
         PropertySpec propertySpec = DtoConverter.toPropertySpec(wordificationConfigDto.getPropertySpec());
@@ -95,7 +95,8 @@ public class PropositionalizationService
             Object rootEntity = rootEntityWithId[0];
             long rootEntityId = (long) rootEntityWithId[1];
 
-            WordificationResultDto wordificationResultDtoNxt = new WordificationResultDto();wordificationResultDtoNxt.setRootEntityId(rootEntityId);
+            WordificationResultDto wordificationResultDtoNxt = new WordificationResultDto();
+            wordificationResultDtoNxt.setRootEntityId(rootEntityId);
 
             // compute wordification
             wordificationResultDtoNxt.setWords(

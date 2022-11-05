@@ -1,7 +1,7 @@
 package si.jernej.mexplorer.entity;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -20,9 +20,9 @@ public class NoteEventsEntity implements Serializable
     // private Long subjectId;
     private PatientsEntity patientsEntity;
     private AdmissionsEntity admissionsEntity;
-    private Timestamp chartdate;
-    private Timestamp charttime;
-    private Timestamp storetime;
+    private LocalDateTime chartdate;
+    private LocalDateTime charttime;
+    private LocalDateTime storetime;
     private String category;
     private String description;
     private Integer cgid;
@@ -67,36 +67,36 @@ public class NoteEventsEntity implements Serializable
 
     @Basic
     @Column(name = "chartdate", nullable = true)
-    public Timestamp getChartdate()
+    public LocalDateTime getChartdate()
     {
         return chartdate;
     }
 
-    public void setChartdate(Timestamp chartdate)
+    public void setChartdate(LocalDateTime chartdate)
     {
         this.chartdate = chartdate;
     }
 
     @Basic
     @Column(name = "charttime", nullable = true)
-    public Timestamp getCharttime()
+    public LocalDateTime getCharttime()
     {
         return charttime;
     }
 
-    public void setCharttime(Timestamp charttime)
+    public void setCharttime(LocalDateTime charttime)
     {
         this.charttime = charttime;
     }
 
     @Basic
     @Column(name = "storetime", nullable = true)
-    public Timestamp getStoretime()
+    public LocalDateTime getStoretime()
     {
         return storetime;
     }
 
-    public void setStoretime(Timestamp storetime)
+    public void setStoretime(LocalDateTime storetime)
     {
         this.storetime = storetime;
     }

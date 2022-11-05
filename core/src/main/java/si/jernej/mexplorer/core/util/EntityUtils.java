@@ -27,7 +27,6 @@ public final class EntityUtils
 {
     private EntityUtils()
     {
-        throw new IllegalStateException("Class for constants");
     }
 
     /**
