@@ -1,13 +1,11 @@
 package si.jernej.mexplorer.core.test.service;
 
-import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,6 @@ import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.processing.Wordification;
 import si.jernej.mexplorer.core.service.ClinicalTextService;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
-import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextResultDto;
 import si.jernej.mexplorer.processorapi.v1.model.DataRangeSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.RootEntitiesSpecDto;
 import si.jernej.mexplorer.test.ATestBase;
@@ -41,47 +38,22 @@ class ClinicalTextServiceTest extends ATestBase
     private ClinicalTextService clinicalTextService;
 
     @Test
-    void joinClinicalTextForEntityEmpty()
-    {
-        Set<ClinicalTextResultDto> clinicalTextResultDtos = clinicalTextService.joinClinicalTextForEntity(Map.of());
-        Assertions.assertTrue(clinicalTextResultDtos.isEmpty());
-    }
-
-    @Test
-    void joinClinicalTextForEntityEmptyBasic()
-    {
-        Map<Object, List<ImmutablePair<String, Timestamp>>> val = Map.of(
-                1L, List.of(ImmutablePair.of("this", null), ImmutablePair.of("is", null), ImmutablePair.of("a", null), ImmutablePair.of("test", null)),
-                2L, List.of(ImmutablePair.of("Hello", null), ImmutablePair.of("to", null), ImmutablePair.of("the", null), ImmutablePair.of("World", null))
-        );
-
-        Set<ClinicalTextResultDto> clinicalTextResultDtos = clinicalTextService.joinClinicalTextForEntity(val);
-
-        ClinicalTextResultDto clinicalTextResultDtoExpected1 = new ClinicalTextResultDto();
-        clinicalTextResultDtoExpected1.setRootEntityId(1L);
-        clinicalTextResultDtoExpected1.setText("this is a test");
-
-        ClinicalTextResultDto clinicalTextResultDtoExpected2 = new ClinicalTextResultDto();
-        clinicalTextResultDtoExpected2.setRootEntityId(2L);
-        clinicalTextResultDtoExpected2.setText("Hello to the World");
-
-        Assertions.assertTrue(clinicalTextResultDtos.contains(clinicalTextResultDtoExpected1));
-        Assertions.assertTrue(clinicalTextResultDtos.contains(clinicalTextResultDtoExpected2));
-    }
-
-    @Test
     void extractClinicalTextWithEmptyIdList()
     {
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime", "chartdate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
         rootEntitiesSpecDto.setIds(List.of());
         clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
-        Assertions.assertTrue(rootEntityIdTotextsAndChartTimes.isEmpty());
-        Assertions.assertTrue(clinicalTextService.joinClinicalTextForEntity(rootEntityIdTotextsAndChartTimes).isEmpty());
+        var res = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
+        Assertions.assertNotNull(res);
+        Assertions.assertTrue(res.isEmpty());
     }
 
     @Test
@@ -90,15 +62,19 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId = 100000L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime", "chartdate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
         rootEntitiesSpecDto.setIds(List.of(rootEntityId));
         clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
 
-        var rootEntityIdToTextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
-        Assertions.assertNotNull(rootEntityIdToTextsAndChartTimes);
-        Assertions.assertTrue(rootEntityIdToTextsAndChartTimes.isEmpty());
+        var res = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
+        Assertions.assertNotNull(res);
+        Assertions.assertTrue(res.isEmpty());
     }
 
     @Test
@@ -107,25 +83,28 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId = 100001L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime", "chartdate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
         rootEntitiesSpecDto.setIds(List.of(rootEntityId));
         clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
-        Assertions.assertNotNull(rootEntityIdTotextsAndChartTimes);
-        Assertions.assertFalse(rootEntityIdTotextsAndChartTimes.isEmpty());
-        Assertions.assertEquals(1, rootEntityIdTotextsAndChartTimes.size());
-        Assertions.assertTrue(rootEntityIdTotextsAndChartTimes.containsKey(rootEntityId));
-        Assertions.assertEquals(2, rootEntityIdTotextsAndChartTimes.get(rootEntityId).size());
+        var res = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
+        Assertions.assertNotNull(res);
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId));
 
-        List<String> texts = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.charttime", String.class)
+        List<String> texts = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.charttime, n.chartdate", String.class)
                 .setParameter("hadmId", rootEntityId)
                 .getResultList();
 
-        Assertions.assertEquals(texts.get(0), rootEntityIdTotextsAndChartTimes.get(rootEntityId).get(0).getLeft());
-        Assertions.assertEquals(texts.get(1), rootEntityIdTotextsAndChartTimes.get(rootEntityId).get(1).getLeft());
+        String joinedText = String.join(" ", texts);
+        Assertions.assertEquals(joinedText, res.stream().filter(r -> r.getRootEntityId() == rootEntityId).findAny().orElseGet(Assertions::fail).getText());
     }
 
     @Test
@@ -134,6 +113,10 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId = 100001L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -145,18 +128,17 @@ class ClinicalTextServiceTest extends ATestBase
 
         clinicalTextConfigDto.setDataRangeSpec(dataRangeSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
-        Assertions.assertNotNull(rootEntityIdTotextsAndChartTimes);
-        Assertions.assertFalse(rootEntityIdTotextsAndChartTimes.isEmpty());
-        Assertions.assertEquals(1, rootEntityIdTotextsAndChartTimes.size());
-        Assertions.assertTrue(rootEntityIdTotextsAndChartTimes.containsKey(rootEntityId));
-        Assertions.assertEquals(1, rootEntityIdTotextsAndChartTimes.get(rootEntityId).size());
+        var res = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
+        Assertions.assertNotNull(res);
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId));
 
-        List<String> texts = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.charttime ASC", String.class)
+        List<String> texts = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.charttime IS NOT NULL ORDER BY n.charttime ASC", String.class)
                 .setParameter("hadmId", rootEntityId)
                 .getResultList();
 
-        Assertions.assertEquals(texts.get(0), rootEntityIdTotextsAndChartTimes.get(rootEntityId).get(0).getLeft());
+        Assertions.assertEquals(texts.get(0), res.stream().filter(r -> r.getRootEntityId() == rootEntityId).findAny().orElseGet(Assertions::fail).getText());
     }
 
     @Test
@@ -166,39 +148,36 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId2 = 100006L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime", "chartdate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
         rootEntitiesSpecDto.setIds(List.of(rootEntityId1, rootEntityId2));
         clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
-        Assertions.assertNotNull(rootEntityIdTotextsAndChartTimes);
-        Assertions.assertFalse(rootEntityIdTotextsAndChartTimes.isEmpty());
-        Assertions.assertEquals(2, rootEntityIdTotextsAndChartTimes.size());
-        Assertions.assertTrue(rootEntityIdTotextsAndChartTimes.containsKey(rootEntityId1));
-        Assertions.assertTrue(rootEntityIdTotextsAndChartTimes.containsKey(rootEntityId2));
+        var res = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
+        Assertions.assertNotNull(res);
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(2, res.size());
+        Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId1));
+        Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId2));
 
-        List<String> texts1 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.chartdate ASC, n.charttime ASC", String.class)
+        List<String> texts1 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.charttime, n.chartdate ASC", String.class)
                 .setParameter("hadmId", rootEntityId1)
                 .getResultList();
 
-        List<String> texts2 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.chartdate ASC, n.charttime ASC", String.class)
+        List<String> texts2 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.charttime, n.chartdate ASC", String.class)
                 .setParameter("hadmId", rootEntityId2)
                 .getResultList();
 
-        Assertions.assertEquals(texts1.size(), rootEntityIdTotextsAndChartTimes.get(rootEntityId1).size());
-        Assertions.assertEquals(texts2.size(), rootEntityIdTotextsAndChartTimes.get(rootEntityId2).size());
+        String joinedText1 = String.join(" ", texts1);
+        String joinedText2 = String.join(" ", texts2);
 
-        for (int i = 0; i < texts1.size(); i++)
-        {
-            Assertions.assertEquals(texts1.get(i), rootEntityIdTotextsAndChartTimes.get(rootEntityId1).get(i).getLeft());
-        }
-
-        for (int i = 0; i < texts2.size(); i++)
-        {
-            Assertions.assertEquals(texts2.get(i), rootEntityIdTotextsAndChartTimes.get(rootEntityId2).get(i).getLeft());
-        }
+        Assertions.assertEquals(joinedText1, res.stream().filter(r -> r.getRootEntityId() == rootEntityId1).findAny().orElseGet(Assertions::fail).getText());
+        Assertions.assertEquals(joinedText2, res.stream().filter(r -> r.getRootEntityId() == rootEntityId2).findAny().orElseGet(Assertions::fail).getText());
     }
 
     @Test
@@ -208,6 +187,10 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId2 = 100006L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -217,35 +200,28 @@ class ClinicalTextServiceTest extends ATestBase
         dataRangeSpecDto.setFirstMinutes(1440);
         clinicalTextConfigDto.setDataRangeSpec(dataRangeSpecDto);
 
-        var rootEntityIdTotextsAndChartTimes = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
-        Assertions.assertNotNull(rootEntityIdTotextsAndChartTimes);
-        Assertions.assertFalse(rootEntityIdTotextsAndChartTimes.isEmpty());
-        Assertions.assertEquals(2, rootEntityIdTotextsAndChartTimes.size());
-        Assertions.assertTrue(rootEntityIdTotextsAndChartTimes.containsKey(rootEntityId1));
-        Assertions.assertTrue(rootEntityIdTotextsAndChartTimes.containsKey(rootEntityId2));
+        var res = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
+        Assertions.assertNotNull(res);
+        Assertions.assertFalse(res.isEmpty());
+        Assertions.assertEquals(2, res.size());
+        Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId1));
+        Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId2));
 
-        List<String> texts1 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.chartdate ASC, n.charttime ASC", String.class)
+        Stream<String> texts1 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.charttime != null ORDER BY n.charttime ASC", String.class)
                 .setParameter("hadmId", rootEntityId1)
-                .getResultList();
+                .getResultStream();
 
-        List<String> texts2 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.chartdate ASC, n.charttime ASC", String.class)
+        Stream<String> texts2 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.charttime != null ORDER BY n.charttime ASC", String.class)
                 .setParameter("hadmId", rootEntityId2)
-                .getResultList();
+                .getResultStream();
 
         final int expectedSize1 = 1;
-        final int expectedSize2 = 5;
+        final int expectedSize2 = 4;
 
-        Assertions.assertEquals(expectedSize1, rootEntityIdTotextsAndChartTimes.get(rootEntityId1).size());
-        Assertions.assertEquals(expectedSize2, rootEntityIdTotextsAndChartTimes.get(rootEntityId2).size());
+        String joinedText1 = texts1.limit(expectedSize1).collect(Collectors.joining(" "));
+        String joinedText2 = texts2.limit(expectedSize2).collect(Collectors.joining(" "));
 
-        for (int i = 0; i < expectedSize1; i++)
-        {
-            Assertions.assertEquals(texts1.get(i), rootEntityIdTotextsAndChartTimes.get(rootEntityId1).get(i).getLeft());
-        }
-
-        for (int i = 0; i < expectedSize2; i++)
-        {
-            Assertions.assertEquals(texts2.get(i), rootEntityIdTotextsAndChartTimes.get(rootEntityId2).get(i).getLeft());
-        }
+        Assertions.assertEquals(joinedText1, res.stream().filter(r -> r.getRootEntityId() == rootEntityId1).findAny().orElseGet(Assertions::fail).getText());
+        Assertions.assertEquals(joinedText2, res.stream().filter(r -> r.getRootEntityId() == rootEntityId2).findAny().orElseGet(Assertions::fail).getText());
     }
 }
