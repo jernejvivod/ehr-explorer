@@ -1,12 +1,9 @@
 package si.jernej.mexplorer.core.v1.endpoint;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
-import org.jboss.ejb3.annotation.TransactionTimeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +20,6 @@ public class ClinicalTextApiImpl implements ClinicalTextApi
     private ClinicalTextService clinicalTextService;
 
     @Override
-    @TransactionTimeout(value = 60, unit = TimeUnit.MINUTES)
     public Response clinicalText(ClinicalTextConfigDto clinicalTextConfigDto)
     {
         logger.info("extracting clinical text");

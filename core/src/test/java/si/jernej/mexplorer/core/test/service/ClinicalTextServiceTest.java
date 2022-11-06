@@ -10,6 +10,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Timeout;
 
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.processing.Wordification;
@@ -108,7 +109,7 @@ class ClinicalTextServiceTest extends ATestBase
     }
 
     @Test
-    void extractClinicalTextForSingleIdWithDateLimit()
+    void extractClinicalTextForSingleIdWithDateTimeLimit()
     {
         final long rootEntityId = 100001L;
 
@@ -181,7 +182,7 @@ class ClinicalTextServiceTest extends ATestBase
     }
 
     @Test
-    void extractClinicalTextForTwoIdsWithDateLimit()
+    void extractClinicalTextForTwoIdsWithDateTimeLimit()
     {
         final long rootEntityId1 = 100001L;
         final long rootEntityId2 = 100006L;
@@ -223,5 +224,59 @@ class ClinicalTextServiceTest extends ATestBase
 
         Assertions.assertEquals(joinedText1, res.stream().filter(r -> r.getRootEntityId() == rootEntityId1).findAny().orElseGet(Assertions::fail).getText());
         Assertions.assertEquals(joinedText2, res.stream().filter(r -> r.getRootEntityId() == rootEntityId2).findAny().orElseGet(Assertions::fail).getText());
+    }
+
+    @Test
+    @Timeout(value=30)
+    void extractClinicalText30PercentIdsWithDateTimeLimit()
+    {
+        List<Long> ids = em.createQuery("SELECT a.hadmId FROM AdmissionsEntity a", Long.class)
+                .setMaxResults(17693)
+                .getResultList();
+
+        ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime"));
+        RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
+        rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
+        rootEntitiesSpecDto.setIdProperty("hadmId");
+        rootEntitiesSpecDto.setIds(ids);
+        clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
+        DataRangeSpecDto dataRangeSpecDto = new DataRangeSpecDto();
+        dataRangeSpecDto.setFirstMinutes(1440);
+        clinicalTextConfigDto.setDataRangeSpec(dataRangeSpecDto);
+
+        var res = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
+        Assertions.assertNotNull(res);
+        Assertions.assertFalse(res.isEmpty());
+    }
+
+    @Test
+    @Timeout(value=30)
+    void extractClinicalText50PercentIdsWithDateTimeLimit()
+    {
+        List<Long> ids = em.createQuery("SELECT a.hadmId FROM AdmissionsEntity a", Long.class)
+                .setMaxResults(29488)
+                .getResultList();
+
+        ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime"));
+        RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
+        rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
+        rootEntitiesSpecDto.setIdProperty("hadmId");
+        rootEntitiesSpecDto.setIds(ids);
+        clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
+        DataRangeSpecDto dataRangeSpecDto = new DataRangeSpecDto();
+        dataRangeSpecDto.setFirstMinutes(1440);
+        clinicalTextConfigDto.setDataRangeSpec(dataRangeSpecDto);
+
+        var res = clinicalTextService.extractClinicalText(clinicalTextConfigDto);
+        Assertions.assertNotNull(res);
+        Assertions.assertFalse(res.isEmpty());
     }
 }
