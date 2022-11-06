@@ -81,6 +81,11 @@ public class ClinicalTextService
                 // filter out clinical text where all date/time values are null
                 var valuesWithDateTime = values.stream().filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull)).toList();
 
+                if (valuesWithDateTime.isEmpty())
+                {
+                    return List.of();
+                }
+
                 // initial date/time
                 LocalDateTime initialDateTime = valuesWithDateTime.get(0).dateTimeColumnValues().stream()
                         .filter(Objects::nonNull)
