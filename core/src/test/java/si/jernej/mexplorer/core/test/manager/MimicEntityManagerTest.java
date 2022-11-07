@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
+import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.test.ATestBase;
 
 public class MimicEntityManagerTest extends ATestBase
@@ -85,7 +87,7 @@ public class MimicEntityManagerTest extends ATestBase
     }
 
     @Test
-    void testComputeIdPropertyValuesForForeignPathEndTwoIds()
+    void testComputeIdPropertyValuesForForeignPathEndThreeIds()
     {
         final Set<Long> hadmIds = Set.of(100001L, 100003L, 100006L);
         final List<String> foreignKeyPath = List.of("AdmissionsEntity", "NoteEventsEntity");
@@ -110,11 +112,11 @@ public class MimicEntityManagerTest extends ATestBase
     @Test
     void testComputeIdPropertyValuesForForeignPathEndOneElementPath()
     {
-        final Set<Long> hadmIds = Set.of(1L);
+        final Set<Long> ids = Set.of(1L);
         final List<String> foreignKeyPath = List.of("NoteEventsEntity");
 
         Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> res = mimicEntityManager.mapRootEntityIdsToClinicalText(
-                hadmIds,
+                ids,
                 foreignKeyPath,
                 "rowId",
                 "rowId",
@@ -122,9 +124,172 @@ public class MimicEntityManagerTest extends ATestBase
                 List.of("chartdate", "charttime")
         );
 
-        // Set<Pair<Long, Set<Long>>> expectedResult = Set.of(Pair.of(100001L, Set.of(42102L, 1206584L)));
-
         Assertions.assertTrue(res.containsKey(1L));
         Assertions.assertTrue(res.get(1L).stream().map(MimicEntityManager.ClinicalTextExtractionQueryResult::clinicalTextEntityId).collect(Collectors.toSet()).containsAll(Set.of(1L)));
     }
+
+    @Test
+    void testComputeIdPropertyValuesForForeignPathEndEmptyIds()
+    {
+        final Set<Long> hadmIds = Set.of();
+        final List<String> foreignKeyPath = List.of("AdmissionsEntity", "NoteEventsEntity");
+
+        Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> res = mimicEntityManager.mapRootEntityIdsToClinicalText(
+                hadmIds,
+                foreignKeyPath,
+                "hadmId",
+                "rowId",
+                "text",
+                List.of("chartdate", "charttime")
+        );
+
+        Assertions.assertEquals(0, res.size());
+    }
+
+    @Test
+    void testComputeIdPropertyValuesForForeignPathEndEmptyForeignKeyPath()
+    {
+        final Set<Long> hadmIds = Set.of(100001L);
+        final List<String> foreignKeyPath = List.of();
+
+        Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> res = mimicEntityManager.mapRootEntityIdsToClinicalText(
+                hadmIds,
+                foreignKeyPath,
+                "hadmId",
+                "rowId",
+                "text",
+                List.of("chartdate", "charttime")
+        );
+
+        Assertions.assertEquals(0, res.size());
+    }
+
+    @Test
+    void testComputeIdPropertyValuesForForeignPathEndEmptyForeignKeyPathEmptyIds()
+    {
+        final Set<Long> hadmIds = Set.of();
+        final List<String> foreignKeyPath = List.of();
+
+        Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> res = mimicEntityManager.mapRootEntityIdsToClinicalText(
+                hadmIds,
+                foreignKeyPath,
+                "hadmId",
+                "rowId",
+                "text",
+                List.of("chartdate", "charttime")
+        );
+
+        Assertions.assertEquals(0, res.size());
+    }
+
+    @Test
+    void testForeignKeyPathToPropertyNamesEmpty()
+    {
+        final List<String> foreignKeyPath = List.of();
+
+        List<String> res = mimicEntityManager.foreignKeyPathToPropertyNames(foreignKeyPath);
+
+        Assertions.assertNotNull(res);
+        Assertions.assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void testForeignKeyPathToPropertyNamesOneEntity()
+    {
+        final List<String> foreignKeyPath = List.of("AdmissionsEntity");
+
+        List<String> res = mimicEntityManager.foreignKeyPathToPropertyNames(foreignKeyPath);
+
+        Assertions.assertNotNull(res);
+        Assertions.assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void testForeignKeyPathToPropertyNamesTwoEntities()
+    {
+        final List<String> foreignKeyPath = List.of("AdmissionsEntity", "NoteEventsEntity");
+
+        List<String> res = mimicEntityManager.foreignKeyPathToPropertyNames(foreignKeyPath);
+
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(List.of("noteEventsEntitys"), res);
+    }
+
+    @Test
+    void testForeignKeyPathToPropertyNamesThreeEntities()
+    {
+        final List<String> foreignKeyPath = List.of("AdmissionsEntity", "PatientsEntity", "IcuStaysEntity");
+
+        List<String> res = mimicEntityManager.foreignKeyPathToPropertyNames(foreignKeyPath);
+
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(List.of("patientsEntity", "icuStaysEntitys"), res);
+    }
+
+    @Test
+    void fetchRootEntitiesForForeignKeyPathsSimple()
+    {
+        List<List<String>> foreignKeyPaths = List.of(List.of("AdmissionsEntity", "NoteEventsEntity"));
+        Set<Long> hadmIds = Set.of(100001L);
+
+        Stream<Object> res = mimicEntityManager.fetchRootEntitiesForForeignKeyPaths(foreignKeyPaths, "hadmId", hadmIds);
+
+        Assertions.assertNotNull(res);
+        List<Object> resList = res.toList();
+        Assertions.assertTrue(resList.stream().allMatch(r -> r instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().allMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100001L));
+    }
+
+    @Test
+    void fetchRootEntitiesForForeignKeyPathsThreeIds()
+    {
+        List<List<String>> foreignKeyPaths = List.of(List.of("AdmissionsEntity", "NoteEventsEntity"));
+        final Set<Long> hadmIds = Set.of(100001L, 100003L, 100006L);
+
+        Stream<Object> res = mimicEntityManager.fetchRootEntitiesForForeignKeyPaths(foreignKeyPaths, "hadmId", hadmIds);
+
+        Assertions.assertNotNull(res);
+        List<Object> resList = res.toList();
+        Assertions.assertEquals(3, resList.size());
+        Assertions.assertTrue(resList.stream().allMatch(r -> r instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100001L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100003L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100006L));
+    }
+
+    @Test
+    void fetchRootEntitiesForForeignKeyPathsTwoForeignKeyPaths()
+    {
+        List<List<String>> foreignKeyPaths = List.of(List.of("AdmissionsEntity", "NoteEventsEntity"), List.of("AdmissionsEntity", "PatientsEntity", "IcuStaysEntity"));
+        final Set<Long> hadmIds = Set.of(100001L, 100003L, 100006L);
+
+        Stream<Object> res = mimicEntityManager.fetchRootEntitiesForForeignKeyPaths(foreignKeyPaths, "hadmId", hadmIds);
+
+        Assertions.assertNotNull(res);
+        List<Object> resList = res.toList();
+        Assertions.assertEquals(3, resList.size());
+        Assertions.assertTrue(resList.stream().allMatch(r -> r instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100001L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100003L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100006L));
+    }
+
+    @Test
+    void fetchRootEntitiesForForeignKeyPathsSharedPath()
+    {
+        List<List<String>> foreignKeyPaths = List.of(List.of("AdmissionsEntity", "NoteEventsEntity"), List.of("AdmissionsEntity", "NoteEventsEntity", "PatientsEntity"));
+        final Set<Long> hadmIds = Set.of(100001L, 100003L, 100006L);
+
+        Stream<Object> res = mimicEntityManager.fetchRootEntitiesForForeignKeyPaths(foreignKeyPaths, "hadmId", hadmIds);
+
+        Assertions.assertNotNull(res);
+        List<Object> resList = res.toList();
+        Assertions.assertEquals(3, resList.size());
+        Assertions.assertTrue(resList.stream().allMatch(r -> r instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100001L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100003L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100006L));
+    }
+
+    // TODO tests for MimicEntityManager#fetchRootEntitiesForForeignKeyPathsSharedPath edge cases (Empty foreign-key paths, empty IDs, non-existent IDs, invalid entity names) - also for other functionality
 }

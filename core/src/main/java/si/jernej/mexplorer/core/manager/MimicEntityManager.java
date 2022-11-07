@@ -3,10 +3,13 @@ package si.jernej.mexplorer.core.manager;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
@@ -32,6 +35,8 @@ public class MimicEntityManager
     }
 
     // TODO redundant select — ID is already in e
+    // TODO to be replaced by dynamic query
+    @Deprecated(forRemoval = true)
     public Stream<Object[]> getEntitiesAndIds(String idPropertyName, String rootEntityName, List<Long> ids)
     {
         final String query = """
@@ -75,6 +80,11 @@ public class MimicEntityManager
             List<String> dateTimePropertiesNames
     )
     {
+        if (rootEntityIds.isEmpty() || foreignKeyPath.isEmpty())
+        {
+            return Collections.emptyMap();
+        }
+
         // pool of available query variables
         String[] queryVarsPool = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
         List<String> queryVars = Arrays.stream(queryVarsPool).limit(foreignKeyPath.size()).toList();
@@ -139,6 +149,9 @@ public class MimicEntityManager
      */
     public boolean[] foreignKeyPathToIsSingularMask(List<String> foreignKeyPath)
     {
+        if (foreignKeyPath.isEmpty())
+            return new boolean[0];
+
         // get name of package containing the entity classes
         Metamodel metamodel = em.getMetamodel();
         final String entityPackageName = em.getMetamodel().getEntities().iterator().next().getJavaType().getPackageName();
@@ -164,4 +177,70 @@ public class MimicEntityManager
         }
         return res;
     }
+
+    /**
+     * Get list of property names for linked entities for given foreign-key path. The Resulting list is one element
+     * shorter than the provided list specifying the foreign-key path.
+     *
+     * @param foreignKeyPath foreign-key path
+     */
+    public List<String> foreignKeyPathToPropertyNames(List<String> foreignKeyPath)
+    {
+        boolean[] isSingularMask = foreignKeyPathToIsSingularMask(foreignKeyPath);
+        return IntStream.range(1, foreignKeyPath.size())
+                .mapToObj(idx -> EntityUtils.entityNameToPropertyName(foreignKeyPath.get(idx), isSingularMask[idx - 1]))
+                .toList();
+    }
+
+    /**
+     * Fetch root entity so that all specified foreign-key paths are loaded.
+     *
+     * @param foreignKeyPaths list of foreign-key paths
+     */
+    public Stream<Object> fetchRootEntitiesForForeignKeyPaths(List<List<String>> foreignKeyPaths, String rootEntityIdPropertyName, Set<?> ids)
+    {
+        // pool of available query variables
+        String[] queryVarsPool = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+        int queryVarsPoolIdx = 1;
+
+        // mapping of entity names to their corresponding variables in the query
+        Map<String, String> entityNameToQueryVar = new HashMap<>();
+        String rootEntityName = foreignKeyPaths.get(0).get(0);
+        entityNameToQueryVar.put(rootEntityName, queryVarsPool[0]);
+
+        // initialize dynamic query
+        StringBuilder dynamicQuery = new StringBuilder("SELECT a FROM %s a%n".formatted(rootEntityName));
+
+        for (List<String> foreignKeyPath : foreignKeyPaths)
+        {
+            List<String> foreignKeyPathPropertyNames = foreignKeyPathToPropertyNames(foreignKeyPath);
+
+            for (int i = 0; i < foreignKeyPath.size() - 1; i++)
+            {
+                // if entity already in query, continue
+                if (entityNameToQueryVar.containsKey(foreignKeyPath.get(i + 1)))
+                {
+                    continue;
+                }
+
+                // get query variable of previous entity on path
+                String entityVarPrev = entityNameToQueryVar.get(foreignKeyPath.get(i));
+
+                // get next query variable for entity
+                String entityVarNxt = queryVarsPool[queryVarsPoolIdx];
+                entityNameToQueryVar.put(foreignKeyPath.get(i + 1), entityVarNxt);
+                queryVarsPoolIdx++;
+
+                // append fetch to query
+                dynamicQuery.append("JOIN FETCH %s.%s %s%n".formatted(entityVarPrev, foreignKeyPathPropertyNames.get(i), entityVarNxt));
+            }
+        }
+
+        dynamicQuery.append("WHERE a.%s IN (:ids)".formatted(rootEntityIdPropertyName));
+
+        return em.createQuery(dynamicQuery.toString(), Object.class)
+                .setParameter("ids", ids)
+                .getResultStream();
+    }
+
 }
