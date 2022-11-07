@@ -12,7 +12,6 @@ import java.util.Set;
  */
 public class PropertySpec
 {
-
     private final Map<String, Set<String>> entityToPropertiesToProcess;
 
     public PropertySpec()
@@ -53,5 +52,4 @@ public class PropertySpec
     {
         return this.entityToPropertiesToProcess.containsKey(entity) && this.entityToPropertiesToProcess.get(entity).contains(propertyName);
     }
-
 }

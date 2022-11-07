@@ -68,6 +68,9 @@ public class PropositionalizationService
             throw new ValidationCoreException("Unknown property name '%s'".formatted(idPropertyName));
         }
 
+        // TODO replace with function performing dynamic query
+        // TODO compute list of foreign-key paths from PropertySpec instance
+        // TODO fetch just root entity and get ID from entity
         // get list of root entities and their IDs
         List<Object[]> rootEntitiesWithIds = mimicEntityManager.getEntitiesAndIds(
                 idPropertyName,
