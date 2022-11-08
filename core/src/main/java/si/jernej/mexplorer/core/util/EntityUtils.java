@@ -22,6 +22,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 
 public final class EntityUtils
 {
@@ -238,5 +239,20 @@ public final class EntityUtils
     public static List<Object> traverseSingularForeignKeyPath(List<?> rootEntitys, List<String> foreignKeyPath)
     {
         return rootEntitys.stream().map(e -> traverseSingularForeignKeyPath(e, foreignKeyPath)).toList();
+    }
+
+    public static List<List<String>> getForeignKeyPathsFromPropertySpec(String rootEntityName, PropertySpec propertySpec, Metamodel metamodel)
+    {
+        final Map<String, Set<String>> entityToPropertiesToProcess = propertySpec.getEntityToPropertiesToProcess();
+        final Map<String, Set<String>> entityToLinkedEntities = computeEntityToLinkedEntitiesMap(metamodel);
+        final List<List<String>> res = new ArrayList<>();
+
+        entityToPropertiesToProcess.keySet().stream()
+                .filter(k -> !k.equals(rootEntityName))
+                .forEach(entityName ->
+                        res.add(computeForeignKeyPath(rootEntityName, entityName, entityToLinkedEntities))
+                );
+
+        return res;
     }
 }

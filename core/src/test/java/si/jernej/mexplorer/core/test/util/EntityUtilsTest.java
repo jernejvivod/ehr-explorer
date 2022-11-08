@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.entity.PatientsEntity;
@@ -149,6 +150,72 @@ public class EntityUtilsTest extends ATestBase
         {
             Assertions.assertEquals(hadmIdToExpectedLinkedSubjectId.get(hadmIdsExtracted.get(i)), ((PatientsEntity) (res.get(i))).getSubjectId());
         }
+    }
 
+    @Test
+    void testGetForeignKeyPathsFromPropertySpecEmptyPropertySpec()
+    {
+        String rootEntityName = "AdmissionsEntity";
+        PropertySpec propertySpec = new PropertySpec();
+
+        List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(0, res.size());
+    }
+
+    @Test
+    void testGetForeignKeyPathsFromPropertySpecOnlyRootEntity()
+    {
+        String rootEntityName = "AdmissionsEntity";
+
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "insurance");
+        propertySpec.addEntry("AdmissionsEntity", "language");
+        propertySpec.addEntry("AdmissionsEntity", "religion");
+
+        List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(0, res.size());
+    }
+
+    @Test
+    void testGetForeignKeyPathsFromPropertySpecSimple()
+    {
+        String rootEntityName = "AdmissionsEntity";
+
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "insurance");
+        propertySpec.addEntry("AdmissionsEntity", "language");
+        propertySpec.addEntry("AdmissionsEntity", "religion");
+
+        propertySpec.addEntry("PatientsEntity", "gender");
+        propertySpec.addEntry("PatientsEntity", "expireFlag");
+
+        List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "PatientsEntity")));
+    }
+
+    @Test
+    void testGetForeignKeyPathsFromPropertySpecTwoPaths()
+    {
+        String rootEntityName = "AdmissionsEntity";
+
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "insurance");
+        propertySpec.addEntry("AdmissionsEntity", "language");
+        propertySpec.addEntry("AdmissionsEntity", "religion");
+
+        propertySpec.addEntry("PatientsEntity", "gender");
+        propertySpec.addEntry("PatientsEntity", "expireFlag");
+
+        propertySpec.addEntry("IcuStaysEntity", "dbSource");
+
+        List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(2, res.size());
+        Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "PatientsEntity")));
+        Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "IcuStaysEntity")));
     }
 }

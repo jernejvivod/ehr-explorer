@@ -229,66 +229,88 @@ public class MimicEntityManagerTest extends ATestBase
     @Test
     void fetchRootEntitiesForForeignKeyPathsSimple()
     {
+        String rootEntityName = "AdmissionsEntity";
         List<List<String>> foreignKeyPaths = List.of(List.of("AdmissionsEntity", "NoteEventsEntity"));
         Set<Long> hadmIds = Set.of(100001L);
 
-        Stream<Object> res = mimicEntityManager.fetchRootEntitiesForForeignKeyPaths(foreignKeyPaths, "hadmId", hadmIds);
+        Stream<Object[]> res = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(rootEntityName, foreignKeyPaths, "hadmId", hadmIds);
 
         Assertions.assertNotNull(res);
-        List<Object> resList = res.toList();
-        Assertions.assertTrue(resList.stream().allMatch(r -> r instanceof AdmissionsEntity));
-        Assertions.assertTrue(resList.stream().allMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100001L));
+        List<Object[]> resList = res.toList();
+        Assertions.assertTrue(resList.stream().allMatch(r -> r[0] instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().allMatch(r -> ((long) r[1]) == 100001L));
     }
 
     @Test
     void fetchRootEntitiesForForeignKeyPathsThreeIds()
     {
+        String rootEntityName = "AdmissionsEntity";
         List<List<String>> foreignKeyPaths = List.of(List.of("AdmissionsEntity", "NoteEventsEntity"));
         final Set<Long> hadmIds = Set.of(100001L, 100003L, 100006L);
 
-        Stream<Object> res = mimicEntityManager.fetchRootEntitiesForForeignKeyPaths(foreignKeyPaths, "hadmId", hadmIds);
+        Stream<Object[]> res = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(rootEntityName, foreignKeyPaths, "hadmId", hadmIds);
 
         Assertions.assertNotNull(res);
-        List<Object> resList = res.toList();
+        List<Object[]> resList = res.toList();
         Assertions.assertEquals(3, resList.size());
-        Assertions.assertTrue(resList.stream().allMatch(r -> r instanceof AdmissionsEntity));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100001L));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100003L));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100006L));
+        Assertions.assertTrue(resList.stream().allMatch(r -> r[0] instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100001L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100003L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100006L));
     }
 
     @Test
     void fetchRootEntitiesForForeignKeyPathsTwoForeignKeyPaths()
     {
+        String rootEntityName = "AdmissionsEntity";
         List<List<String>> foreignKeyPaths = List.of(List.of("AdmissionsEntity", "NoteEventsEntity"), List.of("AdmissionsEntity", "PatientsEntity", "IcuStaysEntity"));
         final Set<Long> hadmIds = Set.of(100001L, 100003L, 100006L);
 
-        Stream<Object> res = mimicEntityManager.fetchRootEntitiesForForeignKeyPaths(foreignKeyPaths, "hadmId", hadmIds);
+        Stream<Object[]> res = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(rootEntityName, foreignKeyPaths, "hadmId", hadmIds);
 
         Assertions.assertNotNull(res);
-        List<Object> resList = res.toList();
+        List<Object[]> resList = res.toList();
         Assertions.assertEquals(3, resList.size());
-        Assertions.assertTrue(resList.stream().allMatch(r -> r instanceof AdmissionsEntity));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100001L));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100003L));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100006L));
+        Assertions.assertTrue(resList.stream().allMatch(r -> r[0] instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100001L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100003L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100006L));
     }
 
     @Test
     void fetchRootEntitiesForForeignKeyPathsSharedPath()
     {
+        String rootEntityName = "AdmissionsEntity";
         List<List<String>> foreignKeyPaths = List.of(List.of("AdmissionsEntity", "NoteEventsEntity"), List.of("AdmissionsEntity", "NoteEventsEntity", "PatientsEntity"));
         final Set<Long> hadmIds = Set.of(100001L, 100003L, 100006L);
 
-        Stream<Object> res = mimicEntityManager.fetchRootEntitiesForForeignKeyPaths(foreignKeyPaths, "hadmId", hadmIds);
+        Stream<Object[]> res = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(rootEntityName, foreignKeyPaths, "hadmId", hadmIds);
 
         Assertions.assertNotNull(res);
-        List<Object> resList = res.toList();
+        List<Object[]> resList = res.toList();
         Assertions.assertEquals(3, resList.size());
-        Assertions.assertTrue(resList.stream().allMatch(r -> r instanceof AdmissionsEntity));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100001L));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100003L));
-        Assertions.assertTrue(resList.stream().anyMatch(r -> ((AdmissionsEntity) r).getHadmId() == 100006L));
+        Assertions.assertTrue(resList.stream().allMatch(r -> r[0] instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100001L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100003L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100006L));
+    }
+
+    @Test
+    void fetchRootEntitiesForForeignKeyPathsEmptyForeignKeyPaths()
+    {
+        String rootEntityName = "AdmissionsEntity";
+        List<List<String>> foreignKeyPaths = List.of();
+        final Set<Long> hadmIds = Set.of(100001L, 100003L, 100006L);
+
+        Stream<Object[]> res = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(rootEntityName, foreignKeyPaths, "hadmId", hadmIds);
+
+        Assertions.assertNotNull(res);
+        List<Object[]> resList = res.toList();
+        Assertions.assertEquals(3, resList.size());
+        Assertions.assertTrue(resList.stream().allMatch(r -> r[0] instanceof AdmissionsEntity));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100001L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100003L));
+        Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100006L));
     }
 
     // TODO tests for MimicEntityManager#fetchRootEntitiesForForeignKeyPathsSharedPath edge cases (Empty foreign-key paths, empty IDs, non-existent IDs, invalid entity names) - also for other functionality

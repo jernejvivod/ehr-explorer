@@ -34,22 +34,6 @@ public class MimicEntityManager
         return em.getMetamodel();
     }
 
-    // TODO redundant select — ID is already in e
-    // TODO to be replaced by dynamic query
-    @Deprecated(forRemoval = true)
-    public Stream<Object[]> getEntitiesAndIds(String idPropertyName, String rootEntityName, List<Long> ids)
-    {
-        final String query = """
-                SELECT e, e.%1$s FROM %2$s e
-                WHERE e.%1$s IN (:ids)
-                """
-                .formatted(idPropertyName, rootEntityName);
-
-        return em.createQuery(query, Object[].class)
-                .setParameter("ids", ids)
-                .getResultStream();
-    }
-
     public record ClinicalTextExtractionQueryResult<T>(
             T clinicalTextEntityId,
             String clinicalText,
@@ -193,11 +177,11 @@ public class MimicEntityManager
     }
 
     /**
-     * Fetch root entity so that all specified foreign-key paths are loaded.
+     * Fetch root entities and their ids so that all specified foreign-key paths are loaded.
      *
      * @param foreignKeyPaths list of foreign-key paths
      */
-    public Stream<Object> fetchRootEntitiesForForeignKeyPaths(List<List<String>> foreignKeyPaths, String rootEntityIdPropertyName, Set<?> ids)
+    public Stream<Object[]> fetchRootEntitiesAndIdsForForeignKeyPaths(String rootEntityName, List<List<String>> foreignKeyPaths, String rootEntityIdPropertyName, Set<?> ids)
     {
         // pool of available query variables
         String[] queryVarsPool = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
@@ -205,11 +189,10 @@ public class MimicEntityManager
 
         // mapping of entity names to their corresponding variables in the query
         Map<String, String> entityNameToQueryVar = new HashMap<>();
-        String rootEntityName = foreignKeyPaths.get(0).get(0);
         entityNameToQueryVar.put(rootEntityName, queryVarsPool[0]);
 
         // initialize dynamic query
-        StringBuilder dynamicQuery = new StringBuilder("SELECT a FROM %s a%n".formatted(rootEntityName));
+        StringBuilder dynamicQuery = new StringBuilder("SELECT a, a.%s FROM %s a%n".formatted(rootEntityIdPropertyName, rootEntityName));
 
         for (List<String> foreignKeyPath : foreignKeyPaths)
         {
@@ -238,7 +221,7 @@ public class MimicEntityManager
 
         dynamicQuery.append("WHERE a.%s IN (:ids)".formatted(rootEntityIdPropertyName));
 
-        return em.createQuery(dynamicQuery.toString(), Object.class)
+        return em.createQuery(dynamicQuery.toString(), Object[].class)
                 .setParameter("ids", ids)
                 .getResultStream();
     }
