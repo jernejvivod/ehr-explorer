@@ -2,6 +2,7 @@ package si.jernej.mexplorer.core.service;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -68,16 +69,6 @@ public class PropositionalizationService
             throw new ValidationCoreException("Unknown property name '%s'".formatted(idPropertyName));
         }
 
-        // TODO replace with function performing dynamic query
-        // TODO compute list of foreign-key paths from PropertySpec instance
-        // TODO fetch just root entity and get ID from entity
-        // get list of root entities and their IDs
-        List<Object[]> rootEntitiesWithIds = mimicEntityManager.getEntitiesAndIds(
-                idPropertyName,
-                rootEntityName,
-                wordificationConfigDto.getRootEntitiesSpec().getIds()
-        ).toList();
-
         // get PropertySpec, ValueTransformer and CompositeColumnCreator instances
         PropertySpec propertySpec = DtoConverter.toPropertySpec(wordificationConfigDto.getPropertySpec());
 
@@ -89,11 +80,19 @@ public class PropositionalizationService
                 .map(s -> DtoConverter.toCompositeColumnCreator(rootEntityName, s, mimicEntityManager.getMetamodel()))
                 .orElse(new CompositeColumnCreator());
 
+        // get list of root entities
+        List<Object[]> rootEntities = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
+                rootEntityName,
+                EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, mimicEntityManager.getMetamodel()),
+                idPropertyName,
+                new HashSet<>(wordificationConfigDto.getRootEntitiesSpec().getIds())
+        ).toList();
+
         // initialize list for storing wordification results
         List<WordificationResultDto> wordificationResults = new ArrayList<>(wordificationConfigDto.getRootEntitiesSpec().getIds().size());
 
         // go over entity IDs and compute Wordification results
-        for (Object[] rootEntityWithId : rootEntitiesWithIds)
+        for (Object[] rootEntityWithId : rootEntities)
         {
             Object rootEntity = rootEntityWithId[0];
             long rootEntityId = (long) rootEntityWithId[1];

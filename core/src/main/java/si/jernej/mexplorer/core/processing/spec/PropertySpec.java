@@ -52,4 +52,9 @@ public class PropertySpec
     {
         return this.entityToPropertiesToProcess.containsKey(entity) && this.entityToPropertiesToProcess.get(entity).contains(propertyName);
     }
+
+    public Map<String, Set<String>> getEntityToPropertiesToProcess()
+    {
+        return entityToPropertiesToProcess;
+    }
 }
