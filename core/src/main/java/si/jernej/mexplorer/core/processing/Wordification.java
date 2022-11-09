@@ -8,7 +8,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import javax.enterprise.context.Dependent;
-import javax.persistence.Table;
+import javax.persistence.Entity;
 import javax.ws.rs.InternalServerErrorException;
 
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
@@ -67,73 +66,78 @@ public class Wordification
         {
             while (!bfsQueue.isEmpty())
             {
-                // Get next entity from queue and get its simple class name.
+                // get next entity from queue and get its simple class name
                 Object nxt = bfsQueue.remove();
                 String entityName = nxt.getClass().getSimpleName();
 
-                // Add to set of visited entities.
-                if (visitedEntities.contains(entityName))
-                {
-                    continue;
-                }
-                else
-                {
-                    visitedEntities.add(entityName);
-                }
-
-                // Initialize list for words obtained from next table.
+                // initialize list for words obtained from next table
                 List<String> wordsForEntity = new ArrayList<>();
 
-                // Go over entity's properties.
+                // go over entity's properties
                 for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(nxt.getClass()).getPropertyDescriptors())
                 {
-
                     Object nxtProperty = propertyDescriptor.getReadMethod().invoke(nxt);
 
                     // if property should be included as a word
                     if (propertySpec.containsEntry(entityName, propertyDescriptor.getName()))
                     {
-                        wordsForEntity.add("%s@%s@%s".formatted(entityName, propertyDescriptor.getName(), valueTransformer.applyTransform(entityName, propertyDescriptor.getName(), nxtProperty)).toLowerCase().replace(' ', '_'));
+                        wordsForEntity.add("%s@%s@%s".formatted(
+                                        entityName,
+                                        propertyDescriptor.getName(),
+                                        valueTransformer.applyTransform(entityName, propertyDescriptor.getName(), nxtProperty)
+                                )
+                                .toLowerCase()
+                                .replace(' ', '_'));
                     }
-                    // if property collection of linked entities
-                    else if (nxtProperty instanceof Collection && !((Collection<?>) nxtProperty).isEmpty())
-                    {
-                        Class<?> aClass = ((Collection<?>) nxtProperty).iterator().next().getClass();
 
-                        // If collection of linked entities that were not yet visited, add to queue.
-                        if (!visitedEntities.contains(aClass.getSimpleName()) && aClass.isAnnotationPresent(Table.class))
+                    else if (nxtProperty instanceof Collection<?> collection && !((Collection<?>) nxtProperty).isEmpty())
+                    {
+                        // if property collection of linked entities
+                        Class<?> linkedEntityClass = collection.iterator().next().getClass();
+
+                        // if collection of linked entities that were not yet visited, add to queue
+                        if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) && linkedEntityClass.isAnnotationPresent(Entity.class))
                         {
-                            bfsQueue.addAll((Collection<?>) nxtProperty);
+                            bfsQueue.addAll(collection);
+                            visitedEntities.add(linkedEntityClass.getSimpleName());
                         }
                     }
                     else if (nxtProperty != null)
                     {
+                        // if single linked entity
+                        Class<?> linkedEntityClass = nxtProperty.getClass();
 
-                        Class<?> aClass = nxtProperty.getClass();
-
-                        // If property linked entity and not yet visited, add to queue.
-                        if (!visitedEntities.contains(nxtProperty.getClass().getSimpleName()) && aClass.isAnnotationPresent(Table.class))
+                        // if property linked entity and not yet visited, add to queue
+                        if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) && linkedEntityClass.isAnnotationPresent(Entity.class))
                         {
                             bfsQueue.add(nxtProperty);
+                            visitedEntities.add(linkedEntityClass.getSimpleName());
                         }
                     }
                 }
 
-                // Add all words and concatenations for entity to results list.
+                // add all words and concatenations for entity to results list
                 wordsAll.addAll(addConcatenations(wordsForEntity, concatenationScheme));
             }
         }
         catch (IntrospectionException | IllegalAccessException | InvocationTargetException e)
         {
-            throw new InternalServerErrorException("error computing Wordification");
+            throw new InternalServerErrorException("Error computing Wordification");
         }
 
-        // Add values from composite columns.
-        Map<String, List<Object>> compositeColumns = compositeColumnCreator.processEntries(Collections.singletonList(rootEntity));
+        // add values from composite columns
+        Map<String, List<Object>> compositeColumns = compositeColumnCreator.processEntries(List.of(rootEntity));
         List<String> wordsForComposite = new ArrayList<>();
-        compositeColumns.forEach((k, l) -> l.forEach(v -> wordsForComposite.add(String.format("%s@%s@%s", COMPOSITE_TABLE_NAME, k, valueTransformer.applyTransform(COMPOSITE_TABLE_NAME, k, v)).toLowerCase().replace(' ', '_'))));
+        compositeColumns.forEach((k, l) -> l.forEach(
+                        v -> wordsForComposite.add(
+                                String.format("%s@%s@%s", COMPOSITE_TABLE_NAME, k, valueTransformer.applyTransform(COMPOSITE_TABLE_NAME, k, v))
+                                        .toLowerCase()
+                                        .replace(' ', '_')
+                        )
+                )
+        );
 
-        // Add all words and concatenations for composite table to results list.
+        // add all words and concatenations for composite table to result list
         wordsAll.addAll(addConcatenations(wordsForComposite, concatenationScheme));
 
         return wordsAll;
