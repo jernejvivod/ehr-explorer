@@ -19,7 +19,6 @@ import si.jernej.mexplorer.core.util.EntityUtils;
  */
 public class CompositeColumnCreator
 {
-
     /**
      * Record representing a specification entry for the creation of a composite column.
      */
@@ -87,7 +86,7 @@ public class CompositeColumnCreator
     /**
      * Create composite columns in new table as specified by the added entries.
      *
-     * @param rootEntities List of root entities
+     * @param rootEntities {@code List} of root entities
      * @return List of created composite columns in order of specified entries
      */
     public Map<String, List<Object>> processEntries(List<?> rootEntities)
@@ -140,10 +139,14 @@ public class CompositeColumnCreator
             }
 
             // Combine properties of entities.
-            resultsForEntity.put(entry.getCompositeName(), IntStream.range(0, res1Prop.size()).mapToObj(i -> entry.combiner.apply(res1Prop.get(i), res2Prop.get(i))).toList());
+            resultsForEntity.put(
+                    entry.getCompositeName(),
+                    IntStream.range(0, res1Prop.size())
+                            .mapToObj(i -> entry.getCombiner().apply(res1Prop.get(i), res2Prop.get(i)))
+                            .toList()
+            );
         }
 
         return resultsForEntity;
     }
-
 }
