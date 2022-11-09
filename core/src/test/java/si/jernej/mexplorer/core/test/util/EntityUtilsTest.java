@@ -159,6 +159,7 @@ public class EntityUtilsTest extends ATestBase
         PropertySpec propertySpec = new PropertySpec();
 
         List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+
         Assertions.assertNotNull(res);
         Assertions.assertEquals(0, res.size());
     }
@@ -174,6 +175,7 @@ public class EntityUtilsTest extends ATestBase
         propertySpec.addEntry("AdmissionsEntity", "religion");
 
         List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+
         Assertions.assertNotNull(res);
         Assertions.assertEquals(0, res.size());
     }
@@ -192,6 +194,7 @@ public class EntityUtilsTest extends ATestBase
         propertySpec.addEntry("PatientsEntity", "expireFlag");
 
         List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+
         Assertions.assertNotNull(res);
         Assertions.assertEquals(1, res.size());
         Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "PatientsEntity")));
@@ -213,6 +216,7 @@ public class EntityUtilsTest extends ATestBase
         propertySpec.addEntry("IcuStaysEntity", "dbSource");
 
         List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+
         Assertions.assertNotNull(res);
         Assertions.assertEquals(2, res.size());
         Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "PatientsEntity")));

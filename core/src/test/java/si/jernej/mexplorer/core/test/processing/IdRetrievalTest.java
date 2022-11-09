@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 
 import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
@@ -108,8 +107,8 @@ class IdRetrievalTest extends ATestBase
 
         long countExpected = em.createQuery("SELECT COUNT(a) FROM AdmissionsEntity a WHERE a.hospitalExpireFlag=:hospitalExpireFlag", Long.class).setParameter("hospitalExpireFlag", hospitalExpireFlag == (short) 1 ? (short) 0 : (short) 1).getSingleResult();
 
-        Set<Object> ids = idRetrieval.retrieveIds(idRetrievalSpecDto);
-        Assertions.assertEquals(countExpected, ids.size());
+        Set<Object> res = idRetrieval.retrieveIds(idRetrievalSpecDto);
+        Assertions.assertEquals(countExpected, res.size());
     }
 
     @Test
@@ -128,8 +127,8 @@ class IdRetrievalTest extends ATestBase
 
         long countExpected = em.createQuery("SELECT COUNT(a) FROM AdmissionsEntity a WHERE a.admissionType = 'EMERGENCY'", Long.class).getSingleResult();
 
-        Set<Object> ids = idRetrieval.retrieveIds(idRetrievalSpecDto);
-        Assertions.assertEquals(countExpected, ids.size());
+        Set<Object> res = idRetrieval.retrieveIds(idRetrievalSpecDto);
+        Assertions.assertEquals(countExpected, res.size());
     }
 
     @Test
@@ -155,8 +154,8 @@ class IdRetrievalTest extends ATestBase
 
         long countExpected = em.createQuery("SELECT COUNT(a) FROM AdmissionsEntity a WHERE a.admissionType = 'EMERGENCY' AND a.hospitalExpireFlag=1", Long.class).getSingleResult();
 
-        Set<Object> ids = idRetrieval.retrieveIds(idRetrievalSpecDto);
-        Assertions.assertEquals(countExpected, ids.size());
+        Set<Object> res = idRetrieval.retrieveIds(idRetrievalSpecDto);
+        Assertions.assertEquals(countExpected, res.size());
     }
 
     @Test
@@ -182,7 +181,7 @@ class IdRetrievalTest extends ATestBase
 
         long countExpected = em.createQuery("SELECT COUNT(a) FROM AdmissionsEntity a WHERE a.admissionType = 'EMERGENCY' AND a.patientsEntity.gender='M'", Long.class).getSingleResult();
 
-        Set<Object> ids = idRetrieval.retrieveIds(idRetrievalSpecDto);
-        Assertions.assertEquals(countExpected, ids.size());
+        Set<Object> res = idRetrieval.retrieveIds(idRetrievalSpecDto);
+        Assertions.assertEquals(countExpected, res.size());
     }
 }

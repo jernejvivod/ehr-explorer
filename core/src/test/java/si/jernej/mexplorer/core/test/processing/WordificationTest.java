@@ -74,9 +74,9 @@ class WordificationTest extends ATestBase
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> words = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO);
 
-        Assertions.assertTrue(words.isEmpty());
+        Assertions.assertTrue(res.isEmpty());
     }
 
     @Test
@@ -96,9 +96,9 @@ class WordificationTest extends ATestBase
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> words = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO);
 
-        Assertions.assertEquals(expectedWords, new HashSet<>(words));
+        Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
 
     @Test
@@ -120,9 +120,9 @@ class WordificationTest extends ATestBase
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> words = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ONE);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ONE);
 
-        Assertions.assertEquals(expectedWords, new HashSet<>(words));
+        Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
 
     @Test
@@ -144,9 +144,9 @@ class WordificationTest extends ATestBase
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> words = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
 
-        Assertions.assertEquals(expectedWords, new HashSet<>(words));
+        Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
 
     @Test
@@ -177,9 +177,9 @@ class WordificationTest extends ATestBase
                 (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
         );
 
-        List<String> words = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
 
-        Assertions.assertEquals(expectedWords, new HashSet<>(words));
+        Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
 
     @Test
@@ -216,9 +216,9 @@ class WordificationTest extends ATestBase
                 DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
         );
 
-        List<String> words = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
 
-        Assertions.assertEquals(expectedWords, new HashSet<>(words));
+        Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
 
     @Test
@@ -274,9 +274,9 @@ class WordificationTest extends ATestBase
                 DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
         );
 
-        List<String> words = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
 
-        Assertions.assertEquals(expectedWords, new HashSet<>(words));
+        Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
 
 }

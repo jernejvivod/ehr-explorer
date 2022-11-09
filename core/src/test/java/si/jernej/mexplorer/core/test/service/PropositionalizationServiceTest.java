@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
@@ -88,8 +89,8 @@ public class PropositionalizationServiceTest extends ATestBase
 
         wordificationConfigDto.setConcatenationSpec(concatenationSpecDto);
 
-        List<WordificationResultDto> results = propositionalizationService.computeWordification(wordificationConfigDto);
-        results.forEach(r -> Assertions.assertTrue(r.getWords().isEmpty()));
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
+        res.forEach(r -> Assertions.assertTrue(r.getWords().isEmpty()));
     }
 
     @Test
@@ -118,7 +119,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         wordificationConfigDto.setConcatenationSpec(concatenationSpecDto);
 
-        List<WordificationResultDto> results = propositionalizationService.computeWordification(wordificationConfigDto);
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
         Set<String> expectedWords = Set.of(
                 "admissionsentity@insurance@private",
@@ -126,8 +127,8 @@ public class PropositionalizationServiceTest extends ATestBase
                 "admissionsentity@religion@protestant_quaker"
         );
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(results.get(0).getWords()));
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
     }
 
     @Test
@@ -161,7 +162,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         wordificationConfigDto.setConcatenationSpec(concatenationSpecDto);
 
-        List<WordificationResultDto> results = propositionalizationService.computeWordification(wordificationConfigDto);
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
         Set<String> expectedWords = Set.of(
                 "admissionsentity@insurance@private",
@@ -171,8 +172,8 @@ public class PropositionalizationServiceTest extends ATestBase
                 "patientsentity@gender@f"
         );
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(results.get(0).getWords()));
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
     }
 
     @Test
@@ -220,7 +221,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         wordificationConfigDto.setCompositeColumnsSpec(compositeColumnsSpecDto);
 
-        List<WordificationResultDto> results = propositionalizationService.computeWordification(wordificationConfigDto);
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
         Set<String> expectedWords = Set.of(
                 "admissionsentity@insurance@private",
@@ -231,8 +232,8 @@ public class PropositionalizationServiceTest extends ATestBase
                 "composite@ageatadmission@35_5_21"
         );
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(results.get(0).getWords()));
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
     }
 
     @Test
@@ -294,7 +295,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         wordificationConfigDto.setValueTransformationSpec(valueTransformationSpecDto);
 
-        List<WordificationResultDto> results = propositionalizationService.computeWordification(wordificationConfigDto);
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
         Set<String> expectedWords = Set.of(
                 "admissionsentity@insurance@private",
@@ -305,8 +306,8 @@ public class PropositionalizationServiceTest extends ATestBase
                 "composite@ageatadmission@40"
         );
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(results.get(0).getWords()));
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
     }
 
     @Test
@@ -385,7 +386,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         wordificationConfigDto.setValueTransformationSpec(valueTransformationSpecDto);
 
-        List<WordificationResultDto> results = propositionalizationService.computeWordification(wordificationConfigDto);
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
         Set<String> expectedWords = Set.of(
                 "admissionsentity@insurance@private",
@@ -399,8 +400,56 @@ public class PropositionalizationServiceTest extends ATestBase
                 "composite@ageatadmission@40"
         );
 
-        Assertions.assertEquals(1, results.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(results.get(0).getWords()));
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
+    }
+
+    @Test
+    @Timeout(value=60)
+    public void testComputeWoridificationSimpleTwoLinkedEntities50PercentAdmissionsEntries()
+    {
+        WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
+
+        RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
+        rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
+        rootEntitiesSpecDto.setIdProperty("hadmId");
+
+        // select 50% of IDs
+        List<Long> ids = em.createQuery("SELECT a.hadmId FROM AdmissionsEntity a", Long.class)
+                .setMaxResults(29488)
+                .getResultList();
+        rootEntitiesSpecDto.setIds(ids);
+
+        wordificationConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
+
+        PropertySpecDto propertySpecDto = new PropertySpecDto();
+
+        PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
+        propertySpecEntryDto1.setEntity("AdmissionsEntity");
+        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion"));
+        propertySpecDto.addEntriesItem(propertySpecEntryDto1);
+
+        PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
+        propertySpecEntryDto2.setEntity("PatientsEntity");
+        propertySpecEntryDto2.setProperties(List.of("gender", "expireFlag"));
+        propertySpecDto.addEntriesItem(propertySpecEntryDto2);
+
+        PropertySpecEntryDto propertySpecEntryDto3 = new PropertySpecEntryDto();
+        propertySpecEntryDto3.setEntity("IcuStaysEntity");
+        propertySpecEntryDto3.setProperties(List.of("firstCareUnit", "lastCareUnit"));
+        propertySpecDto.addEntriesItem(propertySpecEntryDto3);
+
+        wordificationConfigDto.setPropertySpec(propertySpecDto);
+
+        ConcatenationSpecDto concatenationSpecDto = new ConcatenationSpecDto();
+        concatenationSpecDto.setConcatenationScheme(ConcatenationSpecDto.ConcatenationSchemeEnum.ONE);
+
+        wordificationConfigDto.setConcatenationSpec(concatenationSpecDto);
+
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
+
+        Assertions.assertNotNull(res);
+        Assertions.assertFalse(res.isEmpty());
     }
 
 }

@@ -128,9 +128,9 @@ public class Wordification
         // add values from composite columns
         Map<String, List<Object>> compositeColumns = compositeColumnCreator.processEntries(List.of(rootEntity));
         List<String> wordsForComposite = new ArrayList<>();
-        compositeColumns.forEach((k, l) -> l.forEach(
+        compositeColumns.forEach((columnName, columnValues) -> columnValues.forEach(
                         v -> wordsForComposite.add(
-                                String.format("%s@%s@%s", COMPOSITE_TABLE_NAME, k, valueTransformer.applyTransform(COMPOSITE_TABLE_NAME, k, v))
+                                String.format("%s@%s@%s", COMPOSITE_TABLE_NAME, columnName, valueTransformer.applyTransform(COMPOSITE_TABLE_NAME, columnName, v))
                                         .toLowerCase()
                                         .replace(' ', '_')
                         )
