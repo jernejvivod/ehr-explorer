@@ -10,9 +10,7 @@ import java.util.function.Function;
 public class ValueTransformer
 {
     private final Map<String, Map<String, Function<Object, ?>>> entityToPropertyToTransform;
-
     private final Function<Object, ?> defaultTransform;
-
 
     public ValueTransformer()
     {

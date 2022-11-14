@@ -1,7 +1,5 @@
 package si.jernej.mexplorer.core.processing;
 
-import static si.jernej.mexplorer.core.util.Constants.COMPOSITE_TABLE_NAME;
-
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -11,7 +9,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
@@ -22,11 +19,11 @@ import javax.ws.rs.InternalServerErrorException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
+import si.jernej.mexplorer.core.processing.util.WordificationUtil;
 
 @Dependent
 public class Wordification
 {
-
     /**
      * Enum used to specify which concatenation schema to use.
      * {@code ZERO} means not to use any concatenations
@@ -90,7 +87,7 @@ public class Wordification
                                 .replace(' ', '_'));
                     }
 
-                    else if (nxtProperty instanceof Collection<?> collection && !((Collection<?>) nxtProperty).isEmpty())
+                    else if (nxtProperty instanceof Collection<?> collection && !collection.isEmpty())
                     {
                         // if property collection of linked entities
                         Class<?> linkedEntityClass = collection.iterator().next().getClass();
@@ -98,7 +95,7 @@ public class Wordification
                         // if collection of linked entities that were not yet visited, add to queue
                         if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) && linkedEntityClass.isAnnotationPresent(Entity.class))
                         {
-                            bfsQueue.addAll(collection);
+                            WordificationUtil.addLinkedCollectionToQueue(bfsQueue, propertySpec, collection, linkedEntityClass);
                             visitedEntities.add(linkedEntityClass.getSimpleName());
                         }
                     }
@@ -117,7 +114,7 @@ public class Wordification
                 }
 
                 // add all words and concatenations for entity to results list
-                wordsAll.addAll(addConcatenations(wordsForEntity, concatenationScheme));
+                wordsAll.addAll(WordificationUtil.addConcatenations(wordsForEntity, concatenationScheme));
             }
         }
         catch (IntrospectionException | IllegalAccessException | InvocationTargetException e)
@@ -125,82 +122,10 @@ public class Wordification
             throw new InternalServerErrorException("Error computing Wordification");
         }
 
-        // add values from composite columns
-        Map<String, List<Object>> compositeColumns = compositeColumnCreator.processEntries(List.of(rootEntity));
-        List<String> wordsForComposite = new ArrayList<>();
-        compositeColumns.forEach((columnName, columnValues) -> columnValues.forEach(
-                        v -> wordsForComposite.add(
-                                String.format("%s@%s@%s", COMPOSITE_TABLE_NAME, columnName, valueTransformer.applyTransform(COMPOSITE_TABLE_NAME, columnName, v))
-                                        .toLowerCase()
-                                        .replace(' ', '_')
-                        )
-                )
-        );
-
         // add all words and concatenations for composite table to result list
-        wordsAll.addAll(addConcatenations(wordsForComposite, concatenationScheme));
+        List<String> wordsForComposite = WordificationUtil.getWordsForCompositeColumns(compositeColumnCreator, valueTransformer, rootEntity);
+        wordsAll.addAll(WordificationUtil.addConcatenations(wordsForComposite, concatenationScheme));
 
         return wordsAll;
     }
-
-    /**
-     * Construct word concatenation features from list of provided words and return list of original words with
-     * concatenations appended.
-     *
-     * @param words {@code List} of words for which to add concatenations
-     * @param concatenationScheme which concatenation schema to use
-     */
-    private List<String> addConcatenations(List<String> words, ConcatenationScheme concatenationScheme)
-    {
-
-        List<String> wordsWithConcatenations = new ArrayList<>(words);
-
-        switch (concatenationScheme)
-        {
-
-            case ZERO -> {
-            }
-
-            case ONE -> addConcatenationsOne(words, wordsWithConcatenations);
-
-            case TWO -> {
-                addConcatenationsOne(words, wordsWithConcatenations);
-                addConcatenationsTwo(words, wordsWithConcatenations);
-            }
-
-        }
-        return wordsWithConcatenations;
-    }
-
-    /**
-     * Add t_p_v__t_p'_v' type composite words.
-     */
-    private void addConcatenationsOne(List<String> words, List<String> wordsWithConcatenations)
-    {
-        for (int i = 0; i < words.size() - 1; i++)
-        {
-            for (int j = i + 1; j < words.size(); j++)
-            {
-                wordsWithConcatenations.add(String.format("%s@@%s", words.get(i), words.get(j)));
-            }
-        }
-    }
-
-    /**
-     * Add t_p_v__t_p'_v'__t_p''_v'' type composite words.
-     */
-    private void addConcatenationsTwo(List<String> words, List<String> wordsWithConcatenations)
-    {
-        for (int i = 0; i < words.size() - 2; i++)
-        {
-            for (int j = i + 1; j < words.size() - 1; j++)
-            {
-                for (int k = j + 1; k < words.size(); k++)
-                {
-                    wordsWithConcatenations.add(String.format("%s@@%s@@%s", words.get(i), words.get(j), words.get(k)));
-                }
-            }
-        }
-    }
-
 }

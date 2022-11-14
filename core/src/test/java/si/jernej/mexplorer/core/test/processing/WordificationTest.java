@@ -278,5 +278,4 @@ class WordificationTest extends ATestBase
 
         Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
-
 }
