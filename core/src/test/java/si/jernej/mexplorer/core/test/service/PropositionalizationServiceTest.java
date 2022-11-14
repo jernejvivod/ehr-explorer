@@ -405,7 +405,7 @@ public class PropositionalizationServiceTest extends ATestBase
     }
 
     @Test
-    @Timeout(value=60)
+    @Timeout(value=90)
     public void testComputeWoridificationSimpleTwoLinkedEntities50PercentAdmissionsEntries()
     {
         WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();

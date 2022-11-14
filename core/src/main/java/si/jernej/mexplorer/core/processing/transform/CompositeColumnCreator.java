@@ -87,7 +87,7 @@ public class CompositeColumnCreator
      * Create composite columns in new table as specified by the added entries.
      *
      * @param rootEntities {@code List} of root entities
-     * @return List of created composite columns in order of specified entries
+     * @return created composite columns in order of specified entries
      */
     public Map<String, List<Object>> processEntries(List<?> rootEntities)
     {

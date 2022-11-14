@@ -12,7 +12,6 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
@@ -23,22 +22,15 @@ import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecEntryDto
 
 class ValueTransformerTest
 {
-    private static Map<String, Map<TransformDto.DateDiffRoundTypeEnum, String>> dateDiffValuesToResults;
-    private static List<String> dateDiffValues;
+    private static final Map<String, Map<TransformDto.DateDiffRoundTypeEnum, String>> dateDiffValuesToResults = Map.ofEntries(
+            Map.entry("0 0 0", Map.of(YEAR, "0", FIVE_YEARS, "0", TEN_YEARS, "0", FIFTEEN_YEARS, "0", TWENTY_YEARS, "0")),
+            Map.entry("1 0 0", Map.of(YEAR, "1", FIVE_YEARS, "0", TEN_YEARS, "0", FIFTEEN_YEARS, "0", TWENTY_YEARS, "0")),
+            Map.entry("80 3 1", Map.of(YEAR, "80", FIVE_YEARS, "80", TEN_YEARS, "80", FIFTEEN_YEARS, "75", TWENTY_YEARS, "80")),
+            Map.entry("77 12 3", Map.of(YEAR, "77", FIVE_YEARS, "75", TEN_YEARS, "80", FIFTEEN_YEARS, "75", TWENTY_YEARS, "80")),
+            Map.entry("113 1 4", Map.of(YEAR, "113", FIVE_YEARS, "115", TEN_YEARS, "110", FIFTEEN_YEARS, "120", TWENTY_YEARS, "120"))
+    );
 
-    @BeforeAll
-    static void initDateDiffValues()
-    {
-        dateDiffValues = List.of("0 0 0", "1 0 0", "80 3 1", "77 12 3", "113 1 4");
-
-        dateDiffValuesToResults = Map.ofEntries(
-                Map.entry("0 0 0", Map.of(YEAR, "0", FIVE_YEARS, "0", TEN_YEARS, "0", FIFTEEN_YEARS, "0", TWENTY_YEARS, "0")),
-                Map.entry("1 0 0", Map.of(YEAR, "1", FIVE_YEARS, "0", TEN_YEARS, "0", FIFTEEN_YEARS, "0", TWENTY_YEARS, "0")),
-                Map.entry("80 3 1", Map.of(YEAR, "80", FIVE_YEARS, "80", TEN_YEARS, "80", FIFTEEN_YEARS, "75", TWENTY_YEARS, "80")),
-                Map.entry("77 12 3", Map.of(YEAR, "77", FIVE_YEARS, "75", TEN_YEARS, "80", FIFTEEN_YEARS, "75", TWENTY_YEARS, "80")),
-                Map.entry("113 1 4", Map.of(YEAR, "113", FIVE_YEARS, "115", TEN_YEARS, "110", FIFTEEN_YEARS, "120", TWENTY_YEARS, "120"))
-        );
-    }
+    private static final List<String> dateDiffValues = List.of("0 0 0", "1 0 0", "80 3 1", "77 12 3", "113 1 4");
 
     @Test
     void testDateDiffSingleEntry()
