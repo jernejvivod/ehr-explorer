@@ -1,0 +1,3 @@
+[submodule "api/mimic-iii-explorer-api"]
+	path = api/mimic-iii-explorer-api
+	url = https://github.com/jernejvivod/mimic-iii-explorer-api.git
