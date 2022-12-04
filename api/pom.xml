@@ -45,7 +45,7 @@
                         </goals>
                         <configuration>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <inputSpec>${project.basedir}/doc/rest-spec/v1/mexplorer-openapi.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/mimic-iii-explorer-api/doc/rest-spec/v1/mexplorer-openapi.yaml</inputSpec>
                             <apiPackage>true</apiPackage>
                             <modelPackage>true</modelPackage>
                             <apiPackage>si.jernej.mexplorer.processorapi.v1.api</apiPackage>
