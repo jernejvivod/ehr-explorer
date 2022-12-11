@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import javax.annotation.CheckForNull;
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -61,12 +62,17 @@ public class MimicEntityManager
             String rootEntityIdPropertyName,
             String endEntityIdPropertyName,
             String textPropertyName,
-            List<String> dateTimePropertiesNames
+            @CheckForNull List<String> dateTimePropertiesNames
     )
     {
         if (rootEntityIds.isEmpty() || foreignKeyPath.isEmpty())
         {
             return Collections.emptyMap();
+        }
+
+        if (dateTimePropertiesNames == null)
+        {
+            dateTimePropertiesNames = List.of();
         }
 
         // pool of available query variables
@@ -110,13 +116,13 @@ public class MimicEntityManager
         }
 
         // construct dynamic query
-        final String dynamicQuery = ("SELECT a.%s, %s.%s, %s.%s" +                 // SELECT root entity IDs, clinical text entity ids, text from clinical text entity
-                ", %s.%s".repeat(dateTimePropertiesNames.size()) +                 // SELECT clinical text entity datetime column values
-                " FROM %s a" +                                                     // FROM root entity table
-                " JOIN %s.%s %s".repeat(foreignKeyPath.size() - 1) +               // construct foreign key path using JOINs
-                " WHERE a.%1$s IN (:ids)" +                                        // for specified root entity IDs
-                (dateTimePropertiesNames.isEmpty() ? "" : " ORDER BY ") +          // order by specified clinical text entity datetime column values
-                StringUtils.repeat("%s.%s", ", ", dateTimePropertiesNames.size()))
+        final String dynamicQuery = ("SELECT a.%s, %s.%s, %s.%s" +                                      // SELECT root entity IDs, clinical text entity ids, text from clinical text entity
+                                     ", %s.%s".repeat(dateTimePropertiesNames.size()) +                 // SELECT clinical text entity datetime column values
+                                     " FROM %s a" +                                                     // FROM root entity table
+                                     " JOIN %s.%s %s".repeat(foreignKeyPath.size() - 1) +         // construct foreign key path using JOINs
+                                     " WHERE a.%1$s IN (:ids)" +                                        // for specified root entity IDs
+                                     (dateTimePropertiesNames.isEmpty() ? "" : " ORDER BY ") +          // order by specified clinical text entity datetime column values
+                                     StringUtils.repeat("%s.%s", ", ", dateTimePropertiesNames.size()))
                 .formatted(queryTemplateArgs.toArray());
 
         return em.createQuery(dynamicQuery, Object[].class)
