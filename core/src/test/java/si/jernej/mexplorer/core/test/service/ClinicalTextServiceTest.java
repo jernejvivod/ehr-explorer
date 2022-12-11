@@ -43,7 +43,6 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
-        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime", "chartdate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -85,7 +84,6 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
-        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime", "chartdate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -150,7 +148,6 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
-        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime", "chartdate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");

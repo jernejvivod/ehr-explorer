@@ -22,7 +22,7 @@ public class IdsApiImpl implements IdsApi
     private IdRetrieval idRetrieval;
 
     @Override
-    public Response ids(@Valid @NotNull IdRetrievalSpecDto idRetrievalSpecDto)
+    public Response ids(IdRetrievalSpecDto idRetrievalSpecDto)
     {
         logger.info("extracting IDs");
         return Response.ok().entity(idRetrieval.retrieveIds(idRetrievalSpecDto)).build();
