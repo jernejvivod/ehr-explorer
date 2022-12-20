@@ -205,5 +205,4 @@ public final class WordificationUtil
         );
         return wordsForComposite;
     }
-
 }

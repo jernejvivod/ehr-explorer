@@ -63,7 +63,7 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
-        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime", "chartdate"));
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime", "chartDate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -84,6 +84,7 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime", "chartDate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -96,7 +97,7 @@ class ClinicalTextServiceTest extends ATestBase
         Assertions.assertEquals(1, res.size());
         Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId));
 
-        List<String> texts = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.charttime, n.chartdate", String.class)
+        List<String> texts = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.chartTime, n.chartDate", String.class)
                 .setParameter("hadmId", rootEntityId)
                 .getResultList();
 
@@ -113,7 +114,7 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
-        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime"));
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -131,7 +132,7 @@ class ClinicalTextServiceTest extends ATestBase
         Assertions.assertEquals(1, res.size());
         Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId));
 
-        List<String> texts = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.charttime IS NOT NULL ORDER BY n.charttime ASC", String.class)
+        List<String> texts = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.chartTime IS NOT NULL ORDER BY n.chartTime ASC", String.class)
                 .setParameter("hadmId", rootEntityId)
                 .getResultList();
 
@@ -148,6 +149,7 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime", "chartDate"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -161,11 +163,11 @@ class ClinicalTextServiceTest extends ATestBase
         Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId1));
         Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId2));
 
-        List<String> texts1 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.charttime, n.chartdate ASC", String.class)
+        List<String> texts1 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.chartTime, n.chartDate ASC", String.class)
                 .setParameter("hadmId", rootEntityId1)
                 .getResultList();
 
-        List<String> texts2 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.charttime, n.chartdate ASC", String.class)
+        List<String> texts2 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId ORDER BY n.chartTime, n.chartDate ASC", String.class)
                 .setParameter("hadmId", rootEntityId2)
                 .getResultList();
 
@@ -186,7 +188,7 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
-        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime"));
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -203,11 +205,11 @@ class ClinicalTextServiceTest extends ATestBase
         Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId1));
         Assertions.assertTrue(res.stream().anyMatch(r -> r.getRootEntityId() == rootEntityId2));
 
-        Stream<String> texts1 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.charttime != null ORDER BY n.charttime ASC", String.class)
+        Stream<String> texts1 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.chartTime != null ORDER BY n.chartTime ASC", String.class)
                 .setParameter("hadmId", rootEntityId1)
                 .getResultStream();
 
-        Stream<String> texts2 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.charttime != null ORDER BY n.charttime ASC", String.class)
+        Stream<String> texts2 = em.createQuery("SELECT n.text FROM NoteEventsEntity n WHERE n.admissionsEntity.hadmId=:hadmId AND n.chartTime != null ORDER BY n.chartTime ASC", String.class)
                 .setParameter("hadmId", rootEntityId2)
                 .getResultStream();
 
@@ -233,7 +235,7 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
-        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime"));
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");
@@ -249,7 +251,7 @@ class ClinicalTextServiceTest extends ATestBase
     }
 
     @Test
-    @Timeout(value=30)
+    @Timeout(value=60)
     void extractClinicalText50PercentIdsWithDateTimeLimit()
     {
         List<Long> ids = em.createQuery("SELECT a.hadmId FROM AdmissionsEntity a", Long.class)
@@ -260,7 +262,7 @@ class ClinicalTextServiceTest extends ATestBase
         clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
-        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("charttime"));
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime"));
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
         rootEntitiesSpecDto.setIdProperty("hadmId");

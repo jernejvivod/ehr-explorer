@@ -1,54 +1,53 @@
 package si.jernej.mexplorer.entity;
 
-import java.util.Objects;
+import java.io.Serializable;
+import java.util.Set;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+// Dictionary of non-laboratory-related charted items.
 @Entity
 @Table(name = "d_items", schema = "mimiciii", catalog = "mimic")
-public class DItemsEntity
+public class DItemsEntity extends AEntity
 {
-    private int rowId;
-    private int itemid;
-    private String label;
-    private String abbreviation;
-    private String dbsource;
-    private String linksto;
-    private String category;
-    private String unitname;
-    private String paramType;
-    private Integer conceptid;
+    private int itemId;           // charted item ID
+    private String label;         // label identifying the item
+    private String abbreviation;  // abbreviation associated with the item
+    private String dbSource;      // source database of the item
+    private String linksTo;       // table which contains data for the given ITEMID
+    private String category;      // category of data which the concept falls under
+    private String unitName;      // unit associated with the item
+    private String paramType;     // type of item, for example solution or ingredient
+    private Integer conceptId;    // identifier used to harmonize concepts identified by multiple ITEMIDs. CONCEPTIDs are plannet but not yet implemented (all values are NULL).
+    private Set<ChartEventsEntity> chartEventsEntitys;
+    private Set<DatetimeEventsEntity> datetimeEventsEntitys;
+    private Set<DLabitemsEntity> dLabitemsEntitys;
+    private Set<InputEventsCvEntity> inputEventsCvEntitys;
+    private Set<InputEventsMvEntity> inputEventsMvEntitys;
+    private Set<LabEventsEntity> labEventsEntitys;
+    private Set<MicrobiologyEventsEntity> microbiologyEventsEntitysSpecItem;
+    private Set<MicrobiologyEventsEntity> microbiologyEventsEntitysOrgItem;
+    private Set<MicrobiologyEventsEntity> microbiologyEventsEntitysAbItem;
+    private Set<OutputEventsEntity> outputEventsEntitys;
+    private Set<ProcedureEventsMvEntity> procedureEventsMvEntitys;
 
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
-    {
-        return rowId;
-    }
-
-    public void setRowId(int rowId)
-    {
-        this.rowId = rowId;
-    }
-
-    @Basic
     @Column(name = "itemid", nullable = false)
-    public int getItemid()
+    public int getItemId()
     {
-        return itemid;
+        return itemId;
     }
 
-    public void setItemid(int itemid)
+    public void setItemId(int itemId)
     {
-        this.itemid = itemid;
+        this.itemId = itemId;
     }
 
-    @Basic
-    @Column(name = "label", nullable = true, length = 200)
+    @Column(name = "label", length = 200)
     public String getLabel()
     {
         return label;
@@ -59,8 +58,7 @@ public class DItemsEntity
         this.label = label;
     }
 
-    @Basic
-    @Column(name = "abbreviation", nullable = true, length = 100)
+    @Column(name = "abbreviation", length = 100)
     public String getAbbreviation()
     {
         return abbreviation;
@@ -71,32 +69,29 @@ public class DItemsEntity
         this.abbreviation = abbreviation;
     }
 
-    @Basic
-    @Column(name = "dbsource", nullable = true, length = 20)
-    public String getDbsource()
+    @Column(name = "dbsource", length = 20)
+    public String getDbSource()
     {
-        return dbsource;
+        return dbSource;
     }
 
-    public void setDbsource(String dbsource)
+    public void setDbSource(String dbSource)
     {
-        this.dbsource = dbsource;
+        this.dbSource = dbSource;
     }
 
-    @Basic
-    @Column(name = "linksto", nullable = true, length = 50)
-    public String getLinksto()
+    @Column(name = "linksto", length = 50)
+    public String getLinksTo()
     {
-        return linksto;
+        return linksTo;
     }
 
-    public void setLinksto(String linksto)
+    public void setLinksTo(String linksTo)
     {
-        this.linksto = linksto;
+        this.linksTo = linksTo;
     }
 
-    @Basic
-    @Column(name = "category", nullable = true, length = 100)
+    @Column(name = "category", length = 100)
     public String getCategory()
     {
         return category;
@@ -107,20 +102,18 @@ public class DItemsEntity
         this.category = category;
     }
 
-    @Basic
-    @Column(name = "unitname", nullable = true, length = 100)
-    public String getUnitname()
+    @Column(name = "unitname", length = 100)
+    public String getUnitName()
     {
-        return unitname;
+        return unitName;
     }
 
-    public void setUnitname(String unitname)
+    public void setUnitName(String unitName)
     {
-        this.unitname = unitname;
+        this.unitName = unitName;
     }
 
-    @Basic
-    @Column(name = "param_type", nullable = true, length = 30)
+    @Column(name = "param_type", length = 30)
     public String getParamType()
     {
         return paramType;
@@ -131,32 +124,135 @@ public class DItemsEntity
         this.paramType = paramType;
     }
 
-    @Basic
-    @Column(name = "conceptid", nullable = true)
-    public Integer getConceptid()
+    @Column(name = "conceptid")
+    public Integer getConceptId()
     {
-        return conceptid;
+        return conceptId;
     }
 
-    public void setConceptid(Integer conceptid)
+    public void setConceptId(Integer conceptId)
     {
-        this.conceptid = conceptid;
+        this.conceptId = conceptId;
     }
 
-    @Override
-    public boolean equals(Object o)
+    @OneToMany(mappedBy = "dItemsEntity", fetch = FetchType.LAZY)
+    public Set<ChartEventsEntity> getChartEventsEntitys()
     {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        DItemsEntity that = (DItemsEntity) o;
-        return rowId == that.rowId && itemid == that.itemid && Objects.equals(label, that.label) && Objects.equals(abbreviation, that.abbreviation) && Objects.equals(dbsource, that.dbsource) && Objects.equals(linksto, that.linksto) && Objects.equals(category, that.category) && Objects.equals(unitname, that.unitname) && Objects.equals(paramType, that.paramType) && Objects.equals(conceptid, that.conceptid);
+        return chartEventsEntitys;
     }
 
-    @Override
-    public int hashCode()
+    public void setChartEventsEntitys(Set<ChartEventsEntity> chartEventsEntitys)
     {
-        return Objects.hash(rowId, itemid, label, abbreviation, dbsource, linksto, category, unitname, paramType, conceptid);
+        this.chartEventsEntitys = chartEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "dItemsEntity", fetch = FetchType.LAZY)
+    public Set<DatetimeEventsEntity> getDatetimeEventsEntitys()
+    {
+        return datetimeEventsEntitys;
+    }
+
+    public void setDatetimeEventsEntitys(Set<DatetimeEventsEntity> datetimeEventsEntitys)
+    {
+        this.datetimeEventsEntitys = datetimeEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "dItemsEntity", fetch = FetchType.LAZY)
+    public Set<DLabitemsEntity> getdLabitemsEntitys()
+    {
+        return dLabitemsEntitys;
+    }
+
+    public void setdLabitemsEntitys(Set<DLabitemsEntity> dLabitemsEntitys)
+    {
+        this.dLabitemsEntitys = dLabitemsEntitys;
+    }
+
+    @OneToMany(mappedBy = "dItemsEntity", fetch = FetchType.LAZY)
+    public Set<InputEventsCvEntity> getInputEventsCvEntitys()
+    {
+        return inputEventsCvEntitys;
+    }
+
+    public void setInputEventsCvEntitys(Set<InputEventsCvEntity> inputEventsCvEntitys)
+    {
+        this.inputEventsCvEntitys = inputEventsCvEntitys;
+    }
+
+    @OneToMany(mappedBy = "dItemsEntity", fetch = FetchType.LAZY)
+    public Set<InputEventsMvEntity> getInputEventsMvEntitys()
+    {
+        return inputEventsMvEntitys;
+    }
+
+    public void setInputEventsMvEntitys(Set<InputEventsMvEntity> inputEventsMvEntitys)
+    {
+        this.inputEventsMvEntitys = inputEventsMvEntitys;
+    }
+
+    @OneToMany(mappedBy = "dItemsEntity", fetch = FetchType.LAZY)
+    public Set<LabEventsEntity> getLabEventsEntitys()
+    {
+        return labEventsEntitys;
+    }
+
+    public void setLabEventsEntitys(Set<LabEventsEntity> labEventsEntitys)
+    {
+        this.labEventsEntitys = labEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "specItem", fetch = FetchType.LAZY)
+    public Set<MicrobiologyEventsEntity> getMicrobiologyEventsEntitysSpecItem()
+    {
+        return microbiologyEventsEntitysSpecItem;
+    }
+
+    public void setMicrobiologyEventsEntitysSpecItem(Set<MicrobiologyEventsEntity> microbiologyEventsEntitysSpecItem)
+    {
+        this.microbiologyEventsEntitysSpecItem = microbiologyEventsEntitysSpecItem;
+    }
+
+    @OneToMany(mappedBy = "orgItem", fetch = FetchType.LAZY)
+    public Set<MicrobiologyEventsEntity> getMicrobiologyEventsEntitysOrgItem()
+    {
+        return microbiologyEventsEntitysOrgItem;
+    }
+
+    public void setMicrobiologyEventsEntitysOrgItem(Set<MicrobiologyEventsEntity> microbiologyEventsEntitysOrgItem)
+    {
+        this.microbiologyEventsEntitysOrgItem = microbiologyEventsEntitysOrgItem;
+    }
+
+    @OneToMany(mappedBy = "abItem", fetch = FetchType.LAZY)
+    public Set<MicrobiologyEventsEntity> getMicrobiologyEventsEntitysAbItem()
+    {
+        return microbiologyEventsEntitysAbItem;
+    }
+
+    public void setMicrobiologyEventsEntitysAbItem(Set<MicrobiologyEventsEntity> microbiologyEventsEntitysabItem)
+    {
+        this.microbiologyEventsEntitysAbItem = microbiologyEventsEntitysabItem;
+    }
+
+    @OneToMany(mappedBy = "dItemsEntity", fetch = FetchType.LAZY)
+    public Set<OutputEventsEntity> getOutputEventsEntitys()
+    {
+        return outputEventsEntitys;
+    }
+
+    public void setOutputEventsEntitys(Set<OutputEventsEntity> outputEventsEntitys)
+    {
+        this.outputEventsEntitys = outputEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "dItemsEntity", fetch = FetchType.LAZY)
+    public Set<ProcedureEventsMvEntity> getProcedureEventsMvEntitys()
+    {
+        return procedureEventsMvEntitys;
+    }
+
+    public void setProcedureEventsMvEntitys(Set<ProcedureEventsMvEntity> procedureEventsMvEntitys)
+    {
+        this.procedureEventsMvEntitys = procedureEventsMvEntitys;
     }
 }

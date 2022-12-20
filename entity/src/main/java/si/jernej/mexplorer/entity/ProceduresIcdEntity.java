@@ -1,60 +1,46 @@
 package si.jernej.mexplorer.entity;
 
-import java.util.Objects;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+// Procedures relating to a hospital admission coded using the ICD9 system.
 @Entity
 @Table(name = "procedures_icd", schema = "mimiciii", catalog = "mimic")
-public class ProceduresIcdEntity
+public class ProceduresIcdEntity extends AEntity
 {
-    private int rowId;
-    private int subjectId;
-    private int hadmId;
-    private int seqNum;
-    private String icd9Code;
+    private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    private int seqNum;                         // lower procedure numbers occurred earlier
+    private String icd9Code;                    // ICD9 code associated with the procedure
 
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
+    public PatientsEntity getPatientsEntity()
     {
-        return rowId;
+        return patientsEntity;
     }
 
-    public void setRowId(int rowId)
+    public void setPatientsEntity(PatientsEntity patientsEntity)
     {
-        this.rowId = rowId;
+        this.patientsEntity = patientsEntity;
     }
 
-    @Basic
-    @Column(name = "subject_id", nullable = false)
-    public int getSubjectId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hadm_id", referencedColumnName = "hadm_id")
+    public AdmissionsEntity getAdmissionsEntity()
     {
-        return subjectId;
+        return admissionsEntity;
     }
 
-    public void setSubjectId(int subjectId)
+    public void setAdmissionsEntity(AdmissionsEntity admissionsEntity)
     {
-        this.subjectId = subjectId;
+        this.admissionsEntity = admissionsEntity;
     }
 
-    @Basic
-    @Column(name = "hadm_id", nullable = false)
-    public int getHadmId()
-    {
-        return hadmId;
-    }
-
-    public void setHadmId(int hadmId)
-    {
-        this.hadmId = hadmId;
-    }
-
-    @Basic
     @Column(name = "seq_num", nullable = false)
     public int getSeqNum()
     {
@@ -66,7 +52,6 @@ public class ProceduresIcdEntity
         this.seqNum = seqNum;
     }
 
-    @Basic
     @Column(name = "icd9_code", nullable = false, length = 10)
     public String getIcd9Code()
     {
@@ -76,22 +61,5 @@ public class ProceduresIcdEntity
     public void setIcd9Code(String icd9Code)
     {
         this.icd9Code = icd9Code;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        ProceduresIcdEntity that = (ProceduresIcdEntity) o;
-        return rowId == that.rowId && subjectId == that.subjectId && hadmId == that.hadmId && seqNum == that.seqNum && Objects.equals(icd9Code, that.icd9Code);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(rowId, subjectId, hadmId, seqNum, icd9Code);
     }
 }

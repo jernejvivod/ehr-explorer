@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -161,7 +162,8 @@ public class EntityUtilsTest extends ATestBase
         List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
 
         Assertions.assertNotNull(res);
-        Assertions.assertEquals(0, res.size());
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertTrue(res.contains(List.of("AdmissionsEntity")));
     }
 
     @Test
@@ -177,7 +179,8 @@ public class EntityUtilsTest extends ATestBase
         List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
 
         Assertions.assertNotNull(res);
-        Assertions.assertEquals(0, res.size());
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertTrue(res.contains(List.of("AdmissionsEntity")));
     }
 
     @Test
@@ -189,6 +192,7 @@ public class EntityUtilsTest extends ATestBase
         propertySpec.addEntry("AdmissionsEntity", "insurance");
         propertySpec.addEntry("AdmissionsEntity", "language");
         propertySpec.addEntry("AdmissionsEntity", "religion");
+        propertySpec.addEntry("AdmissionsEntity", "patientsEntity");
 
         propertySpec.addEntry("PatientsEntity", "gender");
         propertySpec.addEntry("PatientsEntity", "expireFlag");
@@ -209,6 +213,8 @@ public class EntityUtilsTest extends ATestBase
         propertySpec.addEntry("AdmissionsEntity", "insurance");
         propertySpec.addEntry("AdmissionsEntity", "language");
         propertySpec.addEntry("AdmissionsEntity", "religion");
+        propertySpec.addEntry("AdmissionsEntity", "patientsEntity");
+        propertySpec.addEntry("AdmissionsEntity", "icuStaysEntitys");
 
         propertySpec.addEntry("PatientsEntity", "gender");
         propertySpec.addEntry("PatientsEntity", "expireFlag");
@@ -221,5 +227,59 @@ public class EntityUtilsTest extends ATestBase
         Assertions.assertEquals(2, res.size());
         Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "PatientsEntity")));
         Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "IcuStaysEntity")));
+    }
+
+    @Test
+    void testGetForeignKeyPathsFromPropertySpecTwoPathsSameEndEntity()
+    {
+        String rootEntityName = "AdmissionsEntity";
+
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "insurance");
+        propertySpec.addEntry("AdmissionsEntity", "language");
+        propertySpec.addEntry("AdmissionsEntity", "religion");
+        propertySpec.addEntry("AdmissionsEntity", "datetimeEventsEntitys");
+        propertySpec.addEntry("AdmissionsEntity", "icuStaysEntitys");
+
+        propertySpec.addEntry("DatetimeEventsEntity", "error");
+        propertySpec.addEntry("DatetimeEventsEntity", "dItemsEntity");
+
+        propertySpec.addEntry("DItemsEntity", "label");
+
+        propertySpec.addEntry("IcuStaysEntity", "dbSource");
+        propertySpec.addEntry("IcuStaysEntity", "procedureEventsMvEntitys");
+
+        propertySpec.addEntry("ProcedureEventsMvEntity", "isOpenBag");
+        propertySpec.addEntry("ProcedureEventsMvEntity", "dItemsEntity");
+
+        List<List<String>> res = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, em.getMetamodel());
+
+        Assertions.assertNotNull(res);
+        Assertions.assertEquals(2, res.size());
+        Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "IcuStaysEntity", "ProcedureEventsMvEntity", "DItemsEntity")));
+        Assertions.assertTrue(res.contains(List.of("AdmissionsEntity", "DatetimeEventsEntity", "DItemsEntity")));
+    }
+
+    @Test
+    void testGetTransitionPairsFromForeignKeyPath()
+    {
+        Set<Pair<String, String>> res = EntityUtils.getTransitionPairsFromForeignKeyPath(
+                List.of(
+                        List.of("A", "B", "C"),
+                        List.of("A", "E", "F"),
+                        List.of("A", "B", "C", "D", "G")
+                )
+        );
+        Assertions.assertEquals(
+                Set.of(
+                        Pair.of("A", "B"),
+                        Pair.of("B", "C"),
+                        Pair.of("A", "E"),
+                        Pair.of("E", "F"),
+                        Pair.of("C", "D"),
+                        Pair.of("D", "G")
+                ),
+                res
+        );
     }
 }

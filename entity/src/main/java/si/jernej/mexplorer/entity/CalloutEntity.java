@@ -1,140 +1,122 @@
 package si.jernej.mexplorer.entity;
 
-import java.sql.Timestamp;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+// Record of when patients were ready for discharge (called out), and the actual time of their discharge (or more generally, their outcome).
 @Entity
 @Table(name = "callout", schema = "mimiciii", catalog = "mimic")
-public class CalloutEntity
+public class CalloutEntity extends AEntity
 {
-    private int rowId;
-    private int subjectId;
-    private int hadmId;
-    private Integer submitWardid;
-    private String submitCareunit;
-    private Integer currWardid;
-    private String currCareunit;
-    private Integer calloutWardid;
-    private String calloutService;
-    private short requestTele;
-    private short requestResp;
-    private short requestCdiff;
-    private short requestMrsa;
-    private short requestVre;
-    private String calloutStatus;
-    private String calloutOutcome;
-    private Integer dischargeWardid;
-    private String acknowledgeStatus;
-    private Timestamp createtime;
-    private Timestamp updatetime;
-    private Timestamp acknowledgetime;
-    private Timestamp outcometime;
-    private Timestamp firstreservationtime;
-    private Timestamp currentreservationtime;
+    private PatientsEntity patientsEntity;         // foreign key identifying the patient
+    private AdmissionsEntity admissionsEntity;     // foreign key identifying the hospital stay
+    private Integer submitWardId;                  // identifier for the ward where the call-out request was submitted
+    private String submitCareUnit;                 // if the ward where the call was submitted was an ICU, the ICU type is listed here
+    private Integer currWardId;                    // identifies the ward where the patient is currently residing
+    private String currCareUnit;                   // if the ward where the patient is currently residing is an ICU, the ICU type is listed here
+    private Integer calloutWardId;                 // Identifies the ward where the patient is to be discharged to. A value of 1 indicated the first available ward. A value of 0 indicated home.
+    private String calloutService;                 // identifies the type of service that the patient is called out to
+    private short requestTele;                     // indicated if special precautions are required
+    private short requestResp;                     // indicates if special precautions are required
+    private short requestCdiff;                    // indicates if special precautions are required
+    private short requestMrsa;                     // indicates if special precautions are required
+    private short requestVre;                      // indicates if special precautions are required
+    private String calloutStatus;                  // current status of the call-out request
+    private String calloutOutcome;                 // the result of the call-out request; either a cancellation or a discharge
+    private Integer dischargeWardId;               // the ward to which the patient was discharged
+    private String acknowledgeStatus;              // the status of the response to the call-out request
+    private LocalDateTime createTime;              // time at which the call-out request was created
+    private LocalDateTime updateTime;              // last time at which the call-out request was updated
+    private LocalDateTime acknowledgeTime;         // time at which the call-out request was acknowledged
+    private LocalDateTime outcomeTime;             // time at which the outcome (cancelled or discharged) occurred
+    private LocalDateTime firstReservationTime;    // first time at which a ward was reserved for the call-out request
+    private LocalDateTime currentReservationTime;  // latest time at which a ward was reserved for the call-out request
 
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
+    public PatientsEntity getPatientsEntity()
     {
-        return rowId;
+        return patientsEntity;
     }
 
-    public void setRowId(int rowId)
+    public void setPatientsEntity(PatientsEntity patientsEntity)
     {
-        this.rowId = rowId;
+        this.patientsEntity = patientsEntity;
     }
 
-    @Basic
-    @Column(name = "subject_id", nullable = false)
-    public int getSubjectId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hadm_id", referencedColumnName = "hadm_id")
+    public AdmissionsEntity getAdmissionsEntity()
     {
-        return subjectId;
+        return admissionsEntity;
     }
 
-    public void setSubjectId(int subjectId)
+    public void setAdmissionsEntity(AdmissionsEntity admissionsEntity)
     {
-        this.subjectId = subjectId;
+        this.admissionsEntity = admissionsEntity;
     }
 
-    @Basic
-    @Column(name = "hadm_id", nullable = false)
-    public int getHadmId()
+    @Column(name = "submit_wardid")
+    public Integer getSubmitWardId()
     {
-        return hadmId;
+        return submitWardId;
     }
 
-    public void setHadmId(int hadmId)
+    public void setSubmitWardId(Integer submitWardId)
     {
-        this.hadmId = hadmId;
+        this.submitWardId = submitWardId;
     }
 
-    @Basic
-    @Column(name = "submit_wardid", nullable = true)
-    public Integer getSubmitWardid()
+    @Column(name = "submit_careunit", length = 15)
+    public String getSubmitCareUnit()
     {
-        return submitWardid;
+        return submitCareUnit;
     }
 
-    public void setSubmitWardid(Integer submitWardid)
+    public void setSubmitCareUnit(String submitCareUnit)
     {
-        this.submitWardid = submitWardid;
+        this.submitCareUnit = submitCareUnit;
     }
 
-    @Basic
-    @Column(name = "submit_careunit", nullable = true, length = 15)
-    public String getSubmitCareunit()
+    @Column(name = "curr_wardid")
+    public Integer getCurrWardId()
     {
-        return submitCareunit;
+        return currWardId;
     }
 
-    public void setSubmitCareunit(String submitCareunit)
+    public void setCurrWardId(Integer currWardId)
     {
-        this.submitCareunit = submitCareunit;
+        this.currWardId = currWardId;
     }
 
-    @Basic
-    @Column(name = "curr_wardid", nullable = true)
-    public Integer getCurrWardid()
+    @Column(name = "curr_careunit", length = 15)
+    public String getCurrCareUnit()
     {
-        return currWardid;
+        return currCareUnit;
     }
 
-    public void setCurrWardid(Integer currWardid)
+    public void setCurrCareUnit(String currCareUnit)
     {
-        this.currWardid = currWardid;
+        this.currCareUnit = currCareUnit;
     }
 
-    @Basic
-    @Column(name = "curr_careunit", nullable = true, length = 15)
-    public String getCurrCareunit()
+    @Column(name = "callout_wardid")
+    public Integer getCalloutWardId()
     {
-        return currCareunit;
+        return calloutWardId;
     }
 
-    public void setCurrCareunit(String currCareunit)
+    public void setCalloutWardId(Integer calloutWardId)
     {
-        this.currCareunit = currCareunit;
+        this.calloutWardId = calloutWardId;
     }
 
-    @Basic
-    @Column(name = "callout_wardid", nullable = true)
-    public Integer getCalloutWardid()
-    {
-        return calloutWardid;
-    }
-
-    public void setCalloutWardid(Integer calloutWardid)
-    {
-        this.calloutWardid = calloutWardid;
-    }
-
-    @Basic
     @Column(name = "callout_service", nullable = false, length = 10)
     public String getCalloutService()
     {
@@ -146,7 +128,6 @@ public class CalloutEntity
         this.calloutService = calloutService;
     }
 
-    @Basic
     @Column(name = "request_tele", nullable = false)
     public short getRequestTele()
     {
@@ -158,7 +139,6 @@ public class CalloutEntity
         this.requestTele = requestTele;
     }
 
-    @Basic
     @Column(name = "request_resp", nullable = false)
     public short getRequestResp()
     {
@@ -170,7 +150,6 @@ public class CalloutEntity
         this.requestResp = requestResp;
     }
 
-    @Basic
     @Column(name = "request_cdiff", nullable = false)
     public short getRequestCdiff()
     {
@@ -182,7 +161,6 @@ public class CalloutEntity
         this.requestCdiff = requestCdiff;
     }
 
-    @Basic
     @Column(name = "request_mrsa", nullable = false)
     public short getRequestMrsa()
     {
@@ -194,7 +172,6 @@ public class CalloutEntity
         this.requestMrsa = requestMrsa;
     }
 
-    @Basic
     @Column(name = "request_vre", nullable = false)
     public short getRequestVre()
     {
@@ -206,7 +183,6 @@ public class CalloutEntity
         this.requestVre = requestVre;
     }
 
-    @Basic
     @Column(name = "callout_status", nullable = false, length = 20)
     public String getCalloutStatus()
     {
@@ -218,7 +194,6 @@ public class CalloutEntity
         this.calloutStatus = calloutStatus;
     }
 
-    @Basic
     @Column(name = "callout_outcome", nullable = false, length = 20)
     public String getCalloutOutcome()
     {
@@ -230,19 +205,17 @@ public class CalloutEntity
         this.calloutOutcome = calloutOutcome;
     }
 
-    @Basic
-    @Column(name = "discharge_wardid", nullable = true)
-    public Integer getDischargeWardid()
+    @Column(name = "discharge_wardid")
+    public Integer getDischargeWardId()
     {
-        return dischargeWardid;
+        return dischargeWardId;
     }
 
-    public void setDischargeWardid(Integer dischargeWardid)
+    public void setDischargeWardId(Integer dischargeWardId)
     {
-        this.dischargeWardid = dischargeWardid;
+        this.dischargeWardId = dischargeWardId;
     }
 
-    @Basic
     @Column(name = "acknowledge_status", nullable = false, length = 20)
     public String getAcknowledgeStatus()
     {
@@ -254,93 +227,69 @@ public class CalloutEntity
         this.acknowledgeStatus = acknowledgeStatus;
     }
 
-    @Basic
     @Column(name = "createtime", nullable = false)
-    public Timestamp getCreatetime()
+    public LocalDateTime getCreateTime()
     {
-        return createtime;
+        return createTime;
     }
 
-    public void setCreatetime(Timestamp createtime)
+    public void setCreateTime(LocalDateTime createTime)
     {
-        this.createtime = createtime;
+        this.createTime = createTime;
     }
 
-    @Basic
     @Column(name = "updatetime", nullable = false)
-    public Timestamp getUpdatetime()
+    public LocalDateTime getUpdateTime()
     {
-        return updatetime;
+        return updateTime;
     }
 
-    public void setUpdatetime(Timestamp updatetime)
+    public void setUpdateTime(LocalDateTime updateTime)
     {
-        this.updatetime = updatetime;
+        this.updateTime = updateTime;
     }
 
-    @Basic
-    @Column(name = "acknowledgetime", nullable = true)
-    public Timestamp getAcknowledgetime()
+    @Column(name = "acknowledgetime")
+    public LocalDateTime getAcknowledgeTime()
     {
-        return acknowledgetime;
+        return acknowledgeTime;
     }
 
-    public void setAcknowledgetime(Timestamp acknowledgetime)
+    public void setAcknowledgeTime(LocalDateTime acknowledgeTime)
     {
-        this.acknowledgetime = acknowledgetime;
+        this.acknowledgeTime = acknowledgeTime;
     }
 
-    @Basic
     @Column(name = "outcometime", nullable = false)
-    public Timestamp getOutcometime()
+    public LocalDateTime getOutcomeTime()
     {
-        return outcometime;
+        return outcomeTime;
     }
 
-    public void setOutcometime(Timestamp outcometime)
+    public void setOutcomeTime(LocalDateTime outcomeTime)
     {
-        this.outcometime = outcometime;
+        this.outcomeTime = outcomeTime;
     }
 
-    @Basic
-    @Column(name = "firstreservationtime", nullable = true)
-    public Timestamp getFirstreservationtime()
+    @Column(name = "firstreservationtime")
+    public LocalDateTime getFirstReservationTime()
     {
-        return firstreservationtime;
+        return firstReservationTime;
     }
 
-    public void setFirstreservationtime(Timestamp firstreservationtime)
+    public void setFirstReservationTime(LocalDateTime firstReservationTime)
     {
-        this.firstreservationtime = firstreservationtime;
+        this.firstReservationTime = firstReservationTime;
     }
 
-    @Basic
-    @Column(name = "currentreservationtime", nullable = true)
-    public Timestamp getCurrentreservationtime()
+    @Column(name = "currentreservationtime")
+    public LocalDateTime getCurrentReservationTime()
     {
-        return currentreservationtime;
+        return currentReservationTime;
     }
 
-    public void setCurrentreservationtime(Timestamp currentreservationtime)
+    public void setCurrentReservationTime(LocalDateTime currentReservationTime)
     {
-        this.currentreservationtime = currentreservationtime;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        CalloutEntity that = (CalloutEntity) o;
-        return rowId == that.rowId && subjectId == that.subjectId && hadmId == that.hadmId && requestTele == that.requestTele && requestResp == that.requestResp && requestCdiff == that.requestCdiff && requestMrsa == that.requestMrsa && requestVre == that.requestVre && Objects.equals(submitWardid, that.submitWardid) && Objects.equals(submitCareunit, that.submitCareunit) && Objects.equals(currWardid, that.currWardid) && Objects.equals(currCareunit, that.currCareunit) && Objects.equals(calloutWardid, that.calloutWardid) && Objects.equals(calloutService, that.calloutService) && Objects.equals(calloutStatus, that.calloutStatus) && Objects.equals(calloutOutcome, that.calloutOutcome) && Objects.equals(
-                dischargeWardid, that.dischargeWardid) && Objects.equals(acknowledgeStatus, that.acknowledgeStatus) && Objects.equals(createtime, that.createtime) && Objects.equals(updatetime, that.updatetime) && Objects.equals(acknowledgetime, that.acknowledgetime) && Objects.equals(outcometime, that.outcometime) && Objects.equals(firstreservationtime, that.firstreservationtime) && Objects.equals(currentreservationtime, that.currentreservationtime);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(rowId, subjectId, hadmId, submitWardid, submitCareunit, currWardid, currCareunit, calloutWardid, calloutService, requestTele, requestResp, requestCdiff, requestMrsa, requestVre, calloutStatus, calloutOutcome, dischargeWardid, acknowledgeStatus, createtime, updatetime, acknowledgetime, outcometime, firstreservationtime, currentreservationtime);
+        this.currentReservationTime = currentReservationTime;
     }
 }

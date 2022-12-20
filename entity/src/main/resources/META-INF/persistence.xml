@@ -9,26 +9,26 @@
         <class>si.jernej.mexplorer.entity.PatientsEntity</class>
         <class>si.jernej.mexplorer.entity.AdmissionsEntity</class>
         <class>si.jernej.mexplorer.entity.CalloutEntity</class>
-        <class>si.jernej.mexplorer.entity.CaregiversEntity</class>
-        <class>si.jernej.mexplorer.entity.CharteventsEntity</class>
-        <class>si.jernej.mexplorer.entity.CpteventsEntity</class>
+        <class>si.jernej.mexplorer.entity.CareGiversEntity</class>
+        <class>si.jernej.mexplorer.entity.ChartEventsEntity</class>
+        <class>si.jernej.mexplorer.entity.CptEventsEntity</class>
         <class>si.jernej.mexplorer.entity.DCptEntity</class>
         <class>si.jernej.mexplorer.entity.DIcdDiagnosesEntity</class>
         <class>si.jernej.mexplorer.entity.DIcdProceduresEntity</class>
         <class>si.jernej.mexplorer.entity.DItemsEntity</class>
         <class>si.jernej.mexplorer.entity.DLabitemsEntity</class>
-        <class>si.jernej.mexplorer.entity.DatetimeeventsEntity</class>
+        <class>si.jernej.mexplorer.entity.DatetimeEventsEntity</class>
         <class>si.jernej.mexplorer.entity.DiagnosesIcdEntity</class>
-        <class>si.jernej.mexplorer.entity.DrgcodesEntity</class>
+        <class>si.jernej.mexplorer.entity.DrgCodesEntity</class>
         <class>si.jernej.mexplorer.entity.IcuStaysEntity</class>
-        <class>si.jernej.mexplorer.entity.InputeventsCvEntity</class>
-        <class>si.jernej.mexplorer.entity.InputeventsMvEntity</class>
-        <class>si.jernej.mexplorer.entity.LabeventsEntity</class>
-        <class>si.jernej.mexplorer.entity.MicrobiologyeventsEntity</class>
+        <class>si.jernej.mexplorer.entity.InputEventsCvEntity</class>
+        <class>si.jernej.mexplorer.entity.InputEventsMvEntity</class>
+        <class>si.jernej.mexplorer.entity.LabEventsEntity</class>
+        <class>si.jernej.mexplorer.entity.MicrobiologyEventsEntity</class>
         <class>si.jernej.mexplorer.entity.NoteEventsEntity</class>
-        <class>si.jernej.mexplorer.entity.OutputeventsEntity</class>
+        <class>si.jernej.mexplorer.entity.OutputEventsEntity</class>
         <class>si.jernej.mexplorer.entity.PrescriptionsEntity</class>
-        <class>si.jernej.mexplorer.entity.ProcedureeventsMvEntity</class>
+        <class>si.jernej.mexplorer.entity.ProcedureEventsMvEntity</class>
         <class>si.jernej.mexplorer.entity.ProceduresIcdEntity</class>
         <class>si.jernej.mexplorer.entity.ServicesEntity</class>
         <class>si.jernej.mexplorer.entity.TransfersEntity</class>

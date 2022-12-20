@@ -22,10 +22,13 @@ import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
 import si.jernej.mexplorer.core.service.TargetExtractionService;
 import si.jernej.mexplorer.core.util.DtoConverter;
+import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.entity.IcuStaysEntity;
 import si.jernej.mexplorer.entity.PatientsEntity;
 import si.jernej.mexplorer.test.ATestBase;
+
+// TODO order of words should matter in assertions
 
 class WordificationTest extends ATestBase
 {
@@ -74,7 +77,7 @@ class WordificationTest extends ATestBase
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
 
         Assertions.assertTrue(res.isEmpty());
     }
@@ -90,13 +93,13 @@ class WordificationTest extends ATestBase
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
         propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
 
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
 
         Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
@@ -114,13 +117,13 @@ class WordificationTest extends ATestBase
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
         propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
 
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ONE);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ONE, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
 
         Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
@@ -138,13 +141,13 @@ class WordificationTest extends ATestBase
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
         propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
 
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
 
         Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
@@ -163,7 +166,7 @@ class WordificationTest extends ATestBase
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
         propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
 
         ValueTransformer valueTransformer = new ValueTransformer();
@@ -177,7 +180,7 @@ class WordificationTest extends ATestBase
                 (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
 
         Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
@@ -196,7 +199,7 @@ class WordificationTest extends ATestBase
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
         propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
 
         ValueTransformer valueTransformer = new ValueTransformer();
@@ -216,7 +219,7 @@ class WordificationTest extends ATestBase
                 DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
 
         Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }
@@ -248,7 +251,7 @@ class WordificationTest extends ATestBase
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity", "icuStaysEntitys"));
         propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
         propertySpec.addEntry("IcuStaysEntity", List.of("firstCareUnit", "lastCareUnit", "los"));
 
@@ -274,7 +277,7 @@ class WordificationTest extends ATestBase
                 DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO);
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
 
         Assertions.assertEquals(expectedWords, new HashSet<>(res));
     }

@@ -1,7 +1,8 @@
 package si.jernej.mexplorer.entity;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,36 +10,33 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+// ICU admission.
 @Entity
 @Table(name = "icustays", schema = "mimiciii", catalog = "mimic")
-public class IcuStaysEntity implements Serializable
+public class IcuStaysEntity extends AEntity
 {
-    private int rowId;                          // row ID (primary key)
-    private PatientsEntity patientsEntity;
-    private AdmissionsEntity admissionsEntity;
+    private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
     private int icuStayId;                      // ICU stay ID
     private String dbSource;                    // source database of the item
     private String firstCareUnit;               // first care unit associated with the ICU stay
     private String lastCareUnit;                // last care unit associated with the ICU stay
     private short firstWardId;                  // identifier for the first ward the patient was located in
     private short lastWardId;                   // identifier for the last ward the patient is located in
-    private Timestamp inTime;                   // time of admission to the ICU
-    private Timestamp outTime;                  // time of discharge from the ICU
+    private LocalDateTime inTime;               // time of admission to the ICU
+    private LocalDateTime outTime;              // time of discharge from the ICU
     private Double los;                         // length of stay in the ICU in fractional days
-
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
-    {
-        return rowId;
-    }
-
-    public void setRowId(int rowId)
-    {
-        this.rowId = rowId;
-    }
+    private Set<ChartEventsEntity> chartEventsEntitys;
+    private Set<DatetimeEventsEntity> datetimeEventsEntitys;
+    private Set<InputEventsCvEntity> inputEventsCvEntitys;
+    private Set<InputEventsMvEntity> inputEventsMvEntitys;
+    private Set<OutputEventsEntity> outputEventsEntitys;
+    private Set<PrescriptionsEntity> prescriptionsEntitys;
+    private Set<ProcedureEventsMvEntity> procedureEventsMvEntitys;
+    private Set<TransfersEntity> transfersEntitys;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
@@ -70,9 +68,9 @@ public class IcuStaysEntity implements Serializable
         return icuStayId;
     }
 
-    public void setIcuStayId(int icustayId)
+    public void setIcuStayId(int icuStayId)
     {
-        this.icuStayId = icustayId;
+        this.icuStayId = icuStayId;
     }
 
     @Column(name = "dbsource", nullable = false, length = 20)
@@ -81,9 +79,9 @@ public class IcuStaysEntity implements Serializable
         return dbSource;
     }
 
-    public void setDbSource(String dbsource)
+    public void setDbSource(String dbSource)
     {
-        this.dbSource = dbsource;
+        this.dbSource = dbSource;
     }
 
     @Column(name = "first_careunit", nullable = false, length = 20)
@@ -92,9 +90,9 @@ public class IcuStaysEntity implements Serializable
         return firstCareUnit;
     }
 
-    public void setFirstCareUnit(String firstCareunit)
+    public void setFirstCareUnit(String firstCareUnit)
     {
-        this.firstCareUnit = firstCareunit;
+        this.firstCareUnit = firstCareUnit;
     }
 
     @Column(name = "last_careunit", nullable = false, length = 20)
@@ -103,9 +101,9 @@ public class IcuStaysEntity implements Serializable
         return lastCareUnit;
     }
 
-    public void setLastCareUnit(String lastCareunit)
+    public void setLastCareUnit(String lastCareUnit)
     {
-        this.lastCareUnit = lastCareunit;
+        this.lastCareUnit = lastCareUnit;
     }
 
     @Column(name = "first_wardid", nullable = false)
@@ -114,9 +112,9 @@ public class IcuStaysEntity implements Serializable
         return firstWardId;
     }
 
-    public void setFirstWardId(short firstWardid)
+    public void setFirstWardId(short firstWardId)
     {
-        this.firstWardId = firstWardid;
+        this.firstWardId = firstWardId;
     }
 
     @Column(name = "last_wardid", nullable = false)
@@ -125,34 +123,34 @@ public class IcuStaysEntity implements Serializable
         return lastWardId;
     }
 
-    public void setLastWardId(short lastWardid)
+    public void setLastWardId(short lastWardId)
     {
-        this.lastWardId = lastWardid;
+        this.lastWardId = lastWardId;
     }
 
     @Column(name = "intime", nullable = false)
-    public Timestamp getInTime()
+    public LocalDateTime getInTime()
     {
         return inTime;
     }
 
-    public void setInTime(Timestamp intime)
+    public void setInTime(LocalDateTime inTime)
     {
-        this.inTime = intime;
+        this.inTime = inTime;
     }
 
-    @Column(name = "outtime", nullable = true)
-    public Timestamp getOutTime()
+    @Column(name = "outtime")
+    public LocalDateTime getOutTime()
     {
         return outTime;
     }
 
-    public void setOutTime(Timestamp outtime)
+    public void setOutTime(LocalDateTime outTime)
     {
-        this.outTime = outtime;
+        this.outTime = outTime;
     }
 
-    @Column(name = "los", nullable = true, precision = 0)
+    @Column(name = "los", precision = 0)
     public Double getLos()
     {
         return los;
@@ -163,4 +161,91 @@ public class IcuStaysEntity implements Serializable
         this.los = los;
     }
 
+    @OneToMany(mappedBy = "icuStaysEntity", fetch = FetchType.LAZY)
+    public Set<ChartEventsEntity> getChartEventsEntitys()
+    {
+        return chartEventsEntitys;
+    }
+
+    public void setChartEventsEntitys(Set<ChartEventsEntity> chartEventsEntitys)
+    {
+        this.chartEventsEntitys = chartEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "icuStaysEntity", fetch = FetchType.LAZY)
+    public Set<DatetimeEventsEntity> getDatetimeEventsEntitys()
+    {
+        return datetimeEventsEntitys;
+    }
+
+    public void setDatetimeEventsEntitys(Set<DatetimeEventsEntity> datetimeEventsEntitys)
+    {
+        this.datetimeEventsEntitys = datetimeEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "icuStaysEntity", fetch = FetchType.LAZY)
+    public Set<InputEventsCvEntity> getInputEventsCvEntitys()
+    {
+        return inputEventsCvEntitys;
+    }
+
+    public void setInputEventsCvEntitys(Set<InputEventsCvEntity> inputEventsCvEntitys)
+    {
+        this.inputEventsCvEntitys = inputEventsCvEntitys;
+    }
+
+    @OneToMany(mappedBy = "icuStaysEntity", fetch = FetchType.LAZY)
+    public Set<InputEventsMvEntity> getInputEventsMvEntitys()
+    {
+        return inputEventsMvEntitys;
+    }
+
+    public void setInputEventsMvEntitys(Set<InputEventsMvEntity> inputEventsMvEntitys)
+    {
+        this.inputEventsMvEntitys = inputEventsMvEntitys;
+    }
+
+    @OneToMany(mappedBy = "icuStaysEntity", fetch = FetchType.LAZY)
+    public Set<OutputEventsEntity> getOutputEventsEntitys()
+    {
+        return outputEventsEntitys;
+    }
+
+    public void setOutputEventsEntitys(Set<OutputEventsEntity> outputEventsEntitys)
+    {
+        this.outputEventsEntitys = outputEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "icuStaysEntity", fetch = FetchType.LAZY)
+    public Set<PrescriptionsEntity> getPrescriptionsEntitys()
+    {
+        return prescriptionsEntitys;
+    }
+
+    public void setPrescriptionsEntitys(Set<PrescriptionsEntity> prescriptionsEntitys)
+    {
+        this.prescriptionsEntitys = prescriptionsEntitys;
+    }
+
+    @OneToMany(mappedBy = "icuStaysEntity", fetch = FetchType.LAZY)
+    public Set<ProcedureEventsMvEntity> getProcedureEventsMvEntitys()
+    {
+        return procedureEventsMvEntitys;
+    }
+
+    public void setProcedureEventsMvEntitys(Set<ProcedureEventsMvEntity> procedureEventsMvEntitys)
+    {
+        this.procedureEventsMvEntitys = procedureEventsMvEntitys;
+    }
+
+    @OneToMany(mappedBy = "icuStaysEntity", fetch = FetchType.LAZY)
+    public Set<TransfersEntity> getTransfersEntitys()
+    {
+        return transfersEntitys;
+    }
+
+    public void setTransfersEntitys(Set<TransfersEntity> transfersEntitys)
+    {
+        this.transfersEntitys = transfersEntitys;
+    }
 }

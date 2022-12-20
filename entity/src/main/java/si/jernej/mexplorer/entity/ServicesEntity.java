@@ -1,75 +1,61 @@
 package si.jernej.mexplorer.entity;
 
-import java.sql.Timestamp;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+// Hospital services that patients were under during their hospital stay.
 @Entity
 @Table(name = "services", schema = "mimiciii", catalog = "mimic")
-public class ServicesEntity
+public class ServicesEntity extends AEntity
 {
-    private int rowId;
-    private int subjectId;
-    private int hadmId;
-    private Timestamp transfertime;
-    private String prevService;
-    private String currService;
+    private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    private LocalDateTime transferTime;         // time when the transfer occurred
+    private String prevService;                 // previous service type
+    private String currService;                 // current service type
 
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
+    public PatientsEntity getPatientsEntity()
     {
-        return rowId;
+        return patientsEntity;
     }
 
-    public void setRowId(int rowId)
+    public void setPatientsEntity(PatientsEntity patientsEntity)
     {
-        this.rowId = rowId;
+        this.patientsEntity = patientsEntity;
     }
 
-    @Basic
-    @Column(name = "subject_id", nullable = false)
-    public int getSubjectId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hadm_id", referencedColumnName = "hadm_id")
+    public AdmissionsEntity getAdmissionsEntity()
     {
-        return subjectId;
+        return admissionsEntity;
     }
 
-    public void setSubjectId(int subjectId)
+    public void setAdmissionsEntity(AdmissionsEntity admissionsEntity)
     {
-        this.subjectId = subjectId;
+        this.admissionsEntity = admissionsEntity;
     }
 
-    @Basic
-    @Column(name = "hadm_id", nullable = false)
-    public int getHadmId()
-    {
-        return hadmId;
-    }
-
-    public void setHadmId(int hadmId)
-    {
-        this.hadmId = hadmId;
-    }
-
-    @Basic
     @Column(name = "transfertime", nullable = false)
-    public Timestamp getTransfertime()
+    public LocalDateTime getTransferTime()
     {
-        return transfertime;
+        return transferTime;
     }
 
-    public void setTransfertime(Timestamp transfertime)
+    public void setTransferTime(LocalDateTime transferTime)
     {
-        this.transfertime = transfertime;
+        this.transferTime = transferTime;
     }
 
-    @Basic
-    @Column(name = "prev_service", nullable = true, length = 20)
+    @Column(name = "prev_service", length = 20)
     public String getPrevService()
     {
         return prevService;
@@ -80,8 +66,7 @@ public class ServicesEntity
         this.prevService = prevService;
     }
 
-    @Basic
-    @Column(name = "curr_service", nullable = true, length = 20)
+    @Column(name = "curr_service", length = 20)
     public String getCurrService()
     {
         return currService;
@@ -90,22 +75,5 @@ public class ServicesEntity
     public void setCurrService(String currService)
     {
         this.currService = currService;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        ServicesEntity that = (ServicesEntity) o;
-        return rowId == that.rowId && subjectId == that.subjectId && hadmId == that.hadmId && Objects.equals(transfertime, that.transfertime) && Objects.equals(prevService, that.prevService) && Objects.equals(currService, that.currService);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(rowId, subjectId, hadmId, transfertime, prevService, currService);
     }
 }
