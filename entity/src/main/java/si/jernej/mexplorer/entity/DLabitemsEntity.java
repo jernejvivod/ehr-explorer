@@ -1,49 +1,39 @@
 package si.jernej.mexplorer.entity;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+// Dictionary of laboratory-related items.
 @Entity
 @Table(name = "d_labitems", schema = "mimiciii", catalog = "mimic")
-public class DLabitemsEntity
+public class DLabitemsEntity extends AEntity
 {
-    private int rowId;
-    private int itemid;
-    private String label;
-    private String fluid;
-    private String category;
-    private String loincCode;
+    private DItemsEntity dItemsEntity;  // foreign key identifying the charted item
+    private String label;               // label identifying the item
+    private String fluid;               // fluid associated with the item, for example blood or urine
+    private String category;            // category of item, for example chemistry or hematology
+    private String loincCode;           // Logical Observation Identifiers Names and Codes (LOINC) mapped to the item, if available.
 
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "itemid", referencedColumnName = "itemid")
+    public DItemsEntity getdItemsEntity()
     {
-        return rowId;
+        return dItemsEntity;
     }
 
-    public void setRowId(int rowId)
+    public void setdItemsEntity(DItemsEntity dItemsEntity)
     {
-        this.rowId = rowId;
+        this.dItemsEntity = dItemsEntity;
     }
 
-    @Basic
-    @Column(name = "itemid", nullable = false)
-    public int getItemid()
-    {
-        return itemid;
-    }
-
-    public void setItemid(int itemid)
-    {
-        this.itemid = itemid;
-    }
-
-    @Basic
     @Column(name = "label", nullable = false, length = 100)
     public String getLabel()
     {
@@ -55,7 +45,6 @@ public class DLabitemsEntity
         this.label = label;
     }
 
-    @Basic
     @Column(name = "fluid", nullable = false, length = 100)
     public String getFluid()
     {
@@ -67,7 +56,6 @@ public class DLabitemsEntity
         this.fluid = fluid;
     }
 
-    @Basic
     @Column(name = "category", nullable = false, length = 100)
     public String getCategory()
     {
@@ -79,8 +67,7 @@ public class DLabitemsEntity
         this.category = category;
     }
 
-    @Basic
-    @Column(name = "loinc_code", nullable = true, length = 100)
+    @Column(name = "loinc_code", length = 100)
     public String getLoincCode()
     {
         return loincCode;
@@ -89,22 +76,5 @@ public class DLabitemsEntity
     public void setLoincCode(String loincCode)
     {
         this.loincCode = loincCode;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        DLabitemsEntity that = (DLabitemsEntity) o;
-        return rowId == that.rowId && itemid == that.itemid && Objects.equals(label, that.label) && Objects.equals(fluid, that.fluid) && Objects.equals(category, that.category) && Objects.equals(loincCode, that.loincCode);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(rowId, itemid, label, fluid, category, loincCode);
     }
 }

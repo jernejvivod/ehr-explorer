@@ -80,15 +80,17 @@ public class PropositionalizationService
                 .map(s -> DtoConverter.toCompositeColumnCreator(rootEntityName, s, mimicEntityManager.getMetamodel()))
                 .orElse(new CompositeColumnCreator());
 
+        List<List<String>> foreignKeyPaths = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, mimicEntityManager.getMetamodel());
+
         // get list of root entities
         List<Object[]> rootEntities = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
                 rootEntityName,
-                EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, mimicEntityManager.getMetamodel()),
+                foreignKeyPaths,
                 idPropertyName,
                 new HashSet<>(wordificationConfigDto.getRootEntitiesSpec().getIds())
         ).toList();
 
-        // initialize list for storing wordification results
+        // initialize list for storing Wordification results
         List<WordificationResultDto> wordificationResults = new ArrayList<>(wordificationConfigDto.getRootEntitiesSpec().getIds().size());
 
         // go over entity IDs and compute Wordification results
@@ -107,7 +109,8 @@ public class PropositionalizationService
                             propertySpec,
                             valueTransformer,
                             compositeColumnCreator,
-                            concatenationSchemeEnumMapping.get(wordificationConfigDto.getConcatenationSpec().getConcatenationScheme())
+                            concatenationSchemeEnumMapping.get(wordificationConfigDto.getConcatenationSpec().getConcatenationScheme()),
+                            EntityUtils.getTransitionPairsFromForeignKeyPath(foreignKeyPaths)
                     )
             );
 

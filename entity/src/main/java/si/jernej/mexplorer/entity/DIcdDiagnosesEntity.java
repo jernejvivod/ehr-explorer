@@ -1,35 +1,21 @@
 package si.jernej.mexplorer.entity;
 
-import java.util.Objects;
+import java.io.Serializable;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+// Dictionary of the International Classification of Diseases, 9th Revision (Diagnoses).
 @Entity
 @Table(name = "d_icd_diagnoses", schema = "mimiciii", catalog = "mimic")
-public class DIcdDiagnosesEntity
+public class DIcdDiagnosesEntity extends AEntity
 {
-    private int rowId;
-    private String icd9Code;
-    private String shortTitle;
-    private String longTitle;
+    private String icd9Code;    // ICD9 code - note that this is a fixed length character field, as whitespaces are important in uniquely identifying ICD-9 codes
+    private String shortTitle;  // short title associated with the code
+    private String longTitle;   // long title associated with the code
 
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
-    {
-        return rowId;
-    }
-
-    public void setRowId(int rowId)
-    {
-        this.rowId = rowId;
-    }
-
-    @Basic
     @Column(name = "icd9_code", nullable = false, length = 10)
     public String getIcd9Code()
     {
@@ -41,7 +27,6 @@ public class DIcdDiagnosesEntity
         this.icd9Code = icd9Code;
     }
 
-    @Basic
     @Column(name = "short_title", nullable = false, length = 50)
     public String getShortTitle()
     {
@@ -53,7 +38,6 @@ public class DIcdDiagnosesEntity
         this.shortTitle = shortTitle;
     }
 
-    @Basic
     @Column(name = "long_title", nullable = false, length = 255)
     public String getLongTitle()
     {
@@ -63,22 +47,5 @@ public class DIcdDiagnosesEntity
     public void setLongTitle(String longTitle)
     {
         this.longTitle = longTitle;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        DIcdDiagnosesEntity that = (DIcdDiagnosesEntity) o;
-        return rowId == that.rowId && Objects.equals(icd9Code, that.icd9Code) && Objects.equals(shortTitle, that.shortTitle) && Objects.equals(longTitle, that.longTitle);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(rowId, icd9Code, shortTitle, longTitle);
     }
 }

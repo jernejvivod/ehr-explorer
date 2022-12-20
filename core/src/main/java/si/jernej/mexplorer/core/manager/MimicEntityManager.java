@@ -221,7 +221,7 @@ public class MimicEntityManager
                 queryVarsPoolIdx++;
 
                 // append fetch to query
-                dynamicQuery.append("JOIN FETCH %s.%s %s%n".formatted(entityVarPrev, foreignKeyPathPropertyNames.get(i), entityVarNxt));
+                dynamicQuery.append("LEFT JOIN FETCH %s.%s %s%n".formatted(entityVarPrev, foreignKeyPathPropertyNames.get(i), entityVarNxt));
             }
         }
 

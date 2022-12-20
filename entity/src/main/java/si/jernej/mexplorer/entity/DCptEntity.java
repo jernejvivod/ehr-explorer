@@ -1,40 +1,23 @@
 package si.jernej.mexplorer.entity;
 
-import java.util.Objects;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
+// High-level dictionary of the Current Procedural Terminology.
 @Entity
 @Table(name = "d_cpt", schema = "mimiciii", catalog = "mimic")
-public class DCptEntity
+public class DCptEntity extends AEntity
 {
-    private int rowId;
-    private short category;
-    private String sectionrange;
-    private String sectionheader;
-    private String subsectionrange;
-    private String subsectionheader;
-    private String codesuffix;
-    private int mincodeinsubsection;
-    private int maxcodeinsubsection;
+    private short category;           // code category
+    private String sectionRange;      // range of codes within the high-level section
+    private String sectionHeader;     // section header
+    private String subsectionRange;   // range of codes within the subsection
+    private String subsectionHeader;  // subsection header
+    private String codeSuffix;        // text element of the current procedural terminology, if any
+    private int minCodeInSubsection;  // minimum code within the subsection
+    private int maxCodeInSubsection;  // maximum code within the subsection
 
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
-    {
-        return rowId;
-    }
-
-    public void setRowId(int rowId)
-    {
-        this.rowId = rowId;
-    }
-
-    @Basic
     @Column(name = "category", nullable = false)
     public short getCategory()
     {
@@ -46,104 +29,80 @@ public class DCptEntity
         this.category = category;
     }
 
-    @Basic
     @Column(name = "sectionrange", nullable = false, length = 100)
-    public String getSectionrange()
+    public String getSectionRange()
     {
-        return sectionrange;
+        return sectionRange;
     }
 
-    public void setSectionrange(String sectionrange)
+    public void setSectionRange(String sectionRange)
     {
-        this.sectionrange = sectionrange;
+        this.sectionRange = sectionRange;
     }
 
-    @Basic
     @Column(name = "sectionheader", nullable = false, length = 50)
-    public String getSectionheader()
+    public String getSectionHeader()
     {
-        return sectionheader;
+        return sectionHeader;
     }
 
-    public void setSectionheader(String sectionheader)
+    public void setSectionHeader(String sectionHeader)
     {
-        this.sectionheader = sectionheader;
+        this.sectionHeader = sectionHeader;
     }
 
-    @Basic
     @Column(name = "subsectionrange", nullable = false, length = 100)
-    public String getSubsectionrange()
+    public String getSubsectionRange()
     {
-        return subsectionrange;
+        return subsectionRange;
     }
 
-    public void setSubsectionrange(String subsectionrange)
+    public void setSubsectionRange(String subsectionRange)
     {
-        this.subsectionrange = subsectionrange;
+        this.subsectionRange = subsectionRange;
     }
 
-    @Basic
     @Column(name = "subsectionheader", nullable = false, length = 255)
-    public String getSubsectionheader()
+    public String getSubsectionHeader()
     {
-        return subsectionheader;
+        return subsectionHeader;
     }
 
-    public void setSubsectionheader(String subsectionheader)
+    public void setSubsectionHeader(String subsectionHeader)
     {
-        this.subsectionheader = subsectionheader;
+        this.subsectionHeader = subsectionHeader;
     }
 
-    @Basic
-    @Column(name = "codesuffix", nullable = true, length = 5)
-    public String getCodesuffix()
+    @Column(name = "codesuffix", length = 5)
+    public String getCodeSuffix()
     {
-        return codesuffix;
+        return codeSuffix;
     }
 
-    public void setCodesuffix(String codesuffix)
+    public void setCodeSuffix(String codeSuffix)
     {
-        this.codesuffix = codesuffix;
+        this.codeSuffix = codeSuffix;
     }
 
-    @Basic
     @Column(name = "mincodeinsubsection", nullable = false)
-    public int getMincodeinsubsection()
+    public int getMinCodeInSubsection()
     {
-        return mincodeinsubsection;
+        return minCodeInSubsection;
     }
 
-    public void setMincodeinsubsection(int mincodeinsubsection)
+    public void setMinCodeInSubsection(int minCodeInSubsection)
     {
-        this.mincodeinsubsection = mincodeinsubsection;
+        this.minCodeInSubsection = minCodeInSubsection;
     }
 
-    @Basic
     @Column(name = "maxcodeinsubsection", nullable = false)
-    public int getMaxcodeinsubsection()
+    public int getMaxCodeInSubsection()
     {
-        return maxcodeinsubsection;
+        return maxCodeInSubsection;
     }
 
-    public void setMaxcodeinsubsection(int maxcodeinsubsection)
+    public void setMaxCodeInSubsection(int maxCodeInSubsection)
     {
-        this.maxcodeinsubsection = maxcodeinsubsection;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        DCptEntity that = (DCptEntity) o;
-        return rowId == that.rowId && category == that.category && mincodeinsubsection == that.mincodeinsubsection && maxcodeinsubsection == that.maxcodeinsubsection && Objects.equals(sectionrange, that.sectionrange) && Objects.equals(sectionheader, that.sectionheader) && Objects.equals(subsectionrange, that.subsectionrange) && Objects.equals(subsectionheader, that.subsectionheader) && Objects.equals(codesuffix, that.codesuffix);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(rowId, category, sectionrange, sectionheader, subsectionrange, subsectionheader, codesuffix, mincodeinsubsection, maxcodeinsubsection);
+        this.maxCodeInSubsection = maxCodeInSubsection;
     }
 }

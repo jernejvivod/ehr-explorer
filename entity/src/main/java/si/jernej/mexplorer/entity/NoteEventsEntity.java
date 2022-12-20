@@ -1,45 +1,29 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+// Notes associated with hospital stays.
 @Entity
 @Table(name = "noteevents", schema = "mimiciii", catalog = "mimic")
-public class NoteEventsEntity implements Serializable
+public class NoteEventsEntity extends AEntity
 {
-    private Long rowId;
-    // private Long subjectId;
-    private PatientsEntity patientsEntity;
-    private AdmissionsEntity admissionsEntity;
-    private LocalDateTime chartdate;
-    private LocalDateTime charttime;
-    private LocalDateTime storetime;
-    private String category;
-    private String description;
-    private Integer cgid;
-    private String iserror;
-    private String text;
-
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public Long getRowId()
-    {
-        return rowId;
-    }
-
-    public void setRowId(Long rowId)
-    {
-        this.rowId = rowId;
-    }
+    private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    private LocalDateTime chartDate;            // date when the note was charted
+    private LocalDateTime chartTime;            // Date and time when the note was charted. Note that some notes (e.g. discharge summaries) do not have a time associated with them: these notes have NULL in this column.
+    private LocalDateTime storeTime;            // ?
+    private String category;                    // Category of the note, e.g. Discharge summary.
+    private String description;                 // a more detailed categorization for the note, sometimes entered by free-text
+    private CareGiversEntity careGiversEntity;  // foreign key identifying the caregiver
+    private String isError;                     // flag to highlight an error with the note
+    private String text;                        // content of the note
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
@@ -65,44 +49,40 @@ public class NoteEventsEntity implements Serializable
         this.admissionsEntity = admissionsEntity;
     }
 
-    @Basic
-    @Column(name = "chartdate", nullable = true)
-    public LocalDateTime getChartdate()
+    @Column(name = "chartdate")
+    public LocalDateTime getChartDate()
     {
-        return chartdate;
+        return chartDate;
     }
 
-    public void setChartdate(LocalDateTime chartdate)
+    public void setChartDate(LocalDateTime chartDate)
     {
-        this.chartdate = chartdate;
+        this.chartDate = chartDate;
     }
 
-    @Basic
-    @Column(name = "charttime", nullable = true)
-    public LocalDateTime getCharttime()
+    @Column(name = "charttime")
+    public LocalDateTime getChartTime()
     {
-        return charttime;
+        return chartTime;
     }
 
-    public void setCharttime(LocalDateTime charttime)
+    public void setChartTime(LocalDateTime chartTime)
     {
-        this.charttime = charttime;
+        this.chartTime = chartTime;
     }
 
-    @Basic
-    @Column(name = "storetime", nullable = true)
-    public LocalDateTime getStoretime()
+    @Column(name = "storetime")
+    public LocalDateTime getStoreTime()
     {
-        return storetime;
+        return storeTime;
     }
 
-    public void setStoretime(LocalDateTime storetime)
+    public void setStoreTime(LocalDateTime storeTime)
     {
-        this.storetime = storetime;
+        this.storeTime = storeTime;
     }
 
-    @Basic
-    @Column(name = "category", nullable = true, length = 50)
+    @Column(name = "category", length = 50)
     public String getCategory()
     {
         return category;
@@ -113,8 +93,7 @@ public class NoteEventsEntity implements Serializable
         this.category = category;
     }
 
-    @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", length = 255)
     public String getDescription()
     {
         return description;
@@ -125,32 +104,30 @@ public class NoteEventsEntity implements Serializable
         this.description = description;
     }
 
-    @Basic
-    @Column(name = "cgid", nullable = true)
-    public Integer getCgid()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cgid", referencedColumnName = "cgid")
+    public CareGiversEntity getCareGiversEntity()
     {
-        return cgid;
+        return careGiversEntity;
     }
 
-    public void setCgid(Integer cgid)
+    public void setCareGiversEntity(CareGiversEntity careGiversEntity)
     {
-        this.cgid = cgid;
+        this.careGiversEntity = careGiversEntity;
     }
 
-    @Basic
-    @Column(name = "iserror", nullable = true, length = -1)
-    public String getIserror()
+    @Column(name = "iserror", length = -1)
+    public String getIsError()
     {
-        return iserror;
+        return isError;
     }
 
-    public void setIserror(String iserror)
+    public void setIsError(String isError)
     {
-        this.iserror = iserror;
+        this.isError = isError;
     }
 
-    @Basic
-    @Column(name = "text", nullable = true, length = -1)
+    @Column(name = "text", length = -1)
     public String getText()
     {
         return text;

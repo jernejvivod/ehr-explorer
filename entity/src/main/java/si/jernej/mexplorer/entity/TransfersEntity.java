@@ -1,178 +1,157 @@
 package si.jernej.mexplorer.entity;
 
-import java.sql.Timestamp;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+// Location of patients during their hospital stay.
 @Entity
 @Table(name = "transfers", schema = "mimiciii", catalog = "mimic")
-public class TransfersEntity
+public class TransfersEntity extends AEntity
 {
-    private int rowId;
-    private int subjectId;
-    private int hadmId;
-    private Integer icustayId;
-    private String dbsource;
-    private String eventtype;
-    private String prevCareunit;
-    private String currCareunit;
-    private Short prevWardid;
-    private Short currWardid;
-    private Timestamp intime;
-    private Timestamp outtime;
-    private Double los;
+    private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    private IcuStaysEntity icuStaysEntity;      // foreign key identifying the ICU stay
+    private String dbSource;                    // source database of the item
+    private String eventType;                   // type of event, for example admission or transfer
+    private String prevCareUnit;                // previous careunit
+    private String currCareUnit;                // current careunit
+    private Short prevWardId;                   // identifier for the previous ward the patient was located in
+    private Short currWardId;                   // identifier for the current ward the patient is located in
+    private LocalDateTime inTime;               // time when the patient was transferred into the unit
+    private LocalDateTime outTime;              // time when the patient was transferred out of the unit
+    private Double los;                         // length of stay in minutes
 
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public int getRowId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
+    public PatientsEntity getPatientsEntity()
     {
-        return rowId;
+        return patientsEntity;
     }
 
-    public void setRowId(int rowId)
+    public void setPatientsEntity(PatientsEntity patientsEntity)
     {
-        this.rowId = rowId;
+        this.patientsEntity = patientsEntity;
     }
 
-    @Basic
-    @Column(name = "subject_id", nullable = false)
-    public int getSubjectId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hadm_id", referencedColumnName = "hadm_id")
+    public AdmissionsEntity getAdmissionsEntity()
     {
-        return subjectId;
+        return admissionsEntity;
     }
 
-    public void setSubjectId(int subjectId)
+    public void setAdmissionsEntity(AdmissionsEntity admissionsEntity)
     {
-        this.subjectId = subjectId;
+        this.admissionsEntity = admissionsEntity;
     }
 
-    @Basic
-    @Column(name = "hadm_id", nullable = false)
-    public int getHadmId()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icustay_id", referencedColumnName = "icustay_id")
+    public IcuStaysEntity getIcuStaysEntity()
     {
-        return hadmId;
+        return icuStaysEntity;
     }
 
-    public void setHadmId(int hadmId)
+    public void setIcuStaysEntity(IcuStaysEntity icuStaysEntity)
     {
-        this.hadmId = hadmId;
+        this.icuStaysEntity = icuStaysEntity;
     }
 
-    @Basic
-    @Column(name = "icustay_id", nullable = true)
-    public Integer getIcustayId()
+    @Column(name = "dbsource", length = 20)
+    public String getDbSource()
     {
-        return icustayId;
+        return dbSource;
     }
 
-    public void setIcustayId(Integer icustayId)
+    public void setDbSource(String dbSource)
     {
-        this.icustayId = icustayId;
+        this.dbSource = dbSource;
     }
 
-    @Basic
-    @Column(name = "dbsource", nullable = true, length = 20)
-    public String getDbsource()
+    @Column(name = "eventtype", length = 20)
+    public String getEventType()
     {
-        return dbsource;
+        return eventType;
     }
 
-    public void setDbsource(String dbsource)
+    public void setEventType(String eventType)
     {
-        this.dbsource = dbsource;
+        this.eventType = eventType;
     }
 
-    @Basic
-    @Column(name = "eventtype", nullable = true, length = 20)
-    public String getEventtype()
+    @Column(name = "prev_careunit", length = 20)
+    public String getPrevCareUnit()
     {
-        return eventtype;
+        return prevCareUnit;
     }
 
-    public void setEventtype(String eventtype)
+    public void setPrevCareUnit(String prevCareUnit)
     {
-        this.eventtype = eventtype;
+        this.prevCareUnit = prevCareUnit;
     }
 
-    @Basic
-    @Column(name = "prev_careunit", nullable = true, length = 20)
-    public String getPrevCareunit()
+    @Column(name = "curr_careunit", length = 20)
+    public String getCurrCareUnit()
     {
-        return prevCareunit;
+        return currCareUnit;
     }
 
-    public void setPrevCareunit(String prevCareunit)
+    public void setCurrCareUnit(String currCareUnit)
     {
-        this.prevCareunit = prevCareunit;
+        this.currCareUnit = currCareUnit;
     }
 
-    @Basic
-    @Column(name = "curr_careunit", nullable = true, length = 20)
-    public String getCurrCareunit()
+    @Column(name = "prev_wardid")
+    public Short getPrevWardId()
     {
-        return currCareunit;
+        return prevWardId;
     }
 
-    public void setCurrCareunit(String currCareunit)
+    public void setPrevWardId(Short prevWardId)
     {
-        this.currCareunit = currCareunit;
+        this.prevWardId = prevWardId;
     }
 
-    @Basic
-    @Column(name = "prev_wardid", nullable = true)
-    public Short getPrevWardid()
+    @Column(name = "curr_wardid")
+    public Short getCurrWardId()
     {
-        return prevWardid;
+        return currWardId;
     }
 
-    public void setPrevWardid(Short prevWardid)
+    public void setCurrWardId(Short currWardId)
     {
-        this.prevWardid = prevWardid;
+        this.currWardId = currWardId;
     }
 
-    @Basic
-    @Column(name = "curr_wardid", nullable = true)
-    public Short getCurrWardid()
+    @Column(name = "intime")
+    public LocalDateTime getInTime()
     {
-        return currWardid;
+        return inTime;
     }
 
-    public void setCurrWardid(Short currWardid)
+    public void setInTime(LocalDateTime inTime)
     {
-        this.currWardid = currWardid;
+        this.inTime = inTime;
     }
 
-    @Basic
-    @Column(name = "intime", nullable = true)
-    public Timestamp getIntime()
+    @Column(name = "outtime")
+    public LocalDateTime getOutTime()
     {
-        return intime;
+        return outTime;
     }
 
-    public void setIntime(Timestamp intime)
+    public void setOutTime(LocalDateTime outTime)
     {
-        this.intime = intime;
+        this.outTime = outTime;
     }
 
-    @Basic
-    @Column(name = "outtime", nullable = true)
-    public Timestamp getOuttime()
-    {
-        return outtime;
-    }
-
-    public void setOuttime(Timestamp outtime)
-    {
-        this.outtime = outtime;
-    }
-
-    @Basic
-    @Column(name = "los", nullable = true, precision = 0)
+    @Column(name = "los", precision = 0)
     public Double getLos()
     {
         return los;
@@ -181,22 +160,5 @@ public class TransfersEntity
     public void setLos(Double los)
     {
         this.los = los;
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        TransfersEntity that = (TransfersEntity) o;
-        return rowId == that.rowId && subjectId == that.subjectId && hadmId == that.hadmId && Objects.equals(icustayId, that.icustayId) && Objects.equals(dbsource, that.dbsource) && Objects.equals(eventtype, that.eventtype) && Objects.equals(prevCareunit, that.prevCareunit) && Objects.equals(currCareunit, that.currCareunit) && Objects.equals(prevWardid, that.prevWardid) && Objects.equals(currWardid, that.currWardid) && Objects.equals(intime, that.intime) && Objects.equals(outtime, that.outtime) && Objects.equals(los, that.los);
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash(rowId, subjectId, hadmId, icustayId, dbsource, eventtype, prevCareunit, currCareunit, prevWardid, currWardid, intime, outtime, los);
     }
 }

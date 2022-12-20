@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+// TODO add validation
+
 /**
  * Class representing the specification of which properties of which entities to include for the
  * Wordification algorithm.

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +22,7 @@ import javax.persistence.metamodel.Metamodel;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
@@ -152,7 +155,7 @@ public final class EntityUtils
         Set<T> res = new HashSet<>();
         if (!endEntities.isEmpty())
         {
-            String idMethodName = Arrays.stream(endEntities.iterator().next().getClass().getDeclaredMethods()).filter(m -> m.isAnnotationPresent(Id.class)).findAny().orElseThrow().getName();
+            String idMethodName = Arrays.stream(endEntities.iterator().next().getClass().getMethods()).filter(m -> m.isAnnotationPresent(Id.class)).findAny().orElseThrow().getName();
             for (Object endEntity : endEntities)
             {
                 try
@@ -241,17 +244,78 @@ public final class EntityUtils
         return rootEntitys.stream().map(e -> traverseSingularForeignKeyPath(e, foreignKeyPath)).toList();
     }
 
+    /**
+     * Compute foreign key paths for entities from {@link PropertySpec} using DFS.
+     * @param rootEntityName name of root entity
+     * @param propertySpec {@link PropertySpec} instance
+     * @param metamodel {@link Metamodel} instance
+     */
     public static List<List<String>> getForeignKeyPathsFromPropertySpec(String rootEntityName, PropertySpec propertySpec, Metamodel metamodel)
     {
         final Map<String, Set<String>> entityToPropertiesToProcess = propertySpec.getEntityToPropertiesToProcess();
-        final Map<String, Set<String>> entityToLinkedEntities = computeEntityToLinkedEntitiesMap(metamodel);
         final List<List<String>> res = new ArrayList<>();
 
-        entityToPropertiesToProcess.keySet().stream()
-                .filter(k -> !k.equals(rootEntityName))
-                .forEach(entityName ->
-                        res.add(computeForeignKeyPath(rootEntityName, entityName, entityToLinkedEntities))
-                );
+        Set<String> entityNames = metamodel.getEntities().stream().map(e -> e.getJavaType().getSimpleName()).collect(Collectors.toSet());
+
+        // initialize map mapping entities to entities from which the entity was discovered
+        Map<String, String> childToParentMap = new HashMap<>();
+
+        // initialize DFS stack
+        Deque<String> dfsStack = new LinkedList<>();
+        dfsStack.push(rootEntityName);
+
+        // perform DFS
+        while (!dfsStack.isEmpty())
+        {
+            String entityNxt = dfsStack.pop();
+            boolean foundChildren = false;
+
+            for (String propNxt : entityToPropertiesToProcess.getOrDefault(entityNxt, Set.of()))
+            {
+                String entityName = propertyNameToEntityName(propNxt);
+                if (entityNames.contains(entityName))
+                {
+                    dfsStack.push(entityName);
+                    childToParentMap.put(entityName, entityNxt);
+                    foundChildren = true;
+                }
+            }
+
+            // if 'end' entity, reconstruct path
+            if (!foundChildren)
+            {
+                res.add(reconstructPathFromParentMap(childToParentMap, entityNxt));
+            }
+        }
+        return res;
+    }
+
+    private static List<String> reconstructPathFromParentMap(Map<String, String> childToParentMap, String endEntity)
+    {
+        List<String> res = new ArrayList<>();
+        res.add(endEntity);
+
+        String entityNxt = childToParentMap.get(endEntity);
+
+        while (entityNxt != null)
+        {
+            res.add(0, entityNxt);
+            entityNxt = childToParentMap.get(entityNxt);
+        }
+        return res;
+    }
+
+    public static Set<Pair<String, String>> getTransitionPairsFromForeignKeyPath(List<List<String>> foreignKeyPaths)
+    {
+        Set<Pair<String, String>> res = new HashSet<>();
+
+        for (List<String> foreignKeyPath : foreignKeyPaths)
+        {
+            for (int i = 0; i < foreignKeyPath.size() - 1; i++)
+            {
+                res.add(Pair.of(foreignKeyPath.get(i), foreignKeyPath.get(i + 1)));
+            }
+        }
 
         return res;
     }

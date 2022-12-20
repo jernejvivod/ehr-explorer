@@ -46,7 +46,7 @@ public class PropositionalizationServiceTest extends ATestBase
     private PropositionalizationService propositionalizationService;
 
     @Test
-    public void testComputeWoridificationWrongEntity()
+    public void testComputeWordificationWrongEntity()
     {
         WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
@@ -58,7 +58,7 @@ public class PropositionalizationServiceTest extends ATestBase
     }
 
     @Test
-    public void testComputeWoridificationWrongIdProperty()
+    public void testComputeWordificationWrongIdProperty()
     {
         WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
@@ -94,7 +94,7 @@ public class PropositionalizationServiceTest extends ATestBase
     }
 
     @Test
-    public void testComputeWoridificationSimpleSingleEntity()
+    public void testComputeWordificationSimpleSingleEntity()
     {
         WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
 
@@ -132,7 +132,7 @@ public class PropositionalizationServiceTest extends ATestBase
     }
 
     @Test
-    public void testComputeWoridificationSimpleTwoLinkedEntities()
+    public void testComputeWordificationSimpleTwoLinkedEntities()
     {
         WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
 
@@ -147,7 +147,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
         propertySpecEntryDto1.setEntity("AdmissionsEntity");
-        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion"));
+        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion", "patientsEntity"));
         propertySpecDto.addEntriesItem(propertySpecEntryDto1);
 
         PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
@@ -192,7 +192,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
         propertySpecEntryDto1.setEntity("AdmissionsEntity");
-        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion"));
+        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion", "patientsEntity"));
         propertySpecDto.addEntriesItem(propertySpecEntryDto1);
 
         PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
@@ -252,7 +252,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
         propertySpecEntryDto1.setEntity("AdmissionsEntity");
-        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion"));
+        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion", "patientsEntity"));
         propertySpecDto.addEntriesItem(propertySpecEntryDto1);
 
         PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
@@ -326,7 +326,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
         propertySpecEntryDto1.setEntity("AdmissionsEntity");
-        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion"));
+        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion", "patientsEntity", "icuStaysEntitys"));
         propertySpecDto.addEntriesItem(propertySpecEntryDto1);
 
         PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
@@ -405,7 +405,7 @@ public class PropositionalizationServiceTest extends ATestBase
     }
 
     @Test
-    @Timeout(value=90)
+    @Timeout(value = 180)
     public void testComputeWoridificationSimpleTwoLinkedEntities50PercentAdmissionsEntries()
     {
         WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
@@ -426,7 +426,7 @@ public class PropositionalizationServiceTest extends ATestBase
 
         PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
         propertySpecEntryDto1.setEntity("AdmissionsEntity");
-        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion"));
+        propertySpecEntryDto1.setProperties(List.of("insurance", "language", "religion", "patientsEntity", "icuStaysEntitys", "calloutEntitys"));
         propertySpecDto.addEntriesItem(propertySpecEntryDto1);
 
         PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
@@ -438,6 +438,28 @@ public class PropositionalizationServiceTest extends ATestBase
         propertySpecEntryDto3.setEntity("IcuStaysEntity");
         propertySpecEntryDto3.setProperties(List.of("firstCareUnit", "lastCareUnit"));
         propertySpecDto.addEntriesItem(propertySpecEntryDto3);
+
+        PropertySpecEntryDto propertySpecEntryDto4 = new PropertySpecEntryDto();
+        propertySpecEntryDto4.setEntity("CalloutEntity");
+        propertySpecEntryDto4.setProperties(
+                List.of("submitWardId",
+                        "submitCareUnit",
+                        "currWardId",
+                        "currCareUnit",
+                        "calloutWardId",
+                        "calloutService",
+                        "requestTele",
+                        "requestResp",
+                        "requestCdiff",
+                        "requestMrsa",
+                        "requestVre",
+                        "calloutStatus",
+                        "calloutOutcome",
+                        "dischargeWardId",
+                        "acknowledgeStatus"
+                )
+        );
+        propertySpecDto.addEntriesItem(propertySpecEntryDto4);
 
         wordificationConfigDto.setPropertySpec(propertySpecDto);
 

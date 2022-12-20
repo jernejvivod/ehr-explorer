@@ -1,55 +1,57 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+// Hospital admissions associated with an ICU stay.
 @Entity
 @Table(name = "admissions", schema = "mimiciii", catalog = "mimic")
-public class AdmissionsEntity implements Serializable
+public class AdmissionsEntity extends AEntity
 {
-    private Long rowId;                  // row ID (primary key)
-    private PatientsEntity patientsEntity;
-    private Long hadmId;                 // hospital admission ID
-    private LocalDateTime admitTime;    // time of admission to the hospital
-    private LocalDateTime dischTime;    // time of discharge from the hospital
-    private LocalDateTime deathTime;    // time of death
-    private String admissionType;       // type of admission (for example emergency or elective)
-    private String admissionLocation;   // admission location
-    private String dischargeLocation;   // discharge location
-    private String insurance;           // insurance type
-    private String language;            // language
-    private String religion;            // religion
-    private String maritalStatus;       // marital status
-    private String ethnicity;           // ethnicity
-    private LocalDateTime edRegTime;    // ?
-    private LocalDateTime edOutTime;    // ?
-    private String diagnosis;           // diagnosis
-    private Short hospitalExpireFlag;   // ?
-    private short hasChartEventsData;   // hospital admission has at least one observation in the chartevents table
+    private PatientsEntity patientsEntity;  // foreign key identifying the patient
+    private Long hadmId;                    // hospital admission ID
+    private LocalDateTime admitTime;        // time of admission to the hospital
+    private LocalDateTime dischTime;        // time of discharge from the hospital
+    private LocalDateTime deathTime;        // time of death
+    private String admissionType;           // type of admission (for example emergency or elective)
+    private String admissionLocation;       // admission location
+    private String dischargeLocation;       // discharge location
+    private String insurance;               // insurance type
+    private String language;                // language
+    private String religion;                // religion
+    private String maritalStatus;           // marital status
+    private String ethnicity;               // ethnicity
+    private LocalDateTime edRegTime;        // ?
+    private LocalDateTime edOutTime;        // ?
+    private String diagnosis;               // diagnosis
+    private Short hospitalExpireFlag;       // ?
+    private short hasChartEventsData;       // hospital admission has at least one observation in the chartevents table
     private Set<NoteEventsEntity> noteEventsEntitys;
     private Set<IcuStaysEntity> icuStaysEntitys;
-
-    @Id
-    @Column(name = "row_id", nullable = false)
-    public Long getRowId()
-    {
-        return rowId;
-    }
-
-    public void setRowId(Long rowId)
-    {
-        this.rowId = rowId;
-    }
+    private Set<CalloutEntity> calloutEntitys;
+    private Set<ChartEventsEntity> chartEventsEntitys;
+    private Set<CptEventsEntity> cptEventsEntitys;
+    private Set<DatetimeEventsEntity> datetimeEventsEntitys;
+    private Set<DiagnosesIcdEntity> diagnosesIcdEntitys;
+    private Set<DrgCodesEntity> drgCodesEntitys;
+    private Set<InputEventsCvEntity> inputEventsCvEntities;
+    private Set<InputEventsMvEntity> inputEventsMvEntitys;
+    private Set<LabEventsEntity> labEventsEntitys;
+    private Set<MicrobiologyEventsEntity> microbiologyEventsEntitys;
+    private Set<OutputEventsEntity> outputEventsEntitys;
+    private Set<PrescriptionsEntity> prescriptionsEntitys;
+    private Set<ProcedureEventsMvEntity> procedureEventsMvEntitys;
+    private Set<ProceduresIcdEntity> proceduresIcdEntitys;
+    private Set<ServicesEntity> servicesEntitys;
+    private Set<TransfersEntity> transfersEntitys;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", referencedColumnName = "subject_id")
@@ -80,9 +82,9 @@ public class AdmissionsEntity implements Serializable
         return admitTime;
     }
 
-    public void setAdmitTime(LocalDateTime admittime)
+    public void setAdmitTime(LocalDateTime admitTime)
     {
-        this.admitTime = admittime;
+        this.admitTime = admitTime;
     }
 
     @Column(name = "dischtime", nullable = false)
@@ -91,20 +93,20 @@ public class AdmissionsEntity implements Serializable
         return dischTime;
     }
 
-    public void setDischTime(LocalDateTime dischtime)
+    public void setDischTime(LocalDateTime dischTime)
     {
-        this.dischTime = dischtime;
+        this.dischTime = dischTime;
     }
 
-    @Column(name = "deathtime", nullable = true)
+    @Column(name = "deathtime")
     public LocalDateTime getDeathTime()
     {
         return deathTime;
     }
 
-    public void setDeathTime(LocalDateTime deathtime)
+    public void setDeathTime(LocalDateTime deathTime)
     {
-        this.deathTime = deathtime;
+        this.deathTime = deathTime;
     }
 
     @Column(name = "admission_type", nullable = false, length = 50)
@@ -151,7 +153,7 @@ public class AdmissionsEntity implements Serializable
         this.insurance = insurance;
     }
 
-    @Column(name = "language", nullable = true, length = 10)
+    @Column(name = "language", length = 10)
     public String getLanguage()
     {
         return language;
@@ -162,7 +164,7 @@ public class AdmissionsEntity implements Serializable
         this.language = language;
     }
 
-    @Column(name = "religion", nullable = true, length = 50)
+    @Column(name = "religion", length = 50)
     public String getReligion()
     {
         return religion;
@@ -173,7 +175,7 @@ public class AdmissionsEntity implements Serializable
         this.religion = religion;
     }
 
-    @Column(name = "marital_status", nullable = true, length = 50)
+    @Column(name = "marital_status", length = 50)
     public String getMaritalStatus()
     {
         return maritalStatus;
@@ -195,29 +197,29 @@ public class AdmissionsEntity implements Serializable
         this.ethnicity = ethnicity;
     }
 
-    @Column(name = "edregtime", nullable = true)
+    @Column(name = "edregtime")
     public LocalDateTime getEdRegTime()
     {
         return edRegTime;
     }
 
-    public void setEdRegTime(LocalDateTime edregtime)
+    public void setEdRegTime(LocalDateTime edRegTime)
     {
-        this.edRegTime = edregtime;
+        this.edRegTime = edRegTime;
     }
 
-    @Column(name = "edouttime", nullable = true)
+    @Column(name = "edouttime")
     public LocalDateTime getEdOutTime()
     {
         return edOutTime;
     }
 
-    public void setEdOutTime(LocalDateTime edouttime)
+    public void setEdOutTime(LocalDateTime edOutTime)
     {
-        this.edOutTime = edouttime;
+        this.edOutTime = edOutTime;
     }
 
-    @Column(name = "diagnosis", nullable = true, length = 255)
+    @Column(name = "diagnosis", length = 255)
     public String getDiagnosis()
     {
         return diagnosis;
@@ -228,7 +230,7 @@ public class AdmissionsEntity implements Serializable
         this.diagnosis = diagnosis;
     }
 
-    @Column(name = "hospital_expire_flag", nullable = true)
+    @Column(name = "hospital_expire_flag")
     public Short getHospitalExpireFlag()
     {
         return hospitalExpireFlag;
@@ -245,23 +247,23 @@ public class AdmissionsEntity implements Serializable
         return hasChartEventsData;
     }
 
-    public void setHasChartEventsData(short hasCharteventsData)
+    public void setHasChartEventsData(short hasChartEventsData)
     {
-        this.hasChartEventsData = hasCharteventsData;
+        this.hasChartEventsData = hasChartEventsData;
     }
 
-    @OneToMany(mappedBy = "admissionsEntity", targetEntity = NoteEventsEntity.class)
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
     public Set<NoteEventsEntity> getNoteEventsEntitys()
     {
         return noteEventsEntitys;
     }
 
-    public void setNoteEventsEntitys(Set<NoteEventsEntity> noteeventsEntitys)
+    public void setNoteEventsEntitys(Set<NoteEventsEntity> noteEventsEntitys)
     {
-        this.noteEventsEntitys = noteeventsEntitys;
+        this.noteEventsEntitys = noteEventsEntitys;
     }
 
-    @OneToMany(mappedBy = "admissionsEntity", targetEntity = IcuStaysEntity.class)
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
     public Set<IcuStaysEntity> getIcuStaysEntitys()
     {
         return icuStaysEntitys;
@@ -270,5 +272,181 @@ public class AdmissionsEntity implements Serializable
     public void setIcuStaysEntitys(Set<IcuStaysEntity> icuStaysEntitys)
     {
         this.icuStaysEntitys = icuStaysEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<CalloutEntity> getCalloutEntitys()
+    {
+        return calloutEntitys;
+    }
+
+    public void setCalloutEntitys(Set<CalloutEntity> calloutEntitys)
+    {
+        this.calloutEntitys = calloutEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<ChartEventsEntity> getChartEventsEntitys()
+    {
+        return chartEventsEntitys;
+    }
+
+    public void setChartEventsEntitys(Set<ChartEventsEntity> chartEventsEntities)
+    {
+        this.chartEventsEntitys = chartEventsEntities;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<CptEventsEntity> getCptEventsEntitys()
+    {
+        return cptEventsEntitys;
+    }
+
+    public void setCptEventsEntitys(Set<CptEventsEntity> cptEventsEntitys)
+    {
+        this.cptEventsEntitys = cptEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<DatetimeEventsEntity> getDatetimeEventsEntitys()
+    {
+        return datetimeEventsEntitys;
+    }
+
+    public void setDatetimeEventsEntitys(Set<DatetimeEventsEntity> datetimeEventsEntitys)
+    {
+        this.datetimeEventsEntitys = datetimeEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<DiagnosesIcdEntity> getDiagnosesIcdEntitys()
+    {
+        return diagnosesIcdEntitys;
+    }
+
+    public void setDiagnosesIcdEntitys(Set<DiagnosesIcdEntity> diagnosesIcdEntitys)
+    {
+        this.diagnosesIcdEntitys = diagnosesIcdEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<DrgCodesEntity> getDrgCodesEntitys()
+    {
+        return drgCodesEntitys;
+    }
+
+    public void setDrgCodesEntitys(Set<DrgCodesEntity> drgCodesEntitys)
+    {
+        this.drgCodesEntitys = drgCodesEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<InputEventsCvEntity> getInputEventsCvEntities()
+    {
+        return inputEventsCvEntities;
+    }
+
+    public void setInputEventsCvEntities(Set<InputEventsCvEntity> inputEventsCvEntities)
+    {
+        this.inputEventsCvEntities = inputEventsCvEntities;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<InputEventsMvEntity> getInputEventsMvEntitys()
+    {
+        return inputEventsMvEntitys;
+    }
+
+    public void setInputEventsMvEntitys(Set<InputEventsMvEntity> inputEventsMvEntitys)
+    {
+        this.inputEventsMvEntitys = inputEventsMvEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<LabEventsEntity> getLabEventsEntitys()
+    {
+        return labEventsEntitys;
+    }
+
+    public void setLabEventsEntitys(Set<LabEventsEntity> labEventsEntitys)
+    {
+        this.labEventsEntitys = labEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<MicrobiologyEventsEntity> getMicrobiologyEventsEntitys()
+    {
+        return microbiologyEventsEntitys;
+    }
+
+    public void setMicrobiologyEventsEntitys(Set<MicrobiologyEventsEntity> microbiologyEventsEntitys)
+    {
+        this.microbiologyEventsEntitys = microbiologyEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<OutputEventsEntity> getOutputEventsEntitys()
+    {
+        return outputEventsEntitys;
+    }
+
+    public void setOutputEventsEntitys(Set<OutputEventsEntity> outputEventsEntitys)
+    {
+        this.outputEventsEntitys = outputEventsEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<PrescriptionsEntity> getPrescriptionsEntitys()
+    {
+        return prescriptionsEntitys;
+    }
+
+    public void setPrescriptionsEntitys(Set<PrescriptionsEntity> prescriptionsEntitys)
+    {
+        this.prescriptionsEntitys = prescriptionsEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<ProcedureEventsMvEntity> getProcedureEventsMvEntitys()
+    {
+        return procedureEventsMvEntitys;
+    }
+
+    public void setProcedureEventsMvEntitys(Set<ProcedureEventsMvEntity> procedureEventsMvEntitys)
+    {
+        this.procedureEventsMvEntitys = procedureEventsMvEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<ProceduresIcdEntity> getProceduresIcdEntitys()
+    {
+        return proceduresIcdEntitys;
+    }
+
+    public void setProceduresIcdEntitys(Set<ProceduresIcdEntity> proceduresIcdEntitys)
+    {
+        this.proceduresIcdEntitys = proceduresIcdEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<ServicesEntity> getServicesEntitys()
+    {
+        return servicesEntitys;
+    }
+
+    public void setServicesEntitys(Set<ServicesEntity> servicesEntitys)
+    {
+        this.servicesEntitys = servicesEntitys;
+    }
+
+    @OneToMany(mappedBy = "admissionsEntity", fetch = FetchType.LAZY)
+    public Set<TransfersEntity> getTransfersEntitys()
+    {
+        return transfersEntitys;
+    }
+
+    public void setTransfersEntitys(Set<TransfersEntity> transfersEntitys)
+    {
+        this.transfersEntitys = transfersEntitys;
     }
 }

@@ -1,11 +1,15 @@
 package si.jernej.mexplorer.core.processing;
 
+import java.beans.FeatureDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +19,8 @@ import java.util.Set;
 import javax.enterprise.context.Dependent;
 import javax.persistence.Entity;
 import javax.ws.rs.InternalServerErrorException;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
@@ -45,9 +51,17 @@ public class Wordification
      * @param valueTransformer {@link ValueTransformer} instance used to specify the value transformations
      * @param compositeColumnCreator {@link CompositeColumnCreator} instance used to specify the creation of composite columns
      * @param concatenationScheme {@link ConcatenationScheme} instance used to specify the word concatenations
+     * @param transitionPairsFromForeignKeyPath set of pairs of entity names that occur on foreign key paths obtained from the specified {@link PropertySpec}
      * @return {@code List} of obtained words for specified root entity
      */
-    public List<String> wordify(Object rootEntity, PropertySpec propertySpec, ValueTransformer valueTransformer, CompositeColumnCreator compositeColumnCreator, ConcatenationScheme concatenationScheme)
+    public List<String> wordify(
+            Object rootEntity,
+            PropertySpec propertySpec,
+            ValueTransformer valueTransformer,
+            CompositeColumnCreator compositeColumnCreator,
+            ConcatenationScheme concatenationScheme,
+            Set<Pair<String, String>> transitionPairsFromForeignKeyPath
+    )
     {
         // list of resulting words
         List<String> wordsAll = new ArrayList<>();
@@ -71,43 +85,56 @@ public class Wordification
                 List<String> wordsForEntity = new ArrayList<>();
 
                 // go over entity's properties
-                for (PropertyDescriptor propertyDescriptor : Introspector.getBeanInfo(nxt.getClass()).getPropertyDescriptors())
+                for (PropertyDescriptor propertyDescriptor : Arrays.stream(Introspector.getBeanInfo(nxt.getClass()).getPropertyDescriptors()).sorted(Comparator.comparing(FeatureDescriptor::getName)).toList())
                 {
-                    Object nxtProperty = propertyDescriptor.getReadMethod().invoke(nxt);
+                    Class<?> propertyType = propertyDescriptor.getPropertyType();
 
                     // if property should be included as a word
-                    if (propertySpec.containsEntry(entityName, propertyDescriptor.getName()))
+                    if (propertySpec.containsEntry(entityName, propertyDescriptor.getName()) && !propertyType.isAnnotationPresent(Entity.class) && !Collection.class.isAssignableFrom(propertyType))
                     {
+                        Object nxtPropertyVal = propertyDescriptor.getReadMethod().invoke(nxt);
+
                         wordsForEntity.add("%s@%s@%s".formatted(
                                         entityName,
                                         propertyDescriptor.getName(),
-                                        valueTransformer.applyTransform(entityName, propertyDescriptor.getName(), nxtProperty)
+                                        valueTransformer.applyTransform(entityName, propertyDescriptor.getName(), nxtPropertyVal)
                                 )
                                 .toLowerCase()
                                 .replace(' ', '_'));
                     }
 
-                    else if (nxtProperty instanceof Collection<?> collection && !collection.isEmpty())
+                    else if (Collection.class.isAssignableFrom(propertyType))
                     {
                         // if property collection of linked entities
-                        Class<?> linkedEntityClass = collection.iterator().next().getClass();
+                        Class<?> linkedEntityClass = (Class<?>) ((ParameterizedType) nxt.getClass().getDeclaredField(propertyDescriptor.getName()).getGenericType()).getActualTypeArguments()[0];
 
                         // if collection of linked entities that were not yet visited, add to queue
-                        if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) && linkedEntityClass.isAnnotationPresent(Entity.class))
+                        if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) &&
+                            linkedEntityClass.isAnnotationPresent(Entity.class) &&
+                            transitionPairsFromForeignKeyPath.contains(Pair.of(entityName, linkedEntityClass.getSimpleName()))
+                        )
                         {
-                            WordificationUtil.addLinkedCollectionToQueue(bfsQueue, propertySpec, collection, linkedEntityClass);
+                            Collection<?> nxtPropertyVal = (Collection<?>) propertyDescriptor.getReadMethod().invoke(nxt);
+                            WordificationUtil.addLinkedCollectionToQueue(bfsQueue, propertySpec, nxtPropertyVal, linkedEntityClass);
                             visitedEntities.add(linkedEntityClass.getSimpleName());
                         }
                     }
-                    else if (nxtProperty != null)
+                    else if (propertyType.isAnnotationPresent(Entity.class))
                     {
                         // if single linked entity
-                        Class<?> linkedEntityClass = nxtProperty.getClass();
+                        Object nxtPropertyVal = propertyDescriptor.getReadMethod().invoke(nxt);
+                        if (nxtPropertyVal == null)
+                            continue;
+
+                        Class<?> linkedEntityClass = nxtPropertyVal.getClass();
 
                         // if property linked entity and not yet visited, add to queue
-                        if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) && linkedEntityClass.isAnnotationPresent(Entity.class))
+                        if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) &&
+                            linkedEntityClass.isAnnotationPresent(Entity.class) &&
+                            transitionPairsFromForeignKeyPath.contains(Pair.of(entityName, linkedEntityClass.getSimpleName()))
+                        )
                         {
-                            bfsQueue.add(nxtProperty);
+                            bfsQueue.add(nxtPropertyVal);
                             visitedEntities.add(linkedEntityClass.getSimpleName());
                         }
                     }
@@ -117,7 +144,7 @@ public class Wordification
                 wordsAll.addAll(WordificationUtil.addConcatenations(wordsForEntity, concatenationScheme));
             }
         }
-        catch (IntrospectionException | IllegalAccessException | InvocationTargetException e)
+        catch (IntrospectionException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e)
         {
             throw new InternalServerErrorException("Error computing Wordification");
         }
