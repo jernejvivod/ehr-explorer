@@ -1,36 +1,50 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 
 // Events relating to microbiology tests.
 @Entity
 @Table(name = "microbiologyevents", schema = "mimiciii", catalog = "mimic")
 public class MicrobiologyEventsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private LocalDateTime chartDate;            // date when the event occurred
+    @PropertyOrder(5)
     private LocalDateTime chartTime;            // time when the event occurred, if available
+    @PropertyOrder(6)
     private DItemsEntity specItem;              // foreign key identifying the specimen
+    @PropertyOrder(7)
     private String specTypeDesc;                // description of the specimen
+    @PropertyOrder(8)
     private DItemsEntity orgItem;               // foreign key identifying the organism
+    @PropertyOrder(9)
     private String orgName;                     // name of the organism
+    @PropertyOrder(10)
     private Short isolateNum;                   // isolate number associated with the test
+    @PropertyOrder(11)
     private DItemsEntity abItem;                 // foreign key identifying the antibody
+    @PropertyOrder(12)
     private String abName;                       // name of the antibody used
+    @PropertyOrder(13)
     private String dilutionText;                 // the dilution amount tested for and the comparison which was made against it (e.g. <=4)
+    @PropertyOrder(14)
     private String dilutionComparison;           // the comparison component of DILUTION_TEXT: either <= (less than or equal), = (equal), or >= (greater than or equal), or null when not available
+    @PropertyOrder(15)
     private Double dilutionValue;                // the value component of DILUTION_TEXT: must be a floating point number
+    @PropertyOrder(16)
     private String interpretation;               // interpretation of the test.
 
     @ManyToOne(fetch = FetchType.LAZY)

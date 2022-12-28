@@ -138,4 +138,57 @@ class CompositeColumnCreatorTest extends ATestBase
             Assertions.assertEquals(hadmIdToExpectedAge.get(hadmId), compositeColumns.get(compositeName).get(i));
         }
     }
+
+    @Test
+    void testCompositeColumnCreatorValidationValid()
+    {
+        CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
+        compositeColumnCreator.addEntry(
+                List.of("AdmissionsEntity"),
+                "admitTime",
+                List.of("AdmissionsEntity", "PatientsEntity"),
+                "dob",
+                "ageAtAdmission",
+                (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
+        );
+        Assertions.assertDoesNotThrow(() -> compositeColumnCreator.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testCompositeColumnCreatorValidationEmpty()
+    {
+        CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
+        Assertions.assertDoesNotThrow(() -> compositeColumnCreator.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testCompositeColumnCreatorValidationWrongEntity()
+    {
+        CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
+        compositeColumnCreator.addEntry(
+                List.of("AdmissionsEntity"),
+                "admitTime",
+                List.of("Wrong", "PatientsEntity"),
+                "dob",
+                "ageAtAdmission",
+                (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
+        );
+        Assertions.assertThrows(ValidationCoreException.class, () -> compositeColumnCreator.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testCompositeColumnCreatorValidationWrongProperty()
+    {
+        CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
+        compositeColumnCreator.addEntry(
+                List.of("AdmissionsEntity"),
+                "admitTime",
+                List.of("AdmissionsEntity", "PatientsEntity"),
+                "wrong",
+                "ageAtAdmission",
+                (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
+        );
+        Assertions.assertThrows(ValidationCoreException.class, () -> compositeColumnCreator.assertValid(em.getMetamodel()));
+    }
+
 }

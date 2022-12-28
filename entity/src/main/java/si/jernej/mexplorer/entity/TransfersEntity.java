@@ -9,22 +9,36 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Location of patients during their hospital stay.
 @Entity
 @Table(name = "transfers", schema = "mimiciii", catalog = "mimic")
 public class TransfersEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private IcuStaysEntity icuStaysEntity;      // foreign key identifying the ICU stay
+    @PropertyOrder(5)
     private String dbSource;                    // source database of the item
+    @PropertyOrder(6)
     private String eventType;                   // type of event, for example admission or transfer
+    @PropertyOrder(7)
     private String prevCareUnit;                // previous careunit
+    @PropertyOrder(8)
     private String currCareUnit;                // current careunit
+    @PropertyOrder(9)
     private Short prevWardId;                   // identifier for the previous ward the patient was located in
+    @PropertyOrder(10)
     private Short currWardId;                   // identifier for the current ward the patient is located in
+    @PropertyOrder(11)
     private LocalDateTime inTime;               // time when the patient was transferred into the unit
+    @PropertyOrder(12)
     private LocalDateTime outTime;              // time when the patient was transferred out of the unit
+    @PropertyOrder(13)
     private Double los;                         // length of stay in minutes
 
     @ManyToOne(fetch = FetchType.LAZY)

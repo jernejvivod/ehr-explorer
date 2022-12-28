@@ -1,23 +1,38 @@
 package si.jernej.mexplorer.core.test.util;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
+import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.entity.PatientsEntity;
 import si.jernej.mexplorer.test.ATestBase;
 
-public class EntityUtilsTest extends ATestBase
+class EntityUtilsTest extends ATestBase
 {
+    @Override
+    protected Weld loadWeld(Weld weld)
+    {
+        return weld.addPackages(
+                true,
+                getClass(),
+                OrderedEntityPropertyDescriptors.class
+        );
+    }
+
     private final Map<String, Set<String>> entityToLinkedEntities = Map.ofEntries(
             Map.entry("A", Set.of("B", "C", "D")),
             Map.entry("B", Set.of("A")),
@@ -281,5 +296,47 @@ public class EntityUtilsTest extends ATestBase
                 ),
                 res
         );
+    }
+
+    @Test
+    void testGetFieldsUpToObject()
+    {
+        class A
+        {
+            private int propA;
+        }
+
+        class B extends A
+        {
+            private int propB;
+        }
+
+        class C extends B
+        {
+            private int propC;
+        }
+
+        Set<Field> fieldsUpToObject = EntityUtils.getFieldsUpToObject(C.class);
+        Set<Field> expectedFields = new HashSet<>();
+        expectedFields.addAll(Arrays.asList(A.class.getDeclaredFields()));
+        expectedFields.addAll(Arrays.asList(B.class.getDeclaredFields()));
+        expectedFields.addAll(Arrays.asList(C.class.getDeclaredFields()));
+
+        Assertions.assertEquals(new HashSet<>(expectedFields), fieldsUpToObject);
+    }
+
+    @Test
+    void testAssertEntityValid()
+    {
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertEntityValid("AdmissionsEntity", em.getMetamodel()));
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityValid("Wrong", em.getMetamodel()));
+    }
+
+    @Test
+    void testAssertEntityAndPropertyValid()
+    {
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertEntityAndPropertyValid("AdmissionsEntity", "language", em.getMetamodel()));
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityAndPropertyValid("AdmissionsEntity", "wrong", em.getMetamodel()));
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityAndPropertyValid("Wrong", "gender", em.getMetamodel()));
     }
 }

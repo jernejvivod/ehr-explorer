@@ -7,17 +7,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Hospital stays classified using the Diagnosis-Related Group system.
 @Entity
 @Table(name = "drgcodes", schema = "mimiciii", catalog = "mimic")
 public class DrgCodesEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;        // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;    // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private String drgType;                       // Type of Diagnosis-Related Group, for example APR is All Patient Refined
+    @PropertyOrder(5)
     private String drgCode;                       // Diagnosis-Related Group code
+    @PropertyOrder(6)
     private String description;                   // Description of the Diagnosis-Related Group
+    @PropertyOrder(7)
     private Short drgSeverity;                    // Relative severity, available for type APR only
+    @PropertyOrder(8)
     private Short drgMortality;                   // Relative mortality, available for type APR only
 
     @ManyToOne(fetch = FetchType.LAZY)

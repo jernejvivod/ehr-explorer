@@ -9,20 +9,32 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Notes associated with hospital stays.
 @Entity
 @Table(name = "noteevents", schema = "mimiciii", catalog = "mimic")
 public class NoteEventsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private LocalDateTime chartDate;            // date when the note was charted
+    @PropertyOrder(5)
     private LocalDateTime chartTime;            // Date and time when the note was charted. Note that some notes (e.g. discharge summaries) do not have a time associated with them: these notes have NULL in this column.
+    @PropertyOrder(6)
     private LocalDateTime storeTime;            // ?
+    @PropertyOrder(7)
     private String category;                    // Category of the note, e.g. Discharge summary.
+    @PropertyOrder(8)
     private String description;                 // a more detailed categorization for the note, sometimes entered by free-text
+    @PropertyOrder(9)
     private CareGiversEntity careGiversEntity;  // foreign key identifying the caregiver
+    @PropertyOrder(10)
     private String isError;                     // flag to highlight an error with the note
+    @PropertyOrder(11)
     private String text;                        // content of the note
 
     @ManyToOne(fetch = FetchType.LAZY)

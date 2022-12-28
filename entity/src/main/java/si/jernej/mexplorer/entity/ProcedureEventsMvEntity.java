@@ -9,34 +9,60 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Procedure start and stop times recorded for MetaVision patients.
 @Entity
 @Table(name = "procedureevents_mv", schema = "mimiciii", catalog = "mimic")
 public class ProcedureEventsMvEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private IcuStaysEntity icuStaysEntity;      // foreign key identifying the ICU stay
+    @PropertyOrder(5)
     private LocalDateTime startTime;            // ?
+    @PropertyOrder(6)
     private LocalDateTime endTime;              // ?
+    @PropertyOrder(7)
     private DItemsEntity dItemsEntity;          // ?
+    @PropertyOrder(8)
     private Double value;                       // ?
+    @PropertyOrder(9)
     private String valueUom;                    // ?
+    @PropertyOrder(10)
     private String location;                    // ?
+    @PropertyOrder(11)
     private String locationCategory;            // ?
+    @PropertyOrder(12)
     private LocalDateTime storeTime;            // ?
+    @PropertyOrder(13)
     private CareGiversEntity careGiversEntity;  // ?
+    @PropertyOrder(14)
     private Integer orderId;                    // ?
+    @PropertyOrder(15)
     private Integer linkOrderId;                // ?
+    @PropertyOrder(16)
     private String orderCategoryName;           // ?
+    @PropertyOrder(17)
     private String secondaryOrderCategoryName;  // ?
+    @PropertyOrder(18)
     private String orderCategoryDescription;    // ?
+    @PropertyOrder(19)
     private Short isOpenBag;                    // ?
+    @PropertyOrder(20)
     private Short continueInNextDept;           // ?
+    @PropertyOrder(21)
     private Short cancelReason;                 // ?
+    @PropertyOrder(22)
     private String statusDescription;           // ?
+    @PropertyOrder(23)
     private String commentsEditedBy;            // ?
+    @PropertyOrder(24)
     private String commentsCanceledBy;          // ?
+    @PropertyOrder(25)
     private LocalDateTime commentsDate;         // ?
 
     @ManyToOne(fetch = FetchType.LAZY)

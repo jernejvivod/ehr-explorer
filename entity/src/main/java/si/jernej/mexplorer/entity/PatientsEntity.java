@@ -1,46 +1,72 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 
 // Patients associated with an admission to the ICU.
 @Entity
 @Table(name = "patients", schema = "mimiciii", catalog = "mimic")
 public class PatientsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private int subjectId;                            // patient's ID
+    @PropertyOrder(3)
     private String gender;                            // patient's gender
+    @PropertyOrder(4)
     private LocalDateTime dob;                        // date of birth
+    @PropertyOrder(5)
     private LocalDateTime dod;                        // date of death (null if the patient was alive at least 90 days post hospital discharge)
+    @PropertyOrder(6)
     private LocalDateTime dodHosp;                    // date of death recorded in the hospital records
+    @PropertyOrder(7)
     private LocalDateTime dodSsn;                     // date of death recorded in the social security records
+    @PropertyOrder(8)
     private int expireFlag;                           // Lag indicating that the patient has died
+    @PropertyOrder(9)
     private Set<AdmissionsEntity> admissionsEntitys;
+    @PropertyOrder(10)
     private Set<IcuStaysEntity> icuStaysEntitys;
+    @PropertyOrder(11)
     private Set<NoteEventsEntity> noteEventsEntitys;
+    @PropertyOrder(12)
     private Set<CalloutEntity> calloutEntitys;
+    @PropertyOrder(13)
     private Set<ChartEventsEntity> chartEventsEntitys;
+    @PropertyOrder(14)
     private Set<CptEventsEntity> cptEventsEntitys;
+    @PropertyOrder(15)
     private Set<DatetimeEventsEntity> datetimeEventsEntitys;
+    @PropertyOrder(16)
     private Set<DiagnosesIcdEntity> diagnosesIcdEntitys;
+    @PropertyOrder(17)
     private Set<DrgCodesEntity> drgCodesEntitys;
+    @PropertyOrder(18)
     private Set<InputEventsCvEntity> inputEventsCvEntitys;
+    @PropertyOrder(19)
     private Set<InputEventsMvEntity> inputEventsMvEntitys;
+    @PropertyOrder(20)
     private Set<LabEventsEntity> labEventsEntitys;
+    @PropertyOrder(21)
     private Set<MicrobiologyEventsEntity> microbiologyEventsEntitys;
+    @PropertyOrder(22)
     private Set<OutputEventsEntity> outputEventsEntitys;
+    @PropertyOrder(23)
     private Set<PrescriptionsEntity> prescriptionsEntitys;
+    @PropertyOrder(24)
     private Set<ProcedureEventsMvEntity> procedureEventsMvEntitys;
+    @PropertyOrder(25)
     private Set<ProceduresIcdEntity> proceduresIcdEntitys;
+    @PropertyOrder(26)
     private Set<ServicesEntity> servicesEntitys;
+    @PropertyOrder(27)
     private Set<TransfersEntity> transfersEntitys;
 
     @Column(name = "subject_id", nullable = false)

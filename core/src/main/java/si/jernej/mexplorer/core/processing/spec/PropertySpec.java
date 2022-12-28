@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-// TODO add validation
+import javax.persistence.metamodel.Metamodel;
+
+import si.jernej.mexplorer.core.util.EntityUtils;
 
 /**
  * Class representing the specification of which properties of which entities to include for the
@@ -112,5 +114,25 @@ public class PropertySpec
     public Map<String, Set<String>> getEntityToPropertiesToProcess()
     {
         return entityToPropertiesToProcess;
+    }
+
+    public void assertValid(Metamodel metamodel)
+    {
+        entityToPropertiesToProcess.forEach(
+                (entityName, propertyNames) -> {
+                    for (String propertyValue : propertyNames)
+                    {
+                        EntityUtils.assertEntityAndPropertyValid(entityName, propertyValue, metamodel);
+                    }
+                }
+        );
+
+        sortSpecs.forEach(
+                (entityName, propertyName) -> EntityUtils.assertEntityAndPropertyValid(entityName, propertyName, metamodel)
+        );
+
+        durationLimitSpecs.forEach(
+                (entityName, durationLimitSpec) -> EntityUtils.assertEntityAndPropertyValid(entityName, durationLimitSpec.propertyName(), metamodel)
+        );
     }
 }

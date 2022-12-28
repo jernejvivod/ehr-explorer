@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
@@ -76,9 +75,9 @@ class WordificationUtilTest
     }
 
     @Test
-    void testAddLinkedCollectionToQueue()
+    void testAddLinkedCollectionToStack()
     {
-        Queue<Object> bfsQueue = new LinkedList<>();
+        LinkedList<Object> dfsStack = new LinkedList<>();
         PropertySpec propertySpec = new PropertySpec();
         Class<?> linkedEntityClass = PatientsEntity.class;
 
@@ -89,16 +88,16 @@ class WordificationUtilTest
                 new TestClass(2)
         );
 
-        WordificationUtil.addLinkedCollectionToQueue(bfsQueue, propertySpec, collection, linkedEntityClass);
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, collection, linkedEntityClass);
 
-        Assertions.assertFalse(bfsQueue.isEmpty());
-        bfsQueue.forEach(e -> Assertions.assertTrue(collection.contains(e)));
+        Assertions.assertFalse(dfsStack.isEmpty());
+        dfsStack.forEach(e -> Assertions.assertTrue(collection.contains(e)));
     }
 
     @Test
-    void testAddLinkedCollectionToQueueWithSorting()
+    void testAddLinkedCollectionToStackWithSorting()
     {
-        Queue<Object> bfsQueue = new LinkedList<>();
+        LinkedList<Object> dfsStack = new LinkedList<>();
 
         Class<?> linkedEntityClass = TestClass.class;
 
@@ -115,10 +114,10 @@ class WordificationUtilTest
                 new TestClass(5)
         );
 
-        WordificationUtil.addLinkedCollectionToQueue(bfsQueue, propertySpec, collection, linkedEntityClass);
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, collection, linkedEntityClass);
 
-        Assertions.assertFalse(bfsQueue.isEmpty());
-        Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6, 7), bfsQueue.stream().map(e -> ((TestClass) e).getA()).toList());
+        Assertions.assertFalse(dfsStack.isEmpty());
+        Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6, 7), dfsStack.stream().map(e -> ((TestClass) e).getA()).toList());
     }
 
     @Test
@@ -170,7 +169,7 @@ class WordificationUtilTest
     }
 
     @Test
-    void testAddLinkedCollectionToQueueWithSortingAndDurationLimit()
+    void testAddLinkedCollectionToStackWithSortingAndDurationLimit()
     {
         Collection<?> linkedEntitiesList = Set.of(
                 new TestClassWithDateTimeProperty(LocalDateTime.now().plusHours(3)),
@@ -194,18 +193,18 @@ class WordificationUtilTest
         propertySpec3.addSort("TestClassWithDateTimeProperty", "a");
         propertySpec3.addDurationLimitSpec("TestClassWithDateTimeProperty", "a", Duration.ofHours(5).plusSeconds(1));
 
-        Queue<Object> bfsQueue1 = new LinkedList<>();
-        WordificationUtil.addLinkedCollectionToQueue(bfsQueue1, propertySpec1, linkedEntitiesList, TestClassWithDateTimeProperty.class);
+        LinkedList<Object> dfsStack1 = new LinkedList<>();
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack1, propertySpec1, linkedEntitiesList, TestClassWithDateTimeProperty.class);
 
-        Queue<Object> bfsQueue2 = new LinkedList<>();
-        WordificationUtil.addLinkedCollectionToQueue(bfsQueue2, propertySpec2, linkedEntitiesList, TestClassWithDateTimeProperty.class);
+        LinkedList<Object> dfsStack2 = new LinkedList<>();
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack2, propertySpec2, linkedEntitiesList, TestClassWithDateTimeProperty.class);
 
-        Queue<Object> bfsQueue3 = new LinkedList<>();
-        WordificationUtil.addLinkedCollectionToQueue(bfsQueue3, propertySpec3, linkedEntitiesList, TestClassWithDateTimeProperty.class);
+        LinkedList<Object> dfsStack3 = new LinkedList<>();
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack3, propertySpec3, linkedEntitiesList, TestClassWithDateTimeProperty.class);
 
-        Assertions.assertEquals(2, bfsQueue1.size());
-        Assertions.assertEquals(4, bfsQueue2.size());
-        Assertions.assertEquals(6, bfsQueue3.size());
+        Assertions.assertEquals(2, dfsStack1.size());
+        Assertions.assertEquals(4, dfsStack2.size());
+        Assertions.assertEquals(6, dfsStack3.size());
     }
 
     public static class A

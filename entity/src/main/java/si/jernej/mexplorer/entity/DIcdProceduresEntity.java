@@ -4,13 +4,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Dictionary of the International Classification of Diseases, 9th Revision (Procedures).
 @Entity
 @Table(name = "d_icd_procedures", schema = "mimiciii", catalog = "mimic")
 public class DIcdProceduresEntity extends AEntity
 {
+    @PropertyOrder(2)
     private String icd9Code;    // ICD9 code - note that this is a fixed length character field, as whitespaces are important in uniquely identifying ICD-9 codes.
+    @PropertyOrder(3)
     private String shortTitle;  // short title associated with the code
+    @PropertyOrder(4)
     private String longTitle;   // long title associated with the code
 
     @Column(name = "icd9_code", nullable = false, length = 10)

@@ -1,14 +1,29 @@
 package si.jernej.mexplorer.core.test.processing.spec;
 
+import java.time.Duration;
 import java.util.Set;
 
+import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
+import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
+import si.jernej.mexplorer.test.ATestBase;
 
-class PropertySpecTest
+class PropertySpecTest extends ATestBase
 {
+    @Override
+    protected Weld loadWeld(Weld weld)
+    {
+        return weld.addPackages(
+                true,
+                getClass(),
+                OrderedEntityPropertyDescriptors.class
+        );
+    }
+
     @Test
     void testPropertySpec()
     {
@@ -39,5 +54,72 @@ class PropertySpecTest
         Assertions.assertTrue(propertySpec2.containsEntry(ENTITY2, ENTITY2_PROPERTY1));
         Assertions.assertTrue(propertySpec2.containsEntry(ENTITY2, ENTITY2_PROPERTY2));
 
+    }
+
+    @Test
+    void testPropertySpecValidationValid()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "patientsEntity");
+        propertySpec.addEntry("AdmissionsEntity", "rowId");
+        propertySpec.addEntry("PatientsEntity", "gender");
+        propertySpec.addSort("PatientsEntity", "dod");
+        propertySpec.addDurationLimitSpec("MicrobiologyEventsEntity", "chartTime", Duration.ofHours(1));
+
+        Assertions.assertDoesNotThrow(() -> propertySpec.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testPropertySpecValidationEmpty()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        Assertions.assertDoesNotThrow(() -> propertySpec.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testPropertySpecValidationInvalidSpecEntity()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "patientsEntity");
+        propertySpec.addEntry("AdmissionsEntity", "rowId");
+        propertySpec.addEntry("Wrong", "expireFlag");
+
+        Assertions.assertThrows(ValidationCoreException.class, () -> propertySpec.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testPropertySpecValidationInvalidSpecProperty()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "patientsEntity");
+        propertySpec.addEntry("AdmissionsEntity", "rowId");
+        propertySpec.addEntry("PatientsEntity", "gender");
+        propertySpec.addEntry("PatientsEntity", "wrong");
+
+        Assertions.assertThrows(ValidationCoreException.class, () -> propertySpec.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testPropertySpecValidationInvalidSortProperty()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "patientsEntity");
+        propertySpec.addEntry("AdmissionsEntity", "rowId");
+        propertySpec.addEntry("PatientsEntity", "gender");
+        propertySpec.addSort("PatientsEntity", "wrong");
+
+        Assertions.assertThrows(ValidationCoreException.class, () -> propertySpec.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testPropertySpecValidationInvalidDurationLimitProperty()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("AdmissionsEntity", "patientsEntity");
+        propertySpec.addEntry("AdmissionsEntity", "rowId");
+        propertySpec.addEntry("PatientsEntity", "gender");
+        propertySpec.addDurationLimitSpec("MicrobiologyEventsEntity", "wrong", Duration.ofHours(1));
+
+        Assertions.assertThrows(ValidationCoreException.class, () -> propertySpec.assertValid(em.getMetamodel()));
     }
 }

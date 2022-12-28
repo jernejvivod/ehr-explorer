@@ -7,14 +7,20 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Procedures relating to a hospital admission coded using the ICD9 system.
 @Entity
 @Table(name = "procedures_icd", schema = "mimiciii", catalog = "mimic")
 public class ProceduresIcdEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private int seqNum;                         // lower procedure numbers occurred earlier
+    @PropertyOrder(5)
     private String icd9Code;                    // ICD9 code associated with the procedure
 
     @ManyToOne(fetch = FetchType.LAZY)

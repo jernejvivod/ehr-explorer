@@ -73,7 +73,7 @@ public class MimicEntityManagerTest extends ATestBase
                 "hadmId",
                 "rowId",
                 "text",
-                List.of("chartdate", "charttime")
+                List.of("chartDate", "chartTime")
         );
 
         Assertions.assertEquals(1, res.size());
@@ -98,7 +98,7 @@ public class MimicEntityManagerTest extends ATestBase
                 "hadmId",
                 "rowId",
                 "text",
-                List.of("chartdate", "charttime")
+                List.of("chartDate", "chartTime")
         );
 
         Assertions.assertTrue(res.containsKey(100001L));
@@ -121,7 +121,7 @@ public class MimicEntityManagerTest extends ATestBase
                 "rowId",
                 "rowId",
                 "text",
-                List.of("chartdate", "charttime")
+                List.of("chartDate", "chartTime")
         );
 
         Assertions.assertTrue(res.containsKey(1L));

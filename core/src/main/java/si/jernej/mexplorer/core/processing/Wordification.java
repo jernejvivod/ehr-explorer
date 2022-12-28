@@ -1,22 +1,17 @@
 package si.jernej.mexplorer.core.processing;
 
-import java.beans.FeatureDescriptor;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.ws.rs.InternalServerErrorException;
 
@@ -25,11 +20,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
+import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
 import si.jernej.mexplorer.core.processing.util.WordificationUtil;
 
 @Dependent
 public class Wordification
 {
+    @Inject
+    private OrderedEntityPropertyDescriptors orderedEntityPropertyDescriptors;
+
     /**
      * Enum used to specify which concatenation schema to use.
      * {@code ZERO} means not to use any concatenations
@@ -66,26 +65,23 @@ public class Wordification
         // list of resulting words
         List<String> wordsAll = new ArrayList<>();
 
-        // initialize set of visited tables.
-        Set<String> visitedEntities = new HashSet<>();
-
         // initialize BFS queue
-        Queue<Object> bfsQueue = new LinkedList<>();
-        bfsQueue.add(rootEntity);
+        LinkedList<Object> dfsStack = new LinkedList<>();
+        dfsStack.add(rootEntity);
 
         try
         {
-            while (!bfsQueue.isEmpty())
+            while (!dfsStack.isEmpty())
             {
                 // get next entity from queue and get its simple class name
-                Object nxt = bfsQueue.remove();
+                Object nxt = dfsStack.pop();
                 String entityName = nxt.getClass().getSimpleName();
 
                 // initialize list for words obtained from next table
                 List<String> wordsForEntity = new ArrayList<>();
 
                 // go over entity's properties
-                for (PropertyDescriptor propertyDescriptor : Arrays.stream(Introspector.getBeanInfo(nxt.getClass()).getPropertyDescriptors()).sorted(Comparator.comparing(FeatureDescriptor::getName)).toList())
+                for (PropertyDescriptor propertyDescriptor : Arrays.stream(orderedEntityPropertyDescriptors.getForEntity(nxt.getClass())).filter(p -> propertySpec.containsEntry(entityName, p.getName())).toList())
                 {
                     Class<?> propertyType = propertyDescriptor.getPropertyType();
 
@@ -109,14 +105,12 @@ public class Wordification
                         Class<?> linkedEntityClass = (Class<?>) ((ParameterizedType) nxt.getClass().getDeclaredField(propertyDescriptor.getName()).getGenericType()).getActualTypeArguments()[0];
 
                         // if collection of linked entities that were not yet visited, add to queue
-                        if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) &&
-                            linkedEntityClass.isAnnotationPresent(Entity.class) &&
+                        if (linkedEntityClass.isAnnotationPresent(Entity.class) &&
                             transitionPairsFromForeignKeyPath.contains(Pair.of(entityName, linkedEntityClass.getSimpleName()))
                         )
                         {
                             Collection<?> nxtPropertyVal = (Collection<?>) propertyDescriptor.getReadMethod().invoke(nxt);
-                            WordificationUtil.addLinkedCollectionToQueue(bfsQueue, propertySpec, nxtPropertyVal, linkedEntityClass);
-                            visitedEntities.add(linkedEntityClass.getSimpleName());
+                            WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, nxtPropertyVal, linkedEntityClass);
                         }
                     }
                     else if (propertyType.isAnnotationPresent(Entity.class))
@@ -129,13 +123,11 @@ public class Wordification
                         Class<?> linkedEntityClass = nxtPropertyVal.getClass();
 
                         // if property linked entity and not yet visited, add to queue
-                        if (!visitedEntities.contains(linkedEntityClass.getSimpleName()) &&
-                            linkedEntityClass.isAnnotationPresent(Entity.class) &&
+                        if (linkedEntityClass.isAnnotationPresent(Entity.class) &&
                             transitionPairsFromForeignKeyPath.contains(Pair.of(entityName, linkedEntityClass.getSimpleName()))
                         )
                         {
-                            bfsQueue.add(nxtPropertyVal);
-                            visitedEntities.add(linkedEntityClass.getSimpleName());
+                            dfsStack.push(nxtPropertyVal);
                         }
                     }
                 }
@@ -144,7 +136,7 @@ public class Wordification
                 wordsAll.addAll(WordificationUtil.addConcatenations(wordsForEntity, concatenationScheme));
             }
         }
-        catch (IntrospectionException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e)
+        catch (IllegalAccessException | InvocationTargetException | NoSuchFieldException e)
         {
             throw new InternalServerErrorException("Error computing Wordification");
         }

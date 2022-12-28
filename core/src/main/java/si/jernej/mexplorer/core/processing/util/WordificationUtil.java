@@ -7,10 +7,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Queue;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
@@ -91,7 +91,7 @@ public final class WordificationUtil
     /**
      * Add linked collections to BFS queue and apply any sorting.
      */
-    public static void addLinkedCollectionToQueue(Queue<Object> bfsQueue, PropertySpec propertySpec, Collection<?> collection, Class<?> linkedEntityClass)
+    public static void pushLinkedCollectionToStack(LinkedList<Object> dfsStack, PropertySpec propertySpec, Collection<?> collection, Class<?> linkedEntityClass)
     {
         List<?> linkedEntitiesList = propertySpec.getSortProperty(linkedEntityClass.getSimpleName())
                 .<List<?>>map(sp -> {
@@ -146,7 +146,7 @@ public final class WordificationUtil
                 )
                 .orElse(new ArrayList<>(collection));
 
-        bfsQueue.addAll(applyDurationLimitIfSpecified(linkedEntitiesList, linkedEntityClass, propertySpec));
+        dfsStack.addAll(0, applyDurationLimitIfSpecified(linkedEntitiesList, linkedEntityClass, propertySpec));
     }
 
     /**

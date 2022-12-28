@@ -1,41 +1,60 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 
 // ICU admission.
 @Entity
 @Table(name = "icustays", schema = "mimiciii", catalog = "mimic")
 public class IcuStaysEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private int icuStayId;                      // ICU stay ID
+    @PropertyOrder(5)
     private String dbSource;                    // source database of the item
+    @PropertyOrder(6)
     private String firstCareUnit;               // first care unit associated with the ICU stay
+    @PropertyOrder(7)
     private String lastCareUnit;                // last care unit associated with the ICU stay
+    @PropertyOrder(8)
     private short firstWardId;                  // identifier for the first ward the patient was located in
+    @PropertyOrder(9)
     private short lastWardId;                   // identifier for the last ward the patient is located in
+    @PropertyOrder(10)
     private LocalDateTime inTime;               // time of admission to the ICU
+    @PropertyOrder(11)
     private LocalDateTime outTime;              // time of discharge from the ICU
+    @PropertyOrder(12)
     private Double los;                         // length of stay in the ICU in fractional days
+    @PropertyOrder(13)
     private Set<ChartEventsEntity> chartEventsEntitys;
+    @PropertyOrder(14)
     private Set<DatetimeEventsEntity> datetimeEventsEntitys;
+    @PropertyOrder(15)
     private Set<InputEventsCvEntity> inputEventsCvEntitys;
+    @PropertyOrder(16)
     private Set<InputEventsMvEntity> inputEventsMvEntitys;
+    @PropertyOrder(17)
     private Set<OutputEventsEntity> outputEventsEntitys;
+    @PropertyOrder(18)
     private Set<PrescriptionsEntity> prescriptionsEntitys;
+    @PropertyOrder(19)
     private Set<ProcedureEventsMvEntity> procedureEventsMvEntitys;
+    @PropertyOrder(20)
     private Set<TransfersEntity> transfersEntitys;
 
     @ManyToOne(fetch = FetchType.LAZY)
