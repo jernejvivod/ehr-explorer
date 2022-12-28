@@ -9,40 +9,72 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Events relating to fluid input for patients whose data was originally stored in the MetaVision database.
 @Entity
 @Table(name = "inputevents_mv", schema = "mimiciii", catalog = "mimic")
 public class InputEventsMvEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;         // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;     // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private IcuStaysEntity icuStaysEntity;         // foreign key identifying the ICU stay
+    @PropertyOrder(5)
     private LocalDateTime startTime;               // time when the event started
+    @PropertyOrder(6)
     private LocalDateTime endTime;                 // time when the event ended
+    @PropertyOrder(7)
     private DItemsEntity dItemsEntity;             // foreign key identifying the charted item
+    @PropertyOrder(8)
     private Double amount;                         // amount of the item administered to the patient
+    @PropertyOrder(9)
     private String amountUom;                      // unit of measurement for the amount
+    @PropertyOrder(10)
     private Double rate;                           // rate at which the item is being administered to the patient
+    @PropertyOrder(11)
     private String rateUom;                        // unit of measurement for the rate
+    @PropertyOrder(12)
     private LocalDateTime storeTime;               // time when the event was recorded in the system
+    @PropertyOrder(13)
     private CareGiversEntity careGiversEntity;     // foreign key identifying the caregiver
+    @PropertyOrder(14)
     private Integer orderId;                       // identifier linking items which are grouped in a solution
+    @PropertyOrder(15)
     private Integer linkOrderId;                   // Identifier linking orders across multiple administrations. LINKORDERID is always equal to the first occuring ORDERID of the series.
+    @PropertyOrder(16)
     private String orderCategoryName;              // a group which the item corresponds to
+    @PropertyOrder(17)
     private String secondaryOrderCategoryName;     // a secondary group for those items with more than one grouping possible
+    @PropertyOrder(18)
     private String orderComponentTypeDescription;  // the role of the item administered in the order
+    @PropertyOrder(19)
     private String orderCategoryDescription;       // the type of item administered
+    @PropertyOrder(20)
     private Double patientWeight;                  // for drugs dosed by weight, the value of the weight used in the calculation
+    @PropertyOrder(21)
     private Double totalAmount;                    // the total amount in the solution for the given item.
+    @PropertyOrder(22)
     private String totalAmountUom;                 // unit of measurement for the total amount in the solution
+    @PropertyOrder(23)
     private Short isOpenBag;                       // indicates whether the bag containing the solution is open
+    @PropertyOrder(24)
     private Short continueInNextDept;              // indicates whether the item will be continued in the next department where the patient is transferred to
+    @PropertyOrder(25)
     private Short cancelReason;                    // reason for cancellation, if cancelled
+    @PropertyOrder(26)
     private String statusDescription;              // the current status of the order: stopped, rewritten, running, or cancelled
+    @PropertyOrder(27)
     private String commentsEditedBy;               // the title of the caregiver who edited the order
+    @PropertyOrder(28)
     private String commentsCanceledBy;             // the title of the caregiver who canceled the order
+    @PropertyOrder(29)
     private LocalDateTime commentsDate;            // time at which the caregiver edited or cancelled the order
+    @PropertyOrder(30)
     private Double originalAmount;                 // amount of the item which was originally charted
+    @PropertyOrder(31)
     private Double originalRate;                   // rate of administration originally chosen for the item
 
     @ManyToOne(fetch = FetchType.LAZY)

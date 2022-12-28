@@ -9,33 +9,58 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Record of when patients were ready for discharge (called out), and the actual time of their discharge (or more generally, their outcome).
 @Entity
 @Table(name = "callout", schema = "mimiciii", catalog = "mimic")
 public class CalloutEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;         // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;     // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private Integer submitWardId;                  // identifier for the ward where the call-out request was submitted
+    @PropertyOrder(5)
     private String submitCareUnit;                 // if the ward where the call was submitted was an ICU, the ICU type is listed here
+    @PropertyOrder(6)
     private Integer currWardId;                    // identifies the ward where the patient is currently residing
+    @PropertyOrder(7)
     private String currCareUnit;                   // if the ward where the patient is currently residing is an ICU, the ICU type is listed here
+    @PropertyOrder(8)
     private Integer calloutWardId;                 // Identifies the ward where the patient is to be discharged to. A value of 1 indicated the first available ward. A value of 0 indicated home.
+    @PropertyOrder(9)
     private String calloutService;                 // identifies the type of service that the patient is called out to
+    @PropertyOrder(10)
     private short requestTele;                     // indicated if special precautions are required
+    @PropertyOrder(11)
     private short requestResp;                     // indicates if special precautions are required
+    @PropertyOrder(12)
     private short requestCdiff;                    // indicates if special precautions are required
+    @PropertyOrder(13)
     private short requestMrsa;                     // indicates if special precautions are required
+    @PropertyOrder(14)
     private short requestVre;                      // indicates if special precautions are required
+    @PropertyOrder(15)
     private String calloutStatus;                  // current status of the call-out request
+    @PropertyOrder(16)
     private String calloutOutcome;                 // the result of the call-out request; either a cancellation or a discharge
+    @PropertyOrder(17)
     private Integer dischargeWardId;               // the ward to which the patient was discharged
+    @PropertyOrder(18)
     private String acknowledgeStatus;              // the status of the response to the call-out request
+    @PropertyOrder(19)
     private LocalDateTime createTime;              // time at which the call-out request was created
+    @PropertyOrder(20)
     private LocalDateTime updateTime;              // last time at which the call-out request was updated
+    @PropertyOrder(21)
     private LocalDateTime acknowledgeTime;         // time at which the call-out request was acknowledged
+    @PropertyOrder(22)
     private LocalDateTime outcomeTime;             // time at which the outcome (cancelled or discharged) occurred
+    @PropertyOrder(23)
     private LocalDateTime firstReservationTime;    // first time at which a ward was reserved for the call-out request
+    @PropertyOrder(24)
     private LocalDateTime currentReservationTime;  // latest time at which a ward was reserved for the call-out request
 
     @ManyToOne(fetch = FetchType.LAZY)

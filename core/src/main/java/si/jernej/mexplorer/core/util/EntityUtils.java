@@ -1,5 +1,6 @@
 package si.jernej.mexplorer.core.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Id;
 import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
 import org.apache.commons.beanutils.MethodUtils;
@@ -246,6 +248,7 @@ public final class EntityUtils
 
     /**
      * Compute foreign key paths for entities from {@link PropertySpec} using DFS.
+     *
      * @param rootEntityName name of root entity
      * @param propertySpec {@link PropertySpec} instance
      * @param metamodel {@link Metamodel} instance
@@ -318,5 +321,40 @@ public final class EntityUtils
         }
 
         return res;
+    }
+
+    public static Set<Field> getFieldsUpToObject(Class<?> clazz)
+    {
+        Set<Field> fields = new HashSet<>();
+
+        do
+        {
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        while (!clazz.equals(Object.class));
+
+        return fields;
+    }
+
+    public static void assertEntityValid(String entityName, Metamodel metamodel)
+    {
+        if (metamodel.getEntities().stream().noneMatch(e -> e.getName().equals(entityName)))
+        {
+            throw new ValidationCoreException("Entity '%s' not recognized.".formatted(entityName));
+        }
+    }
+
+    public static void assertEntityAndPropertyValid(String entityName, String propertyName, Metamodel metamodel)
+    {
+        EntityType<?> entity = metamodel.getEntities().stream()
+                .filter(e -> e.getName().equals(entityName))
+                .findAny()
+                .orElseThrow(() -> new ValidationCoreException("Entity '%s' not recognized.".formatted(entityName)));
+
+        if (entity.getAttributes().stream().noneMatch(a -> a.getName().equals(propertyName)))
+        {
+            throw new ValidationCoreException("Property '%s' of entity '%s' not recognized".formatted(propertyName, entityName));
+        }
     }
 }

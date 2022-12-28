@@ -1,15 +1,15 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 
 // Events recorded in Current Procedural Terminology.
 
@@ -21,16 +21,27 @@ import javax.persistence.Table;
 @Table(name = "cptevents", schema = "mimiciii", catalog = "mimic")
 public class CptEventsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private String costCenter;                  // center recording the code, for example the ICU or the respiratory unit
+    @PropertyOrder(5)
     private LocalDateTime chartDate;            // date when the event occurred, if available
+    @PropertyOrder(6)
     private String cptCd;                       // current Procedural Terminology code
+    @PropertyOrder(7)
     private Integer cptNumber;                  // numerical element of the Current Procedural Terminology code
+    @PropertyOrder(8)
     private String cptSuffix;                   // text element of the current procedural terminology, if any. Indicates code category.
+    @PropertyOrder(9)
     private Integer ticketIdSeq;                // sequence number of the event, derived from the ticked ID
+    @PropertyOrder(10)
     private String sectionHeader;               // high-level section of the Current Procedural Terminology code
+    @PropertyOrder(11)
     private String subsectionHeader;            // subsection of the Current Procedural Terminology code
+    @PropertyOrder(12)
     private String description;                 // description of the Current Procedural Terminology, if available
 
     @ManyToOne(fetch = FetchType.LAZY)

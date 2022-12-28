@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.persistence.metamodel.Metamodel;
+
+import si.jernej.mexplorer.core.util.EntityUtils;
+
 /**
  * Class implementing value transformations.
  */
@@ -54,5 +58,15 @@ public class ValueTransformer
         {
             return defaultTransform.apply(value);
         }
+    }
+
+    public void assertValid(Metamodel metamodel)
+    {
+        entityToPropertyToTransform.forEach((entityName, map) -> {
+            for (String properyName : map.keySet())
+            {
+                EntityUtils.assertEntityAndPropertyValid(entityName, properyName, metamodel);
+            }
+        });
     }
 }

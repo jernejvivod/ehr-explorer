@@ -71,14 +71,17 @@ public class PropositionalizationService
 
         // get PropertySpec, ValueTransformer and CompositeColumnCreator instances
         PropertySpec propertySpec = DtoConverter.toPropertySpec(wordificationConfigDto.getPropertySpec());
+        propertySpec.assertValid(mimicEntityManager.getMetamodel());
 
         ValueTransformer valueTransformer = Optional.ofNullable(wordificationConfigDto.getValueTransformationSpec())
                 .map(DtoConverter::toValueTransformer)
                 .orElse(new ValueTransformer());
+        valueTransformer.assertValid(mimicEntityManager.getMetamodel());
 
         CompositeColumnCreator compositeColumnCreator = Optional.ofNullable(wordificationConfigDto.getCompositeColumnsSpec())
                 .map(s -> DtoConverter.toCompositeColumnCreator(rootEntityName, s, mimicEntityManager.getMetamodel()))
                 .orElse(new CompositeColumnCreator());
+        compositeColumnCreator.assertValid(mimicEntityManager.getMetamodel());
 
         List<List<String>> foreignKeyPaths = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, mimicEntityManager.getMetamodel());
 

@@ -14,13 +14,15 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
 import si.jernej.mexplorer.core.util.DtoConverter;
 import si.jernej.mexplorer.processorapi.v1.model.TransformDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecEntryDto;
+import si.jernej.mexplorer.test.ATestBase;
 
-class ValueTransformerTest
+class ValueTransformerTest extends ATestBase
 {
     private static final Map<String, Map<TransformDto.DateDiffRoundTypeEnum, String>> dateDiffValuesToResults = Map.ofEntries(
             Map.entry("0 0 0", Map.of(YEAR, "0", FIVE_YEARS, "0", TEN_YEARS, "0", FIFTEEN_YEARS, "0", TWENTY_YEARS, "0")),
@@ -167,6 +169,41 @@ class ValueTransformerTest
                 Assertions.assertEquals(expected, resNxt);
             }
         }
+    }
+
+    @Test
+    void testValueTransformerValidationValid()
+    {
+        ValueTransformer valueTransformer = new ValueTransformer();
+        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
+        valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
+        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testValueTransformerValidationEmpty()
+    {
+        ValueTransformer valueTransformer = new ValueTransformer();
+        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testValueTransformerValidationWrongEntity()
+    {
+        ValueTransformer valueTransformer = new ValueTransformer();
+        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
+        valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
+        valueTransformer.addTransform("Wrong", "dbSource", x -> x);
+        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testValueTransformerValidationWrongProperty()
+    {
+        ValueTransformer valueTransformer = new ValueTransformer();
+        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
+        valueTransformer.addTransform("PatientsEntity", "wrong", x -> x);
+        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel()));
     }
 
 }

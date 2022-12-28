@@ -9,15 +9,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Hospital services that patients were under during their hospital stay.
 @Entity
 @Table(name = "services", schema = "mimiciii", catalog = "mimic")
 public class ServicesEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private LocalDateTime transferTime;         // time when the transfer occurred
+    @PropertyOrder(5)
     private String prevService;                 // previous service type
+    @PropertyOrder(6)
     private String currService;                 // current service type
 
     @ManyToOne(fetch = FetchType.LAZY)

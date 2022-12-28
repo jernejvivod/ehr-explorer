@@ -11,46 +11,84 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Hospital admissions associated with an ICU stay.
 @Entity
 @Table(name = "admissions", schema = "mimiciii", catalog = "mimic")
 public class AdmissionsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;  // foreign key identifying the patient
+    @PropertyOrder(3)
     private Long hadmId;                    // hospital admission ID
+    @PropertyOrder(4)
     private LocalDateTime admitTime;        // time of admission to the hospital
+    @PropertyOrder(5)
     private LocalDateTime dischTime;        // time of discharge from the hospital
+    @PropertyOrder(6)
     private LocalDateTime deathTime;        // time of death
+    @PropertyOrder(7)
     private String admissionType;           // type of admission (for example emergency or elective)
+    @PropertyOrder(8)
     private String admissionLocation;       // admission location
+    @PropertyOrder(9)
     private String dischargeLocation;       // discharge location
+    @PropertyOrder(10)
     private String insurance;               // insurance type
+    @PropertyOrder(11)
     private String language;                // language
+    @PropertyOrder(12)
     private String religion;                // religion
+    @PropertyOrder(13)
     private String maritalStatus;           // marital status
+    @PropertyOrder(14)
     private String ethnicity;               // ethnicity
+    @PropertyOrder(15)
     private LocalDateTime edRegTime;        // ?
+    @PropertyOrder(16)
     private LocalDateTime edOutTime;        // ?
+    @PropertyOrder(17)
     private String diagnosis;               // diagnosis
+    @PropertyOrder(18)
     private Short hospitalExpireFlag;       // ?
+    @PropertyOrder(19)
     private short hasChartEventsData;       // hospital admission has at least one observation in the chartevents table
+    @PropertyOrder(20)
     private Set<NoteEventsEntity> noteEventsEntitys;
+    @PropertyOrder(21)
     private Set<IcuStaysEntity> icuStaysEntitys;
+    @PropertyOrder(22)
     private Set<CalloutEntity> calloutEntitys;
+    @PropertyOrder(23)
     private Set<ChartEventsEntity> chartEventsEntitys;
+    @PropertyOrder(24)
     private Set<CptEventsEntity> cptEventsEntitys;
+    @PropertyOrder(25)
     private Set<DatetimeEventsEntity> datetimeEventsEntitys;
+    @PropertyOrder(26)
     private Set<DiagnosesIcdEntity> diagnosesIcdEntitys;
+    @PropertyOrder(27)
     private Set<DrgCodesEntity> drgCodesEntitys;
+    @PropertyOrder(28)
     private Set<InputEventsCvEntity> inputEventsCvEntities;
+    @PropertyOrder(29)
     private Set<InputEventsMvEntity> inputEventsMvEntitys;
+    @PropertyOrder(30)
     private Set<LabEventsEntity> labEventsEntitys;
+    @PropertyOrder(31)
     private Set<MicrobiologyEventsEntity> microbiologyEventsEntitys;
+    @PropertyOrder(32)
     private Set<OutputEventsEntity> outputEventsEntitys;
+    @PropertyOrder(33)
     private Set<PrescriptionsEntity> prescriptionsEntitys;
+    @PropertyOrder(34)
     private Set<ProcedureEventsMvEntity> procedureEventsMvEntitys;
+    @PropertyOrder(35)
     private Set<ProceduresIcdEntity> proceduresIcdEntitys;
+    @PropertyOrder(36)
     private Set<ServicesEntity> servicesEntitys;
+    @PropertyOrder(37)
     private Set<TransfersEntity> transfersEntitys;
 
     @ManyToOne(fetch = FetchType.LAZY)

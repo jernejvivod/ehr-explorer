@@ -9,23 +9,38 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 // Events relating to a datetime.
 @Entity
 @Table(name = "datetimeevents", schema = "mimiciii", catalog = "mimic")
 public class DatetimeEventsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private IcuStaysEntity icuStaysEntity;      // foreign key identifying the ICU stay
+    @PropertyOrder(5)
     private DItemsEntity dItemsEntity;          // foreign key identifying the charted item
+    @PropertyOrder(6)
     private LocalDateTime chartTime;            // time when the event occurred
+    @PropertyOrder(7)
     private LocalDateTime storeTime;            // time when the event was recorded in the system
+    @PropertyOrder(8)
     private CareGiversEntity careGiversEntity;  // foreign key identifying the caregiver
+    @PropertyOrder(9)
     private LocalDateTime value;                // value of the event as a text string
+    @PropertyOrder(10)
     private String valueUom;                    // unit of measurement
+    @PropertyOrder(11)
     private Short warning;                      // flag to highlight that the value has triggered a warning
+    @PropertyOrder(12)
     private Short error;                        // flag to highlight an error with the event
+    @PropertyOrder(13)
     private String resultStatus;                // result status of lab data
+    @PropertyOrder(14)
     private String stopped;                     // event was explicitly marked as stopped. Infrequently used by caregivers.
 
     @ManyToOne(fetch = FetchType.LAZY)

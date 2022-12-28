@@ -1,33 +1,44 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 
 // Outputs recorded during the ICU stay.
 @Entity
 @Table(name = "outputevents", schema = "mimiciii", catalog = "mimic")
 public class OutputEventsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private IcuStaysEntity icuStaysEntity;      // foreign key identifying the ICU stay
+    @PropertyOrder(5)
     private LocalDateTime chartTime;            // time when the output was recorded/occurred
+    @PropertyOrder(6)
     private DItemsEntity dItemsEntity;          // foreign key identifying the charted item
+    @PropertyOrder(7)
     private Double value;                       // value of the event as a float
+    @PropertyOrder(8)
     private String valueUom;                    // unit of measurement
+    @PropertyOrder(9)
     private LocalDateTime storeTime;            // time when the event was recorded in the system
+    @PropertyOrder(10)
     private CareGiversEntity careGiversEntity;  // foreign key identifying the caregiver
+    @PropertyOrder(11)
     private String stopped;                     // event was explicitly marked as stopped. Infrequently used by caregivers
+    @PropertyOrder(12)
     private String newBottle;                   // not applicable to outputs - column always null
+    @PropertyOrder(13)
     private Integer isError;                    // flag to highlight an error with the measurement
 
     @ManyToOne(fetch = FetchType.LAZY)

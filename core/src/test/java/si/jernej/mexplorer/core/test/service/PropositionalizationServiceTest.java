@@ -1,8 +1,6 @@
 package si.jernej.mexplorer.core.test.service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -121,14 +119,14 @@ public class PropositionalizationServiceTest extends ATestBase
 
         List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
-        Set<String> expectedWords = Set.of(
+        List<String> expectedWords = List.of(
                 "admissionsentity@insurance@private",
                 "admissionsentity@language@engl",
                 "admissionsentity@religion@protestant_quaker"
         );
 
         Assertions.assertEquals(1, res.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
+        Assertions.assertEquals(expectedWords, res.get(0).getWords());
     }
 
     @Test
@@ -164,16 +162,16 @@ public class PropositionalizationServiceTest extends ATestBase
 
         List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
-        Set<String> expectedWords = Set.of(
+        List<String> expectedWords = List.of(
                 "admissionsentity@insurance@private",
                 "admissionsentity@language@engl",
                 "admissionsentity@religion@protestant_quaker",
-                "patientsentity@expireflag@0",
-                "patientsentity@gender@f"
+                "patientsentity@gender@f",
+                "patientsentity@expireflag@0"
         );
 
         Assertions.assertEquals(1, res.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
+        Assertions.assertEquals(expectedWords, res.get(0).getWords());
     }
 
     @Test
@@ -223,17 +221,17 @@ public class PropositionalizationServiceTest extends ATestBase
 
         List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
-        Set<String> expectedWords = Set.of(
+        List<String> expectedWords = List.of(
                 "admissionsentity@insurance@private",
                 "admissionsentity@language@engl",
                 "admissionsentity@religion@protestant_quaker",
-                "patientsentity@expireflag@0",
                 "patientsentity@gender@f",
+                "patientsentity@expireflag@0",
                 "composite@ageatadmission@35_5_21"
         );
 
         Assertions.assertEquals(1, res.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
+        Assertions.assertEquals(expectedWords, res.get(0).getWords());
     }
 
     @Test
@@ -297,17 +295,17 @@ public class PropositionalizationServiceTest extends ATestBase
 
         List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
-        Set<String> expectedWords = Set.of(
+        List<String> expectedWords = List.of(
                 "admissionsentity@insurance@private",
                 "admissionsentity@language@engl",
                 "admissionsentity@religion@protestant_quaker",
-                "patientsentity@expireflag@0",
                 "patientsentity@gender@f",
+                "patientsentity@expireflag@0",
                 "composite@ageatadmission@40"
         );
 
         Assertions.assertEquals(1, res.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
+        Assertions.assertEquals(expectedWords, res.get(0).getWords());
     }
 
     @Test
@@ -388,20 +386,20 @@ public class PropositionalizationServiceTest extends ATestBase
 
         List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
 
-        Set<String> expectedWords = Set.of(
+        List<String> expectedWords = List.of(
                 "admissionsentity@insurance@private",
                 "admissionsentity@language@engl",
                 "admissionsentity@religion@protestant_quaker",
                 "icustaysentity@firstcareunit@micu",
                 "icustaysentity@lastcareunit@micu",
                 "icustaysentity@los@4.0",
-                "patientsentity@expireflag@0",
                 "patientsentity@gender@f",
+                "patientsentity@expireflag@0",
                 "composite@ageatadmission@40"
         );
 
         Assertions.assertEquals(1, res.size());
-        Assertions.assertEquals(expectedWords, new HashSet<>(res.get(0).getWords()));
+        Assertions.assertEquals(expectedWords, res.get(0).getWords());
     }
 
     @Test

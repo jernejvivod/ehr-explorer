@@ -6,9 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+
 @MappedSuperclass
 public abstract class AEntity implements Serializable
 {
+    @PropertyOrder(1)
     private Long rowId;  // unique row identifier
 
     @Id

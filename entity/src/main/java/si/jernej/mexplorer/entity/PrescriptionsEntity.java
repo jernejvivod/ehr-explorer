@@ -1,38 +1,56 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 
 // Medicines prescribed.
 @Entity
 @Table(name = "prescriptions", schema = "mimiciii", catalog = "mimic")
 public class PrescriptionsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private PatientsEntity patientsEntity;      // foreign key identifying the patient
+    @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
+    @PropertyOrder(4)
     private IcuStaysEntity icuStaysEntity;      // foreign key identifying the ICU stay
+    @PropertyOrder(5)
     private LocalDateTime startDate;            // date when the prescription started
+    @PropertyOrder(6)
     private LocalDateTime endDate;              // date when the prescription ended
+    @PropertyOrder(7)
     private String drugType;                    // type of drug
+    @PropertyOrder(8)
     private String drug;                        // name of the drug
+    @PropertyOrder(9)
     private String drugNamePoe;                 // name of the drug on the Provider Order Entry Interface
+    @PropertyOrder(10)
     private String drugNameGeneric;             // generic drug name
+    @PropertyOrder(11)
     private String formularyDrugCd;             // formulary drug code
+    @PropertyOrder(12)
     private String gsn;                         // generic sequence number
+    @PropertyOrder(13)
     private String ndc;                         // national drug code
+    @PropertyOrder(14)
     private String prodStrength;                // strength of the drug (product)
+    @PropertyOrder(15)
     private String doseValRx;                   // dose of the drug prescribed
+    @PropertyOrder(16)
     private String doseUnitRx;                  // unit of measurement associated with the dose
+    @PropertyOrder(17)
     private String formValDisp;                 // amount of the formulation dispensed
+    @PropertyOrder(18)
     private String formUnitDisp;                // unit of measurement associated with the formulation
+    @PropertyOrder(19)
     private String route;                       // route of administration, for example intravenous or oral
 
     @ManyToOne(fetch = FetchType.LAZY)

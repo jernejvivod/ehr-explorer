@@ -9,6 +9,8 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.stream.IntStream;
 
+import javax.persistence.metamodel.Metamodel;
+
 import org.apache.commons.beanutils.PropertyUtils;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
@@ -148,5 +150,22 @@ public class CompositeColumnCreator
         }
 
         return resultsForEntity;
+    }
+
+    public void assertValid(Metamodel metamodel)
+    {
+        this.entries.forEach(e -> {
+            for (String entityOnForeignKeyPath1 : e.getForeignKeyPath1())
+            {
+                EntityUtils.assertEntityValid(entityOnForeignKeyPath1, metamodel);
+            }
+            for (String entityOnForeignKeyPath2 : e.getForeignKeyPath2())
+            {
+                EntityUtils.assertEntityValid(entityOnForeignKeyPath2, metamodel);
+            }
+
+            EntityUtils.assertEntityAndPropertyValid(e.getForeignKeyPath1().get(e.getForeignKeyPath1().size() - 1), e.getProperty1(), metamodel);
+            EntityUtils.assertEntityAndPropertyValid(e.getForeignKeyPath2().get(e.getForeignKeyPath2().size() - 1), e.getProperty2(), metamodel);
+        });
     }
 }

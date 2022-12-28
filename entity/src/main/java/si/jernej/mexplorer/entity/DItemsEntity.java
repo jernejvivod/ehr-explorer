@@ -1,39 +1,59 @@
 package si.jernej.mexplorer.entity;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 
 // Dictionary of non-laboratory-related charted items.
 @Entity
 @Table(name = "d_items", schema = "mimiciii", catalog = "mimic")
 public class DItemsEntity extends AEntity
 {
+    @PropertyOrder(2)
     private int itemId;           // charted item ID
+    @PropertyOrder(3)
     private String label;         // label identifying the item
+    @PropertyOrder(4)
     private String abbreviation;  // abbreviation associated with the item
+    @PropertyOrder(5)
     private String dbSource;      // source database of the item
+    @PropertyOrder(6)
     private String linksTo;       // table which contains data for the given ITEMID
+    @PropertyOrder(7)
     private String category;      // category of data which the concept falls under
+    @PropertyOrder(8)
     private String unitName;      // unit associated with the item
+    @PropertyOrder(9)
     private String paramType;     // type of item, for example solution or ingredient
+    @PropertyOrder(10)
     private Integer conceptId;    // identifier used to harmonize concepts identified by multiple ITEMIDs. CONCEPTIDs are plannet but not yet implemented (all values are NULL).
+    @PropertyOrder(11)
     private Set<ChartEventsEntity> chartEventsEntitys;
+    @PropertyOrder(12)
     private Set<DatetimeEventsEntity> datetimeEventsEntitys;
+    @PropertyOrder(13)
     private Set<DLabitemsEntity> dLabitemsEntitys;
+    @PropertyOrder(14)
     private Set<InputEventsCvEntity> inputEventsCvEntitys;
+    @PropertyOrder(15)
     private Set<InputEventsMvEntity> inputEventsMvEntitys;
+    @PropertyOrder(16)
     private Set<LabEventsEntity> labEventsEntitys;
+    @PropertyOrder(17)
     private Set<MicrobiologyEventsEntity> microbiologyEventsEntitysSpecItem;
+    @PropertyOrder(18)
     private Set<MicrobiologyEventsEntity> microbiologyEventsEntitysOrgItem;
+    @PropertyOrder(19)
     private Set<MicrobiologyEventsEntity> microbiologyEventsEntitysAbItem;
+    @PropertyOrder(20)
     private Set<OutputEventsEntity> outputEventsEntitys;
+    @PropertyOrder(21)
     private Set<ProcedureEventsMvEntity> procedureEventsMvEntitys;
 
     @Column(name = "itemid", nullable = false)
