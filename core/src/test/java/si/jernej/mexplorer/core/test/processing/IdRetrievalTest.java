@@ -65,21 +65,16 @@ class IdRetrievalTest extends ATestBase
         Assertions.assertEquals(countExpected, res.size());
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "Wrong, admissionType",
-            "AdmissionsEntity, wrong",
-            "Wrong, wrong"
-    })
-    void basicWithFilterWithWrongEntityNamePropertyNamePair(String entityName, String propertyName)
+    @Test
+    void basicWithFilterWithWrongPropertyName()
     {
         IdRetrievalSpecDto idRetrievalSpecDto = new IdRetrievalSpecDto();
         idRetrievalSpecDto.setEntityName("AdmissionsEntity");
         idRetrievalSpecDto.setIdProperty("hadmId");
 
         IdRetrievalFilterSpecDto idRetrievalFilterSpecDto = new IdRetrievalFilterSpecDto();
-        idRetrievalFilterSpecDto.setEntityName(entityName);
-        idRetrievalFilterSpecDto.setPropertyName(propertyName);
+        idRetrievalFilterSpecDto.setForeignKeyPath(List.of("AdmissionsEntity"));
+        idRetrievalFilterSpecDto.setPropertyName("wrong");
         idRetrievalFilterSpecDto.setComparator(IdRetrievalFilterSpecDto.ComparatorEnum.EQUAL);
         idRetrievalFilterSpecDto.setPropertyVal("EMERGENCY");
         idRetrievalSpecDto.setFilterSpecs(List.of(idRetrievalFilterSpecDto));
@@ -99,7 +94,7 @@ class IdRetrievalTest extends ATestBase
         idRetrievalSpecDto.setIdProperty("hadmId");
 
         IdRetrievalFilterSpecDto idRetrievalFilterSpecDto = new IdRetrievalFilterSpecDto();
-        idRetrievalFilterSpecDto.setEntityName("AdmissionsEntity");
+        idRetrievalFilterSpecDto.setForeignKeyPath(List.of("AdmissionsEntity"));
         idRetrievalFilterSpecDto.setPropertyName("hospitalExpireFlag");
         idRetrievalFilterSpecDto.setComparator(comparatorEnum);
         idRetrievalFilterSpecDto.setPropertyVal(hospitalExpireFlag);
@@ -119,7 +114,7 @@ class IdRetrievalTest extends ATestBase
         idRetrievalSpecDto.setIdProperty("hadmId");
 
         IdRetrievalFilterSpecDto idRetrievalFilterSpecDto = new IdRetrievalFilterSpecDto();
-        idRetrievalFilterSpecDto.setEntityName("AdmissionsEntity");
+        idRetrievalFilterSpecDto.setForeignKeyPath(List.of("AdmissionsEntity"));
         idRetrievalFilterSpecDto.setPropertyName("admissionType");
         idRetrievalFilterSpecDto.setComparator(IdRetrievalFilterSpecDto.ComparatorEnum.EQUAL);
         idRetrievalFilterSpecDto.setPropertyVal("EMERGENCY");
@@ -139,13 +134,13 @@ class IdRetrievalTest extends ATestBase
         idRetrievalSpecDto.setIdProperty("hadmId");
 
         IdRetrievalFilterSpecDto idRetrievalFilterSpecDto1 = new IdRetrievalFilterSpecDto();
-        idRetrievalFilterSpecDto1.setEntityName("AdmissionsEntity");
+        idRetrievalFilterSpecDto1.setForeignKeyPath(List.of("AdmissionsEntity"));
         idRetrievalFilterSpecDto1.setPropertyName("hospitalExpireFlag");
         idRetrievalFilterSpecDto1.setComparator(IdRetrievalFilterSpecDto.ComparatorEnum.MORE);
         idRetrievalFilterSpecDto1.setPropertyVal((short) 0);
 
         IdRetrievalFilterSpecDto idRetrievalFilterSpecDto2 = new IdRetrievalFilterSpecDto();
-        idRetrievalFilterSpecDto2.setEntityName("AdmissionsEntity");
+        idRetrievalFilterSpecDto2.setForeignKeyPath(List.of("AdmissionsEntity"));
         idRetrievalFilterSpecDto2.setPropertyName("admissionType");
         idRetrievalFilterSpecDto2.setComparator(IdRetrievalFilterSpecDto.ComparatorEnum.EQUAL);
         idRetrievalFilterSpecDto2.setPropertyVal("EMERGENCY");
@@ -166,13 +161,13 @@ class IdRetrievalTest extends ATestBase
         idRetrievalSpecDto.setIdProperty("hadmId");
 
         IdRetrievalFilterSpecDto idRetrievalFilterSpecDto1 = new IdRetrievalFilterSpecDto();
-        idRetrievalFilterSpecDto1.setEntityName("PatientsEntity");
+        idRetrievalFilterSpecDto1.setForeignKeyPath(List.of("AdmissionsEntity", "PatientsEntity"));
         idRetrievalFilterSpecDto1.setPropertyName("gender");
         idRetrievalFilterSpecDto1.setComparator(IdRetrievalFilterSpecDto.ComparatorEnum.EQUAL);
         idRetrievalFilterSpecDto1.setPropertyVal("M");
 
         IdRetrievalFilterSpecDto idRetrievalFilterSpecDto2 = new IdRetrievalFilterSpecDto();
-        idRetrievalFilterSpecDto2.setEntityName("AdmissionsEntity");
+        idRetrievalFilterSpecDto2.setForeignKeyPath(List.of("AdmissionsEntity"));
         idRetrievalFilterSpecDto2.setPropertyName("admissionType");
         idRetrievalFilterSpecDto2.setComparator(IdRetrievalFilterSpecDto.ComparatorEnum.EQUAL);
         idRetrievalFilterSpecDto2.setPropertyVal("EMERGENCY");

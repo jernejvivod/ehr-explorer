@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
+import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 
 public final class EntityUtils
 {
@@ -355,6 +357,61 @@ public final class EntityUtils
         if (entity.getAttributes().stream().noneMatch(a -> a.getName().equals(propertyName)))
         {
             throw new ValidationCoreException("Property '%s' of entity '%s' not recognized".formatted(propertyName, entityName));
+        }
+    }
+
+    public static void assertEntityAndPropertyValid(String entityName, String propertyName, Metamodel metamodel, CompositeColumnCreator compositeColumnCreator)
+    {
+        Optional<EntityType<?>> entityOpt = metamodel.getEntities().stream()
+                .filter(e -> e.getName().equals(entityName))
+                .findAny();
+
+        if (entityOpt.isEmpty())
+        {
+            if (entityName.equals(Constants.COMPOSITE_TABLE_NAME))
+            {
+                if (compositeColumnCreator.getEntries().stream().noneMatch(e -> e.getCompositeName().equals(propertyName)))
+                {
+                    throw new ValidationCoreException("Property '%s' of composite table '%s' not recognized".formatted(propertyName, entityName));
+                }
+            }
+            else
+            {
+                throw new ValidationCoreException("Entity '%s' not recognized.".formatted(entityName));
+            }
+        }
+        else
+        {
+            if (entityOpt.get().getAttributes().stream().noneMatch(a -> a.getName().equals(propertyName)))
+            {
+                throw new ValidationCoreException("Property '%s' of entity '%s' not recognized".formatted(propertyName, entityName));
+            }
+        }
+    }
+
+    public static void assertForeignKeyPathValid(List<String> foreignKeyPath, Metamodel metamodel)
+    {
+        Map<String, Set<String>> entityToLinkedEntities = computeEntityToLinkedEntitiesMap(metamodel);
+        if (foreignKeyPath.isEmpty())
+        {
+            throw new ValidationCoreException("Foreign key path must not be empty.");
+        }
+        if (foreignKeyPath.size() == 1)
+        {
+            assertEntityValid(foreignKeyPath.get(0), metamodel);
+        }
+        else
+        {
+            for (int i = 0; i < foreignKeyPath.size() - 1; i++)
+            {
+                assertEntityValid(foreignKeyPath.get(i), metamodel);
+                assertEntityValid(foreignKeyPath.get(i + 1), metamodel);
+                if (!entityToLinkedEntities.get(foreignKeyPath.get(i)).contains(foreignKeyPath.get(i + 1)))
+                {
+                    throw new ValidationCoreException("Unrecognized transition between entities '%s' to '%s' in foreign key path".formatted(foreignKeyPath.get(i), foreignKeyPath.get(i + 1)));
+                }
+
+            }
         }
     }
 }

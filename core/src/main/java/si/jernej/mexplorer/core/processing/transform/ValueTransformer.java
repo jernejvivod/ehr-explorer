@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.annotation.CheckForNull;
 import javax.persistence.metamodel.Metamodel;
 
 import si.jernej.mexplorer.core.util.EntityUtils;
@@ -60,12 +61,19 @@ public class ValueTransformer
         }
     }
 
-    public void assertValid(Metamodel metamodel)
+    public void assertValid(Metamodel metamodel, @CheckForNull CompositeColumnCreator compositeColumnCreator)
     {
         entityToPropertyToTransform.forEach((entityName, map) -> {
             for (String properyName : map.keySet())
             {
-                EntityUtils.assertEntityAndPropertyValid(entityName, properyName, metamodel);
+                if (compositeColumnCreator != null)
+                {
+                    EntityUtils.assertEntityAndPropertyValid(entityName, properyName, metamodel, compositeColumnCreator);
+                }
+                else
+                {
+                    EntityUtils.assertEntityAndPropertyValid(entityName, properyName, metamodel);
+                }
             }
         });
     }

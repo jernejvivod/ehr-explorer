@@ -40,7 +40,7 @@ class ClinicalTextServiceTest extends ATestBase
     void extractClinicalTextWithEmptyIdList()
     {
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
-        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
@@ -60,7 +60,7 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId = 100000L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
-        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime", "chartDate"));
@@ -81,7 +81,7 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId = 100001L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
-        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime", "chartDate"));
@@ -111,7 +111,7 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId = 100001L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
-        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime"));
@@ -146,7 +146,7 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId2 = 100006L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
-        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime", "chartDate"));
@@ -185,7 +185,7 @@ class ClinicalTextServiceTest extends ATestBase
         final long rootEntityId2 = 100006L;
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
-        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime"));
@@ -232,7 +232,7 @@ class ClinicalTextServiceTest extends ATestBase
                 .getResultList();
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
-        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime"));
@@ -259,7 +259,7 @@ class ClinicalTextServiceTest extends ATestBase
                 .getResultList();
 
         ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
-        clinicalTextConfigDto.setClinicalTextEntityName("NoteEventsEntity");
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime"));

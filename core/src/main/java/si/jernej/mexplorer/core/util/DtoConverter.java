@@ -3,14 +3,10 @@ package si.jernej.mexplorer.core.util;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
-
-import javax.persistence.metamodel.Metamodel;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
@@ -127,21 +123,15 @@ public final class DtoConverter
     /**
      * Construct {@link CompositeColumnCreator} instance from model.
      *
-     * @param rootEntityName name of root entity
      * @param compositeColumnsSpecDto model for the instance
-     * @param metamodel {@link Metamodel} instance
      * @return initialized {@link CompositeColumnCreator} instance that can be used in {@link si.jernej.mexplorer.core.processing.Wordification}
      */
-    public static CompositeColumnCreator toCompositeColumnCreator(String rootEntityName, CompositeColumnsSpecDto compositeColumnsSpecDto, Metamodel metamodel)
+    public static CompositeColumnCreator toCompositeColumnCreator(CompositeColumnsSpecDto compositeColumnsSpecDto)
     {
-        Map<String, Set<String>> entityToLinkedEntities = EntityUtils.computeEntityToLinkedEntitiesMap(metamodel);
-
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
         for (CompositeColumnsSpecEntryDto entry : compositeColumnsSpecDto.getEntries())
         {
-            List<String> foreignKeyPath1 = EntityUtils.computeForeignKeyPath(rootEntityName, entry.getTable1(), entityToLinkedEntities);
-            List<String> foreignKeyPath2 = EntityUtils.computeForeignKeyPath(rootEntityName, entry.getTable2(), entityToLinkedEntities);
-            compositeColumnCreator.addEntry(foreignKeyPath1, entry.getProperty1(), foreignKeyPath2, entry.getProperty2(), entry.getCompositeName(), combinerEnumMapping.get(entry.getCombiner()).getBinaryOperator());
+            compositeColumnCreator.addEntry(entry.getForeignKeyPath1(), entry.getProperty1(), entry.getForeignKeyPath2(), entry.getProperty2(), entry.getCompositeName(), combinerEnumMapping.get(entry.getCombiner()).getBinaryOperator());
         }
         return compositeColumnCreator;
     }

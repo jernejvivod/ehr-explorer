@@ -1,6 +1,8 @@
 package si.jernej.mexplorer.core.test.util;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +17,9 @@ import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
+import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
+import si.jernej.mexplorer.core.util.Constants;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.entity.PatientsEntity;
@@ -338,5 +342,61 @@ class EntityUtilsTest extends ATestBase
         Assertions.assertDoesNotThrow(() -> EntityUtils.assertEntityAndPropertyValid("AdmissionsEntity", "language", em.getMetamodel()));
         Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityAndPropertyValid("AdmissionsEntity", "wrong", em.getMetamodel()));
         Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityAndPropertyValid("Wrong", "gender", em.getMetamodel()));
+    }
+
+    @Test
+    void testAssertEntityAndPropertyValidCompositeColumnCreator()
+    {
+        final String compositeName = "compositeName";
+
+        CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
+        compositeColumnCreator.addEntry(
+                List.of("AdmissionsEntity"),
+                "admitTime",
+                List.of("AdmissionsEntity", "PatientsEntity"),
+                "dob",
+                compositeName,
+                (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
+        );
+
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertEntityAndPropertyValid(Constants.COMPOSITE_TABLE_NAME, compositeName, em.getMetamodel(), compositeColumnCreator));
+    }
+
+    @Test
+    void testAssertEntityAndPropertyValidCompositeColumnCreatorWrongProperty()
+    {
+        final String compositeName = "compositeName";
+
+        CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
+        compositeColumnCreator.addEntry(
+                List.of("AdmissionsEntity"),
+                "admitTime",
+                List.of("AdmissionsEntity", "PatientsEntity"),
+                "dob",
+                compositeName,
+                (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
+        );
+
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityAndPropertyValid(Constants.COMPOSITE_TABLE_NAME, "wrong", em.getMetamodel(), compositeColumnCreator));
+    }
+
+    @Test
+    void testAssertForeignKeyPathValidEmptyPath()
+    {
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertForeignKeyPathValid(List.of(), em.getMetamodel()));
+    }
+
+    @Test
+    void testAssertForeignKeyPathValidOneElementPath()
+    {
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertForeignKeyPathValid(List.of("Wrong"), em.getMetamodel()));
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertForeignKeyPathValid(List.of("AdmissionsEntity"), em.getMetamodel()));
+    }
+
+    @Test
+    void testAssertForeignKeyPathValid()
+    {
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertForeignKeyPathValid(List.of("AdmissionsEntity", "PatientsEntity", "Wrong"), em.getMetamodel()));
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertForeignKeyPathValid(List.of("AdmissionsEntity", "PatientsEntity", "LabEventsEntity"), em.getMetamodel()));
     }
 }
