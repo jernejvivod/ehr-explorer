@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
+import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 
 public final class EntityUtils
 {
@@ -412,6 +413,21 @@ public final class EntityUtils
                 }
 
             }
+        }
+    }
+
+    public static void assertDateTimeLimitSpecValidForClinicalTextExtraction(ClinicalTextConfigDto clinicalTextConfigDto, Metamodel metamodel)
+    {
+        if (clinicalTextConfigDto.getDataRangeSpec() != null && (clinicalTextConfigDto.getDateTimePropertiesNames() == null || clinicalTextConfigDto.getDateTimePropertiesNames().isEmpty()))
+        {
+            throw new ValidationCoreException("DateTime property names must be specified when data range specified.");
+        }
+
+        List<String> foreignKeyPath = clinicalTextConfigDto.getForeignKeyPath();
+
+        for (String dateTimePropertyName : clinicalTextConfigDto.getDateTimePropertiesNames())
+        {
+            assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), dateTimePropertyName, metamodel);
         }
     }
 }

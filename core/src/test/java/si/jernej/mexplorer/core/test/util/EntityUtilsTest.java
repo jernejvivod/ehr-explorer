@@ -23,6 +23,9 @@ import si.jernej.mexplorer.core.util.Constants;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.entity.PatientsEntity;
+import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
+import si.jernej.mexplorer.processorapi.v1.model.DataRangeSpecDto;
+import si.jernej.mexplorer.processorapi.v1.model.RootEntitiesSpecDto;
 import si.jernej.mexplorer.test.ATestBase;
 
 class EntityUtilsTest extends ATestBase
@@ -398,5 +401,47 @@ class EntityUtilsTest extends ATestBase
     {
         Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertForeignKeyPathValid(List.of("AdmissionsEntity", "PatientsEntity", "Wrong"), em.getMetamodel()));
         Assertions.assertDoesNotThrow(() -> EntityUtils.assertForeignKeyPathValid(List.of("AdmissionsEntity", "PatientsEntity", "LabEventsEntity"), em.getMetamodel()));
+    }
+
+    @Test
+    void testAssertDateTimeLimitSpecValidForClinicalTextExtractionEmptyClinicalTextConfigDto()
+    {
+        ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, em.getMetamodel()));
+    }
+
+    @Test
+    void testAssertDateTimeLimitSpecValidForClinicalTextExtraction()
+    {
+        final long rootEntityId = 100000L;
+
+        ClinicalTextConfigDto clinicalTextConfigDto = new ClinicalTextConfigDto();
+        clinicalTextConfigDto.setForeignKeyPath(List.of("AdmissionsEntity", "NoteEventsEntity"));
+        clinicalTextConfigDto.setTextPropertyName("text");
+        clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime", "chartDate"));
+        RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
+        rootEntitiesSpecDto.setRootEntity("AdmissionsEntity");
+        rootEntitiesSpecDto.setIdProperty("hadmId");
+        rootEntitiesSpecDto.setIds(List.of(rootEntityId));
+        clinicalTextConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
+
+        DataRangeSpecDto dataRangeSpecDto = new DataRangeSpecDto();
+        dataRangeSpecDto.setFirstMinutes(1440);
+        clinicalTextConfigDto.setDataRangeSpec(dataRangeSpecDto);
+
+        // should be valid
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, em.getMetamodel()));
+
+        // dateTime property names not specified
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of());
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, em.getMetamodel()));
+
+        clinicalTextConfigDto.setDateTimePropertiesNames(null);
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, em.getMetamodel()));
+
+        // wrong DateTime property name specified
+        clinicalTextConfigDto.setDateTimePropertiesNames(List.of("chartTime", "wrong"));
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, em.getMetamodel()));
     }
 }

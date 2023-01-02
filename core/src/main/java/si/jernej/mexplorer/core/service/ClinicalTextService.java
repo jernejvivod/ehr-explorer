@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
+import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextResultDto;
 import si.jernej.mexplorer.processorapi.v1.model.DataRangeSpecDto;
@@ -50,6 +51,9 @@ public class ClinicalTextService
         {
             return Collections.emptySet();
         }
+
+        EntityUtils.assertForeignKeyPathValid(clinicalTextConfigDto.getForeignKeyPath(), mimicEntityManager.getMetamodel());
+        EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, mimicEntityManager.getMetamodel());
 
         DataRangeSpecDto dataRangeSpec = clinicalTextConfigDto.getDataRangeSpec();
         String idPropertyName = clinicalTextConfigDto.getRootEntitiesSpec().getIdProperty();
