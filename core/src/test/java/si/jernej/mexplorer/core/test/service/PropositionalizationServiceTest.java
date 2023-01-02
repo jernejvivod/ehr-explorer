@@ -208,8 +208,8 @@ public class PropositionalizationServiceTest extends ATestBase
         CompositeColumnsSpecDto compositeColumnsSpecDto = new CompositeColumnsSpecDto();
 
         CompositeColumnsSpecEntryDto compositeColumnsSpecEntryDto = new CompositeColumnsSpecEntryDto();
-        compositeColumnsSpecEntryDto.setTable1("PatientsEntity");
-        compositeColumnsSpecEntryDto.setTable2("AdmissionsEntity");
+        compositeColumnsSpecEntryDto.setForeignKeyPath1(List.of("AdmissionsEntity", "PatientsEntity"));
+        compositeColumnsSpecEntryDto.setForeignKeyPath2(List.of("AdmissionsEntity"));
         compositeColumnsSpecEntryDto.setProperty1("dob");
         compositeColumnsSpecEntryDto.setProperty2("admitTime");
         compositeColumnsSpecEntryDto.setCompositeName("ageAtAdmission");
@@ -268,8 +268,8 @@ public class PropositionalizationServiceTest extends ATestBase
         CompositeColumnsSpecDto compositeColumnsSpecDto = new CompositeColumnsSpecDto();
 
         CompositeColumnsSpecEntryDto compositeColumnsSpecEntryDto = new CompositeColumnsSpecEntryDto();
-        compositeColumnsSpecEntryDto.setTable1("PatientsEntity");
-        compositeColumnsSpecEntryDto.setTable2("AdmissionsEntity");
+        compositeColumnsSpecEntryDto.setForeignKeyPath1(List.of("AdmissionsEntity", "PatientsEntity"));
+        compositeColumnsSpecEntryDto.setForeignKeyPath2(List.of("AdmissionsEntity"));
         compositeColumnsSpecEntryDto.setProperty1("dob");
         compositeColumnsSpecEntryDto.setProperty2("admitTime");
         compositeColumnsSpecEntryDto.setCompositeName("ageAtAdmission");
@@ -347,8 +347,8 @@ public class PropositionalizationServiceTest extends ATestBase
         CompositeColumnsSpecDto compositeColumnsSpecDto = new CompositeColumnsSpecDto();
 
         CompositeColumnsSpecEntryDto compositeColumnsSpecEntryDto = new CompositeColumnsSpecEntryDto();
-        compositeColumnsSpecEntryDto.setTable1("PatientsEntity");
-        compositeColumnsSpecEntryDto.setTable2("AdmissionsEntity");
+        compositeColumnsSpecEntryDto.setForeignKeyPath1(List.of("AdmissionsEntity", "PatientsEntity"));
+        compositeColumnsSpecEntryDto.setForeignKeyPath2(List.of("AdmissionsEntity"));
         compositeColumnsSpecEntryDto.setProperty1("dob");
         compositeColumnsSpecEntryDto.setProperty2("admitTime");
         compositeColumnsSpecEntryDto.setCompositeName("ageAtAdmission");

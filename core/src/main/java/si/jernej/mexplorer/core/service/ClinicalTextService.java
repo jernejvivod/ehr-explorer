@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
-import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextResultDto;
 import si.jernej.mexplorer.processorapi.v1.model.DataRangeSpecDto;
@@ -53,20 +52,12 @@ public class ClinicalTextService
         }
 
         DataRangeSpecDto dataRangeSpec = clinicalTextConfigDto.getDataRangeSpec();
-        String rootEntityName = clinicalTextConfigDto.getRootEntitiesSpec().getRootEntity();
         String idPropertyName = clinicalTextConfigDto.getRootEntitiesSpec().getIdProperty();
-
-        // compute foreign key path from root entity to entity containing clinical text
-        List<String> foreignKeyPath = EntityUtils.computeForeignKeyPath(
-                rootEntityName,
-                clinicalTextConfigDto.getClinicalTextEntityName(),
-                EntityUtils.computeEntityToLinkedEntitiesMap(mimicEntityManager.getMetamodel())
-        );
 
         // map ids of root entities to clinical text
         Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData = mimicEntityManager.mapRootEntityIdsToClinicalText(
                 new HashSet<>(clinicalTextConfigDto.getRootEntitiesSpec().getIds()),
-                foreignKeyPath,
+                clinicalTextConfigDto.getForeignKeyPath(),
                 idPropertyName,
                 clinicalTextConfigDto.getClinicalTextEntityIdPropertyName(),
                 clinicalTextConfigDto.getTextPropertyName(),

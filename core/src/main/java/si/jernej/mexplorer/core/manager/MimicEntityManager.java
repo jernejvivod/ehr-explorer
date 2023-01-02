@@ -75,6 +75,8 @@ public class MimicEntityManager
             dateTimePropertiesNames = List.of();
         }
 
+        EntityUtils.assertForeignKeyPathValid(foreignKeyPath, em.getMetamodel());
+
         // pool of available query variables
         String[] queryVarsPool = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
         List<String> queryVars = Arrays.stream(queryVarsPool).limit(foreignKeyPath.size()).toList();

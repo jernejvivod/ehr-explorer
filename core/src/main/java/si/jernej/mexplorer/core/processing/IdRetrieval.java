@@ -3,7 +3,6 @@ package si.jernej.mexplorer.core.processing;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -62,19 +61,16 @@ public class IdRetrieval
         Set<Object> entitiesFiltered = new HashSet<>(entitiesAll);
         Set<Object> entitiesFilteredNxt = new HashSet<>();
 
-        // get map of entities to their linked entities
-        Map<String, Set<String>> entityToLinkedEntities = EntityUtils.computeEntityToLinkedEntitiesMap(em.getMetamodel());
-
         // go over filtering specifications
         if (idRetrievalSpecDto.getFilterSpecs() != null)
         {
             for (IdRetrievalFilterSpecDto filterSpec : idRetrievalSpecDto.getFilterSpecs())
             {
-                List<String> foreignKeyPath = EntityUtils.computeForeignKeyPath(idRetrievalSpecDto.getEntityName(), filterSpec.getEntityName(), entityToLinkedEntities);
                 for (Object entity : entitiesFiltered)
                 {
                     // get entity at end of foreign key path and make sure path is singular
-                    Set<Object> entityEndFkPath = EntityUtils.traverseForeignKeyPath(entity, foreignKeyPath);
+                    EntityUtils.assertForeignKeyPathValid(filterSpec.getForeignKeyPath(), em.getMetamodel());
+                    Set<Object> entityEndFkPath = EntityUtils.traverseForeignKeyPath(entity, filterSpec.getForeignKeyPath());
                     if (entityEndFkPath.size() > 1)
                     {
                         throw new ValidationCoreException("Entity used to filter the ids should be reachable by an all-singular path");
@@ -104,7 +100,7 @@ public class IdRetrieval
                     }
                     catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
                     {
-                        throw new ValidationCoreException("Specified property '%s' for filtering of entity '%s' is not valid".formatted(filterSpec.getPropertyName(), filterSpec.getEntityName()));
+                        throw new ValidationCoreException("Specified property '%s' for filtering of entity '%s' is not valid".formatted(filterSpec.getPropertyName(), entityForFiltering.getClass().getSimpleName()));
                     }
                 }
                 entitiesFiltered = new HashSet<>(entitiesFilteredNxt);

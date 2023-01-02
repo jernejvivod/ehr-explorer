@@ -6,6 +6,8 @@ import static si.jernej.mexplorer.processorapi.v1.model.TransformDto.DateDiffRou
 import static si.jernej.mexplorer.processorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.TWENTY_YEARS;
 import static si.jernej.mexplorer.processorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.YEAR;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -15,7 +17,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
+import si.jernej.mexplorer.core.util.Constants;
 import si.jernej.mexplorer.core.util.DtoConverter;
 import si.jernej.mexplorer.processorapi.v1.model.TransformDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecDto;
@@ -177,14 +181,14 @@ class ValueTransformerTest extends ATestBase
         ValueTransformer valueTransformer = new ValueTransformer();
         valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
         valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
-        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel()));
+        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), null));
     }
 
     @Test
     void testValueTransformerValidationEmpty()
     {
         ValueTransformer valueTransformer = new ValueTransformer();
-        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel()));
+        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), null));
     }
 
     @Test
@@ -194,7 +198,7 @@ class ValueTransformerTest extends ATestBase
         valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
         valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
         valueTransformer.addTransform("Wrong", "dbSource", x -> x);
-        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel()));
+        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), null));
     }
 
     @Test
@@ -203,7 +207,53 @@ class ValueTransformerTest extends ATestBase
         ValueTransformer valueTransformer = new ValueTransformer();
         valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
         valueTransformer.addTransform("PatientsEntity", "wrong", x -> x);
-        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel()));
+        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), null));
+    }
+
+    @Test
+    void testValueTransformerValidationWithCompositeColumnCreator()
+    {
+        final String compositeName = "compositeName";
+
+        ValueTransformer valueTransformer = new ValueTransformer();
+        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
+        valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
+        valueTransformer.addTransform(Constants.COMPOSITE_TABLE_NAME, compositeName, x -> x);
+
+        CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
+        compositeColumnCreator.addEntry(
+                List.of("AdmissionsEntity"),
+                "admitTime",
+                List.of("AdmissionsEntity", "PatientsEntity"),
+                "dob",
+                compositeName,
+                (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
+        );
+
+        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), compositeColumnCreator));
+    }
+
+    @Test
+    void testValueTransformerValidationWithCompositeColumnCreatorWrongProperty()
+    {
+        final String compositeName = "compositeName";
+
+        ValueTransformer valueTransformer = new ValueTransformer();
+        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
+        valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
+        valueTransformer.addTransform(Constants.COMPOSITE_TABLE_NAME, "wrong", x -> x);
+
+        CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
+        compositeColumnCreator.addEntry(
+                List.of("AdmissionsEntity"),
+                "admitTime",
+                List.of("AdmissionsEntity", "PatientsEntity"),
+                "dob",
+                compositeName,
+                (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
+        );
+
+        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), compositeColumnCreator));
     }
 
 }

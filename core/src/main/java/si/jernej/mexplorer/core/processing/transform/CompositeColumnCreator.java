@@ -155,14 +155,8 @@ public class CompositeColumnCreator
     public void assertValid(Metamodel metamodel)
     {
         this.entries.forEach(e -> {
-            for (String entityOnForeignKeyPath1 : e.getForeignKeyPath1())
-            {
-                EntityUtils.assertEntityValid(entityOnForeignKeyPath1, metamodel);
-            }
-            for (String entityOnForeignKeyPath2 : e.getForeignKeyPath2())
-            {
-                EntityUtils.assertEntityValid(entityOnForeignKeyPath2, metamodel);
-            }
+            EntityUtils.assertForeignKeyPathValid(e.getForeignKeyPath1(), metamodel);
+            EntityUtils.assertForeignKeyPathValid(e.getForeignKeyPath2(), metamodel);
 
             EntityUtils.assertEntityAndPropertyValid(e.getForeignKeyPath1().get(e.getForeignKeyPath1().size() - 1), e.getProperty1(), metamodel);
             EntityUtils.assertEntityAndPropertyValid(e.getForeignKeyPath2().get(e.getForeignKeyPath2().size() - 1), e.getProperty2(), metamodel);
