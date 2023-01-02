@@ -7,8 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.inject.Inject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -16,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.processorapi.v1.model.IdRetrievalFilterSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.IdRetrievalSpecDto;
@@ -25,8 +25,8 @@ public class IdRetrieval
 {
     private static final Logger logger = LoggerFactory.getLogger(IdRetrieval.class);
 
-    @PersistenceContext
-    private EntityManager em;
+    @Inject
+    private MimicEntityManager mimicEntityManager;
 
     /**
      * Retrieve ids of specified entities with specified entity filtering.
@@ -47,10 +47,7 @@ public class IdRetrieval
         List<Object> entitiesAll;
         try
         {
-            entitiesAll = em.createQuery(String.format("SELECT e FROM %s e WHERE e.%s IS NOT NULL",
-                    idRetrievalSpecDto.getEntityName(),
-                    idRetrievalSpecDto.getIdProperty()
-            ), Object.class).getResultList();
+            entitiesAll = mimicEntityManager.getAllSpecifiedEntitiesWithNonNullIdProperty(idRetrievalSpecDto.getEntityName(), idRetrievalSpecDto.getIdProperty());
         }
         catch (IllegalArgumentException e)
         {
@@ -69,7 +66,7 @@ public class IdRetrieval
                 for (Object entity : entitiesFiltered)
                 {
                     // get entity at end of foreign key path and make sure path is singular
-                    EntityUtils.assertForeignKeyPathValid(filterSpec.getForeignKeyPath(), em.getMetamodel());
+                    EntityUtils.assertForeignKeyPathValid(filterSpec.getForeignKeyPath(), mimicEntityManager.getMetamodel());
                     Set<Object> entityEndFkPath = EntityUtils.traverseForeignKeyPath(entity, filterSpec.getForeignKeyPath());
                     if (entityEndFkPath.size() > 1)
                     {
