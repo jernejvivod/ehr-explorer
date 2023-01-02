@@ -3,12 +3,12 @@ package si.jernej.mexplorer.core.processing;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.processorapi.v1.model.ExtractedTargetDto;
 
 /**
@@ -19,8 +19,8 @@ public class TargetExtraction
 {
     private static final Logger logger = LoggerFactory.getLogger(TargetExtraction.class);
 
-    @PersistenceContext
-    private EntityManager em;
+    @Inject
+    private MimicEntityManager mimicEntityManager;
 
     /**
      * @param ids ids for root entity (AdmissionsEntity) for which to extract the target values
@@ -30,8 +30,7 @@ public class TargetExtraction
     {
         logger.info("extracting target 'patient died during admission' ({} ids)", ids.size());
 
-        String sql = "SELECT a.hadmId, a.hospitalExpireFlag FROM AdmissionsEntity a WHERE a.hadmId IN (:ids)";
-        List<Object[]> results = em.createQuery(sql, Object[].class).setParameter("ids", ids).getResultList();
+        List<Object[]> results = mimicEntityManager.getResultListForExtractPatientDiedDuringAdmissionTarget(ids);
 
         return results.stream().map(r -> {
             ExtractedTargetDto extractedTargetDto = new ExtractedTargetDto();
