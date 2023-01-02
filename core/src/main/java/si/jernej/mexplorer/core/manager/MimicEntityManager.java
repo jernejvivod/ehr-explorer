@@ -242,4 +242,9 @@ public class MimicEntityManager
         ), Object.class).getResultList();
     }
 
+    public List<Object[]> getResultListForExtractPatientDiedDuringAdmissionTarget(List<Long> ids)
+    {
+        final String sql = "SELECT a.hadmId, a.hospitalExpireFlag FROM AdmissionsEntity a WHERE a.hadmId IN (:ids)";
+        return em.createQuery(sql, Object[].class).setParameter("ids", ids).getResultList();
+    }
 }
