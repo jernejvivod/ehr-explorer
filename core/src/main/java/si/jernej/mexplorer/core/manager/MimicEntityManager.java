@@ -234,4 +234,12 @@ public class MimicEntityManager
                 .getResultStream();
     }
 
+    public List<Object> getAllSpecifiedEntitiesWithNonNullIdProperty(String entityName, String idProperty)
+    {
+        return em.createQuery(String.format("SELECT e FROM %s e WHERE e.%s IS NOT NULL",
+                entityName,
+                idProperty
+        ), Object.class).getResultList();
+    }
+
 }
