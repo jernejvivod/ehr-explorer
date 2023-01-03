@@ -65,15 +65,15 @@ public class MimicEntityManager
             @CheckForNull List<String> dateTimePropertiesNames
     )
     {
-        // assert entity and associated property names valid, assert foreign key path valid
-        EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(0), rootEntityIdPropertyName, em.getMetamodel());
-        EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), endEntityIdPropertyName, em.getMetamodel());
-        EntityUtils.assertForeignKeyPathValid(foreignKeyPath, em.getMetamodel());
-
         if (rootEntityIds.isEmpty() || foreignKeyPath.isEmpty())
         {
             return Collections.emptyMap();
         }
+
+        // assert entity and associated property names valid, assert foreign key path valid
+        EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(0), rootEntityIdPropertyName, em.getMetamodel());
+        EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), endEntityIdPropertyName, em.getMetamodel());
+        EntityUtils.assertForeignKeyPathValid(foreignKeyPath, em.getMetamodel());
 
         if (dateTimePropertiesNames == null)
         {
@@ -146,6 +146,8 @@ public class MimicEntityManager
     {
         if (foreignKeyPath.isEmpty())
             return new boolean[0];
+
+        EntityUtils.assertForeignKeyPathValid(foreignKeyPath, em.getMetamodel());
 
         // get name of package containing the entity classes
         Metamodel metamodel = em.getMetamodel();
