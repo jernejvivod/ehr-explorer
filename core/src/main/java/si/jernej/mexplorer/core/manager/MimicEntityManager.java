@@ -65,6 +65,11 @@ public class MimicEntityManager
             @CheckForNull List<String> dateTimePropertiesNames
     )
     {
+        // assert entity and associated property names valid, assert foreign key path valid
+        EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(0), rootEntityIdPropertyName, em.getMetamodel());
+        EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), endEntityIdPropertyName, em.getMetamodel());
+        EntityUtils.assertForeignKeyPathValid(foreignKeyPath, em.getMetamodel());
+
         if (rootEntityIds.isEmpty() || foreignKeyPath.isEmpty())
         {
             return Collections.emptyMap();
@@ -74,8 +79,6 @@ public class MimicEntityManager
         {
             dateTimePropertiesNames = List.of();
         }
-
-        EntityUtils.assertForeignKeyPathValid(foreignKeyPath, em.getMetamodel());
 
         // pool of available query variables
         String[] queryVarsPool = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
@@ -191,6 +194,10 @@ public class MimicEntityManager
      */
     public Stream<Object[]> fetchRootEntitiesAndIdsForForeignKeyPaths(String rootEntityName, List<List<String>> foreignKeyPaths, String rootEntityIdPropertyName, Set<?> ids)
     {
+        // assert root entity name and associated id property name valid, assert foreign key paths valid
+        EntityUtils.assertEntityAndPropertyValid(rootEntityName, rootEntityIdPropertyName, em.getMetamodel());
+        foreignKeyPaths.forEach(fkp -> EntityUtils.assertForeignKeyPathValid(fkp, em.getMetamodel()));
+
         // pool of available query variables
         String[] queryVarsPool = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
         int queryVarsPoolIdx = 1;
@@ -236,6 +243,8 @@ public class MimicEntityManager
 
     public List<Object> getAllSpecifiedEntitiesWithNonNullIdProperty(String entityName, String idProperty)
     {
+        EntityUtils.assertEntityAndPropertyValid(entityName, idProperty, em.getMetamodel());
+
         return em.createQuery(String.format("SELECT e FROM %s e WHERE e.%s IS NOT NULL",
                 entityName,
                 idProperty
