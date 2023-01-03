@@ -66,7 +66,7 @@ public class PropositionalizationService
         }
         if (entityNameToAttributes.containsKey(rootEntityName) && !entityNameToAttributes.get(rootEntityName).contains(idPropertyName))
         {
-            throw new ValidationCoreException("Unknown property name '%s'".formatted(idPropertyName));
+            throw new ValidationCoreException("Unknown property name '%s' of entity '%s'".formatted(idPropertyName, rootEntityName));
         }
 
         // get PropertySpec, ValueTransformer and CompositeColumnCreator instances
