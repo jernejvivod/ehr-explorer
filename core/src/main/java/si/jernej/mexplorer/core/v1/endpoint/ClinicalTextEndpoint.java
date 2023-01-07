@@ -12,9 +12,9 @@ import si.jernej.mexplorer.processorapi.v1.api.ClinicalTextApi;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 
 @Stateless
-public class ClinicalTextApiImpl implements ClinicalTextApi
+public class ClinicalTextEndpoint implements ClinicalTextApi
 {
-    private static final Logger logger = LoggerFactory.getLogger(ClinicalTextApiImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClinicalTextEndpoint.class);
 
     @Inject
     private ClinicalTextService clinicalTextService;
