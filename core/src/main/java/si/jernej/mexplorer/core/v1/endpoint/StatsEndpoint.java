@@ -20,7 +20,7 @@ public class StatsEndpoint implements StatsApi
     }
 
     @Override
-    public Response tableStats(String tableName)
+    public Response entityStats(String tableName)
     {
         return Response.ok().entity(statsService.tableStats(tableName)).build();
     }

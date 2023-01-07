@@ -35,6 +35,12 @@ public class MimicEntityManager
         return em.getMetamodel();
     }
 
+    public Object[] getResultsForColumnStatsQuery(String query)
+    {
+        return em.createQuery(query, Object[].class)
+                .getSingleResult();
+    }
+
     public record ClinicalTextExtractionQueryResult<T>(
             T clinicalTextEntityId,
             String clinicalText,
