@@ -7,10 +7,9 @@ import javax.ws.rs.core.Response;
 import si.jernej.mexplorer.core.service.PropositionalizationService;
 import si.jernej.mexplorer.processorapi.v1.api.PropositionalizationApi;
 import si.jernej.mexplorer.processorapi.v1.model.WordificationConfigDto;
-// import si.jernej.mexplorer.processorapi.v1.model.WordificationTimeSeriesConfigDto;
 
 @Stateless
-public class PropositionalizationApiImpl implements PropositionalizationApi
+public class PropositionalizationEndpoint implements PropositionalizationApi
 {
     @Inject
     private PropositionalizationService propositionalizationService;
@@ -20,10 +19,4 @@ public class PropositionalizationApiImpl implements PropositionalizationApi
     {
         return Response.ok().entity(propositionalizationService.computeWordification(wordificationConfigDto)).build();
     }
-
-    // @Override
-    // public Response timeSeriesWordification(@Valid @NotNull WordificationTimeSeriesConfigDto wordificationTimeSeriesConfigDto)
-    // {
-    //     throw new NotImplementedException("TODO implement");
-    // }
 }

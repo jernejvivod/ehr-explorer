@@ -8,7 +8,7 @@ import si.jernej.mexplorer.core.service.StatsService;
 import si.jernej.mexplorer.processorapi.v1.api.StatsApi;
 
 @Stateless
-public class StatsApiImpl implements StatsApi
+public class StatsEndpoint implements StatsApi
 {
     @Inject
     private StatsService statsService;

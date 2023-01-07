@@ -12,9 +12,9 @@ import si.jernej.mexplorer.processorapi.v1.api.TargetApi;
 import si.jernej.mexplorer.processorapi.v1.model.TargetExtractionSpecDto;
 
 @Stateless
-public class TargetApiImpl implements TargetApi
+public class TargetEndpoint implements TargetApi
 {
-    private static final Logger logger = LoggerFactory.getLogger(TargetApiImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TargetEndpoint.class);
 
     @Inject
     private TargetExtractionService targetExtractionService;
