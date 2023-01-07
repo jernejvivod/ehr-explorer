@@ -57,7 +57,7 @@ public class MimicEntityManager
      */
     @SuppressWarnings("unchecked")
     public <T, S> Map<T, List<ClinicalTextExtractionQueryResult<S>>> mapRootEntityIdsToClinicalText(
-            Set<?> rootEntityIds,
+            @CheckForNull Set<?> rootEntityIds,
             List<String> foreignKeyPath,
             String rootEntityIdPropertyName,
             String endEntityIdPropertyName,
@@ -253,9 +253,9 @@ public class MimicEntityManager
         ), Object.class).getResultList();
     }
 
-    public List<Object[]> getResultListForExtractPatientDiedDuringAdmissionTarget(List<Long> ids)
+    public List<Object[]> getResultListForExtractPatientDiedDuringAdmissionTarget(@CheckForNull List<Long> ids)
     {
-        final String sql = "SELECT a.hadmId, a.hospitalExpireFlag FROM AdmissionsEntity a WHERE a.hadmId IN (:ids)";
+        final String sql = "SELECT a.hadmId, a.hospitalExpireFlag FROM AdmissionsEntity a" + (ids != null ? " WHERE a.hadmId IN (:ids)" : "");
         return em.createQuery(sql, Object[].class).setParameter("ids", ids).getResultList();
     }
 }

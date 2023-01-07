@@ -46,8 +46,8 @@ public class ClinicalTextService
                 clinicalTextConfigDto.getRootEntitiesSpec().getIds().size()
         );
 
-        // if no root entity IDs specified, return empty map
-        if (clinicalTextConfigDto.getRootEntitiesSpec().getIds().isEmpty())
+        // if no root entity IDs specified, return empty Set
+        if (clinicalTextConfigDto.getRootEntitiesSpec().getIds() != null && clinicalTextConfigDto.getRootEntitiesSpec().getIds().isEmpty())
         {
             return Collections.emptySet();
         }
