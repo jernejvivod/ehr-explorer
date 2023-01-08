@@ -10,38 +10,23 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.processing.Wordification;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
-import si.jernej.mexplorer.core.service.TargetExtractionService;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.core.util.DtoConverter;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.entity.IcuStaysEntity;
 import si.jernej.mexplorer.entity.PatientsEntity;
-import si.jernej.mexplorer.test.ATestBase;
 
-class WordificationTest extends ATestBase
+class WordificationTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                Wordification.class,
-                TargetExtractionService.class,
-                MimicEntityManager.class
-        );
-    }
-
     @Inject
     private Wordification wordification;
 

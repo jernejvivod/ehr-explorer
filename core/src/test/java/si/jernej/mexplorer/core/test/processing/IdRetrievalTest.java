@@ -5,34 +5,19 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.processing.IdRetrieval;
-import si.jernej.mexplorer.core.service.TargetExtractionService;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.IdRetrievalFilterSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.IdRetrievalSpecDto;
-import si.jernej.mexplorer.test.ATestBase;
 
-class IdRetrievalTest extends ATestBase
+class IdRetrievalTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                IdRetrieval.class,
-                TargetExtractionService.class,
-                MimicEntityManager.class
-        );
-    }
-
     @Inject
     private IdRetrieval idRetrieval;
 

@@ -37,18 +37,18 @@ public class StatsService
         return tableStatsDtoList;
     }
 
-    public EntityStatsDto tableStats(String tableName)  // TODO change to 'entityName'
+    public EntityStatsDto tableStats(String entityName)
     {
-        EntityUtils.assertEntityValid(tableName, mimicEntityManager.getMetamodel());
+        EntityUtils.assertEntityValid(entityName, mimicEntityManager.getMetamodel());
 
         EntityType<?> tableEntity = mimicEntityManager.getMetamodel().getEntities()
                 .stream()
-                .filter(e -> e.getName().equals(tableName))
+                .filter(e -> e.getName().equals(entityName))
                 .findAny()
                 .orElseThrow(() -> new ValidationCoreException(""));
 
         EntityStatsDto tableStatsDto = new EntityStatsDto();
-        tableStatsDto.setEntityName(tableName);
+        tableStatsDto.setEntityName(entityName);
 
         // construct dynamic query
         StringBuilder query = new StringBuilder("SELECT COUNT(e),\n");
@@ -64,7 +64,7 @@ public class StatsService
             }
         }
         query.delete(query.length() - 2, query.length()).append("\n");
-        query.append("FROM %s e".formatted(tableName));
+        query.append("FROM %s e".formatted(entityName));
 
         // get results
         Object[] resultsForColumnStatsQuery = mimicEntityManager.getResultsForColumnStatsQuery(query.toString());

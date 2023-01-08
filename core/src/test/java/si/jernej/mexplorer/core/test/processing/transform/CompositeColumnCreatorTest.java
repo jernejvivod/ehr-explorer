@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
-import si.jernej.mexplorer.test.ATestBase;
 
-class CompositeColumnCreatorTest extends ATestBase
+class CompositeColumnCreatorTest extends ACoreTest
 {
     @Test
     void testWrongEntityNameOnForeignKeyPath()

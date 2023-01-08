@@ -8,27 +8,16 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
-import si.jernej.mexplorer.test.ATestBase;
 
-public class MimicEntityManagerTest extends ATestBase
+public class MimicEntityManagerTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                MimicEntityManager.class
-        );
-    }
-
     @Inject
     private MimicEntityManager mimicEntityManager;
 

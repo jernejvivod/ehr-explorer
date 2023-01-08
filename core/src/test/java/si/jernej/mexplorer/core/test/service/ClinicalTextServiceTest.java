@@ -6,33 +6,18 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
-import si.jernej.mexplorer.core.processing.Wordification;
 import si.jernej.mexplorer.core.service.ClinicalTextService;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 import si.jernej.mexplorer.processorapi.v1.model.DataRangeSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.RootEntitiesSpecDto;
-import si.jernej.mexplorer.test.ATestBase;
 
-class ClinicalTextServiceTest extends ATestBase
+class ClinicalTextServiceTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                ClinicalTextService.class,
-                Wordification.class,
-                MimicEntityManager.class
-        );
-    }
-
     @Inject
     private ClinicalTextService clinicalTextService;
 
@@ -224,7 +209,7 @@ class ClinicalTextServiceTest extends ATestBase
     }
 
     @Test
-    @Timeout(value=30)
+    @Timeout(value = 30)
     void extractClinicalText30PercentIdsWithDateTimeLimit()
     {
         List<Long> ids = em.createQuery("SELECT a.hadmId FROM AdmissionsEntity a", Long.class)
@@ -251,7 +236,7 @@ class ClinicalTextServiceTest extends ATestBase
     }
 
     @Test
-    @Timeout(value=60)
+    @Timeout(value = 60)
     void extractClinicalText50PercentIdsWithDateTimeLimit()
     {
         List<Long> ids = em.createQuery("SELECT a.hadmId FROM AdmissionsEntity a", Long.class)
