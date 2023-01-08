@@ -6,28 +6,17 @@ import java.lang.reflect.Field;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.entity.AEntity;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.entity.annotation.PropertyOrder;
-import si.jernej.mexplorer.test.ATestBase;
 
-public class OrderedEntityPropertyDescriptorsTest extends ATestBase
+public class OrderedEntityPropertyDescriptorsTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                OrderedEntityPropertyDescriptors.class
-        );
-    }
-
     @Inject
     private OrderedEntityPropertyDescriptors orderedEntityPropertyDescriptors;
 

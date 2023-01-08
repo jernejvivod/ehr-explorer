@@ -3,27 +3,15 @@ package si.jernej.mexplorer.core.test.processing.spec;
 import java.time.Duration;
 import java.util.Set;
 
-import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
-import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
-import si.jernej.mexplorer.test.ATestBase;
+import si.jernej.mexplorer.core.test.ACoreTest;
 
-class PropertySpecTest extends ATestBase
+class PropertySpecTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                OrderedEntityPropertyDescriptors.class
-        );
-    }
-
     @Test
     void testPropertySpec()
     {

@@ -19,14 +19,14 @@ import org.junit.jupiter.api.Test;
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.core.util.Constants;
 import si.jernej.mexplorer.core.util.DtoConverter;
 import si.jernej.mexplorer.processorapi.v1.model.TransformDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecEntryDto;
-import si.jernej.mexplorer.test.ATestBase;
 
-class ValueTransformerTest extends ATestBase
+class ValueTransformerTest extends ACoreTest
 {
     private static final Map<String, Map<TransformDto.DateDiffRoundTypeEnum, String>> dateDiffValuesToResults = Map.ofEntries(
             Map.entry("0 0 0", Map.of(YEAR, "0", FIVE_YEARS, "0", TEN_YEARS, "0", FIFTEEN_YEARS, "0", TWENTY_YEARS, "0")),

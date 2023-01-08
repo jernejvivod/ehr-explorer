@@ -4,31 +4,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
-import si.jernej.mexplorer.core.processing.TargetExtraction;
 import si.jernej.mexplorer.core.service.TargetExtractionService;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.ExtractedTargetDto;
 import si.jernej.mexplorer.processorapi.v1.model.TargetExtractionSpecDto;
-import si.jernej.mexplorer.test.ATestBase;
 
-public class TargetExtractionServiceTest extends ATestBase
+public class TargetExtractionServiceTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                TargetExtractionService.class,
-                TargetExtraction.class,
-                MimicEntityManager.class
-        );
-    }
-
     @Inject
     private TargetExtractionService targetExtractionService;
 

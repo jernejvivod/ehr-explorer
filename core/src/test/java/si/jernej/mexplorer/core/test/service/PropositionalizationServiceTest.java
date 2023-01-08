@@ -4,15 +4,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.weld.environment.se.Weld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
-import si.jernej.mexplorer.core.processing.TargetExtraction;
 import si.jernej.mexplorer.core.service.PropositionalizationService;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.CompositeColumnsSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.CompositeColumnsSpecEntryDto;
 import si.jernej.mexplorer.processorapi.v1.model.ConcatenationSpecDto;
@@ -24,22 +22,9 @@ import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecEntryDto;
 import si.jernej.mexplorer.processorapi.v1.model.WordificationConfigDto;
 import si.jernej.mexplorer.processorapi.v1.model.WordificationResultDto;
-import si.jernej.mexplorer.test.ATestBase;
 
-public class PropositionalizationServiceTest extends ATestBase
+public class PropositionalizationServiceTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                PropositionalizationService.class,
-                TargetExtraction.class,
-                MimicEntityManager.class
-        );
-    }
-
     @Inject
     private PropositionalizationService propositionalizationService;
 

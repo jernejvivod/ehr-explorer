@@ -19,6 +19,7 @@ import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
+import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.core.util.Constants;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
@@ -28,18 +29,8 @@ import si.jernej.mexplorer.processorapi.v1.model.DataRangeSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.RootEntitiesSpecDto;
 import si.jernej.mexplorer.test.ATestBase;
 
-class EntityUtilsTest extends ATestBase
+class EntityUtilsTest extends ACoreTest
 {
-    @Override
-    protected Weld loadWeld(Weld weld)
-    {
-        return weld.addPackages(
-                true,
-                getClass(),
-                OrderedEntityPropertyDescriptors.class
-        );
-    }
-
     private final Map<String, Set<String>> entityToLinkedEntities = Map.ofEntries(
             Map.entry("A", Set.of("B", "C", "D")),
             Map.entry("B", Set.of("A")),
