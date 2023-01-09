@@ -81,6 +81,7 @@ public class MimicEntityManagerTest extends ACoreTest
                         "hadmId",
                         "rowId",
                         "text",
+                        null,
                         null
                 )
         );
@@ -98,7 +99,8 @@ public class MimicEntityManagerTest extends ACoreTest
                 "hadmId",
                 "rowId",
                 "text",
-                List.of("chartdate", "charttime")
+                List.of("chartdate", "charttime"),
+                null
         );
 
         Assertions.assertEquals(0, res.size());
@@ -116,7 +118,8 @@ public class MimicEntityManagerTest extends ACoreTest
                 "hadmId",
                 "rowId",
                 "text",
-                List.of("chartDate", "chartTime")
+                List.of("chartDate", "chartTime"),
+                null
         );
 
         Assertions.assertEquals(1, res.size());
@@ -141,7 +144,8 @@ public class MimicEntityManagerTest extends ACoreTest
                 "hadmId",
                 "rowId",
                 "text",
-                List.of("chartDate", "chartTime")
+                List.of("chartDate", "chartTime"),
+                null
         );
 
         Assertions.assertTrue(res.containsKey(100001L));
@@ -164,7 +168,8 @@ public class MimicEntityManagerTest extends ACoreTest
                 "rowId",
                 "rowId",
                 "text",
-                List.of("chartDate", "chartTime")
+                List.of("chartDate", "chartTime"),
+                null
         );
 
         Assertions.assertTrue(res.containsKey(1L));
@@ -183,7 +188,8 @@ public class MimicEntityManagerTest extends ACoreTest
                 "hadmId",
                 "rowId",
                 "text",
-                List.of("chartdate", "charttime")
+                List.of("chartdate", "charttime"),
+                null
         );
 
         Assertions.assertEquals(0, res.size());
@@ -201,7 +207,8 @@ public class MimicEntityManagerTest extends ACoreTest
                 "hadmId",
                 "rowId",
                 "text",
-                List.of("chartdate", "charttime")
+                List.of("chartdate", "charttime"),
+                null
         );
 
         Assertions.assertEquals(0, res.size());

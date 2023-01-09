@@ -44,6 +44,7 @@ public class MimicEntityManager
     public record ClinicalTextExtractionQueryResult<T>(
             T clinicalTextEntityId,
             String clinicalText,
+            LocalDateTime rootEntityDatetimePropertyForCutoffValue,
             List<LocalDateTime> dateTimeColumnValues
     )
     {
@@ -68,10 +69,11 @@ public class MimicEntityManager
             String rootEntityIdPropertyName,
             String endEntityIdPropertyName,
             String textPropertyName,
-            @CheckForNull List<String> dateTimePropertiesNames
+            @CheckForNull List<String> dateTimePropertiesNames,
+            @CheckForNull String rootEntityDatetimePropertyForCutoff
     )
     {
-        if (rootEntityIds.isEmpty() || foreignKeyPath.isEmpty())
+        if (rootEntityIds != null && (rootEntityIds.isEmpty() || foreignKeyPath.isEmpty()))
         {
             return Collections.emptyMap();
         }
@@ -100,6 +102,13 @@ public class MimicEntityManager
         queryTemplateArgs.add(queryVars.get(queryVars.size() - 1));
         queryTemplateArgs.add(textPropertyName);
 
+        // if specified, add property containing the time value to be used as cutoff for extracting clinical text
+        if (rootEntityDatetimePropertyForCutoff != null)
+        {
+            EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(0), rootEntityDatetimePropertyForCutoff, em.getMetamodel());
+            queryTemplateArgs.add(rootEntityDatetimePropertyForCutoff);
+        }
+
         // add query template arguments for selecting clinical entity datetime columns values
         for (String dateTimePropertiesName : dateTimePropertiesNames)
         {
@@ -125,21 +134,24 @@ public class MimicEntityManager
             queryTemplateArgs.add(queryVars.get(queryVars.size() - 1));
             queryTemplateArgs.add(dateTimePropertiesName);
         }
+        queryTemplateArgs.add(queryVars.get(queryVars.size() - 1));
 
         // construct dynamic query
         final String dynamicQuery = ("SELECT a.%s, %s.%s, %s.%s" +                                      // SELECT root entity IDs, clinical text entity ids, text from clinical text entity
+                                     (rootEntityDatetimePropertyForCutoff != null ? ", a.%s" : "") +    // SELECT root entity property value for cutoff if specified
                                      ", %s.%s".repeat(dateTimePropertiesNames.size()) +                 // SELECT clinical text entity datetime column values
                                      " FROM %s a" +                                                     // FROM root entity table
                                      " JOIN %s.%s %s".repeat(foreignKeyPath.size() - 1) +         // construct foreign key path using JOINs
-                                     " WHERE a.%1$s IN (:ids)" +                                        // for specified root entity IDs
-                                     (dateTimePropertiesNames.isEmpty() ? "" : " ORDER BY ") +          // order by specified clinical text entity datetime column values
-                                     StringUtils.repeat("%s.%s", ", ", dateTimePropertiesNames.size()))
+                                     (rootEntityIds != null ? " WHERE a.%1$s IN (:ids)" : "") +         // for specified root entity IDs
+                                     " ORDER BY " +                                                     // order by specified clinical text entity datetime column values
+                                     StringUtils.repeat("%s.%s", ", ", dateTimePropertiesNames.size()) +
+                                     (!dateTimePropertiesNames.isEmpty() ? ", " : "") + "%s.%3$s ASC")
                 .formatted(queryTemplateArgs.toArray());
 
         return em.createQuery(dynamicQuery, Object[].class)
                 .setParameter("ids", rootEntityIds)
                 .getResultStream()
-                .collect(Collectors.groupingBy(e -> (T) e[0], Collectors.mapping(e -> new ClinicalTextExtractionQueryResult<>((S) e[1], (String) e[2], Arrays.stream(e).skip(3).map(LocalDateTime.class::cast).toList()), Collectors.toList())));
+                .collect(Collectors.groupingBy(e -> (T) e[0], Collectors.mapping(e -> new ClinicalTextExtractionQueryResult<>((S) e[1], (String) e[2], rootEntityDatetimePropertyForCutoff != null ? (LocalDateTime) e[3] : null, Arrays.stream(e).skip(rootEntityDatetimePropertyForCutoff != null ? 4 : 3).map(LocalDateTime.class::cast).toList()), Collectors.toList())));
     }
 
     /**

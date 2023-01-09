@@ -23,7 +23,7 @@ public class IcuStaysEntity extends AEntity
     @PropertyOrder(3)
     private AdmissionsEntity admissionsEntity;  // foreign key identifying the hospital stay
     @PropertyOrder(4)
-    private int icuStayId;                      // ICU stay ID
+    private Long icuStayId;                      // ICU stay ID
     @PropertyOrder(5)
     private String dbSource;                    // source database of the item
     @PropertyOrder(6)
@@ -82,12 +82,12 @@ public class IcuStaysEntity extends AEntity
     }
 
     @Column(name = "icustay_id", nullable = false)
-    public int getIcuStayId()
+    public Long getIcuStayId()
     {
         return icuStayId;
     }
 
-    public void setIcuStayId(int icuStayId)
+    public void setIcuStayId(Long icuStayId)
     {
         this.icuStayId = icuStayId;
     }

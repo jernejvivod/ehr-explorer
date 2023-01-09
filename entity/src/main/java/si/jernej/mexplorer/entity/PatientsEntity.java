@@ -29,7 +29,7 @@ public class PatientsEntity extends AEntity
     @PropertyOrder(7)
     private LocalDateTime dodSsn;                     // date of death recorded in the social security records
     @PropertyOrder(8)
-    private int expireFlag;                           // Lag indicating that the patient has died
+    private int expireFlag;                           // flag indicating that the patient has died
     @PropertyOrder(9)
     private Set<AdmissionsEntity> admissionsEntitys;
     @PropertyOrder(10)

@@ -418,14 +418,14 @@ public final class EntityUtils
 
     public static void assertDateTimeLimitSpecValidForClinicalTextExtraction(ClinicalTextConfigDto clinicalTextConfigDto, Metamodel metamodel)
     {
-        if (clinicalTextConfigDto.getDataRangeSpec() != null && (clinicalTextConfigDto.getDateTimePropertiesNames() == null || clinicalTextConfigDto.getDateTimePropertiesNames().isEmpty()))
+        if (clinicalTextConfigDto.getClinicalTextExtractionDurationSpec() != null && (clinicalTextConfigDto.getClinicalTextDateTimePropertiesNames() == null || clinicalTextConfigDto.getClinicalTextDateTimePropertiesNames().isEmpty()))
         {
             throw new ValidationCoreException("DateTime property names must be specified when data range specified.");
         }
 
         List<String> foreignKeyPath = clinicalTextConfigDto.getForeignKeyPath();
 
-        for (String dateTimePropertyName : clinicalTextConfigDto.getDateTimePropertiesNames())
+        for (String dateTimePropertyName : clinicalTextConfigDto.getClinicalTextDateTimePropertiesNames())
         {
             assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), dateTimePropertyName, metamodel);
         }
