@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
+import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextResultDto;
-import si.jernej.mexplorer.processorapi.v1.model.DataRangeSpecDto;
 
 @Stateless
 public class ClinicalTextService
@@ -55,7 +55,7 @@ public class ClinicalTextService
         EntityUtils.assertForeignKeyPathValid(clinicalTextConfigDto.getForeignKeyPath(), mimicEntityManager.getMetamodel());
         EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, mimicEntityManager.getMetamodel());
 
-        DataRangeSpecDto dataRangeSpec = clinicalTextConfigDto.getDataRangeSpec();
+        ClinicalTextExtractionDurationSpecDto clinicalTextExtractionDurationSpec = clinicalTextConfigDto.getClinicalTextExtractionDurationSpec();
         String idPropertyName = clinicalTextConfigDto.getRootEntitiesSpec().getIdProperty();
 
         // map ids of root entities to clinical text
@@ -65,11 +65,12 @@ public class ClinicalTextService
                 idPropertyName,
                 clinicalTextConfigDto.getClinicalTextEntityIdPropertyName(),
                 clinicalTextConfigDto.getTextPropertyName(),
-                clinicalTextConfigDto.getDateTimePropertiesNames()
+                clinicalTextConfigDto.getClinicalTextDateTimePropertiesNames(),
+                clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoff()
         );
 
         // if range of data limited, filter
-        if (dataRangeSpec != null)
+        if (clinicalTextExtractionDurationSpec != null)
         {
             rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
 
@@ -93,7 +94,26 @@ public class ClinicalTextService
                             .filter(Objects::nonNull)
                             .findFirst()
                             .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found"));
-                    return Duration.between(initialDateTime, dateTimeNxt).toMinutes() < dataRangeSpec.getFirstMinutes();
+                    return Duration.between(initialDateTime, dateTimeNxt).toMinutes() < clinicalTextExtractionDurationSpec.getFirstMinutes();
+                }).toList();
+            });
+        }
+
+        // if property containing cut-off value specified, apply cut-off
+        if (clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoff() != null)
+        {
+            rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
+
+                // filter out clinical text where all date/time values are null
+                var valuesWithDateTime = values.stream().filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull)).toList();
+
+                // filter to specified cutoff time
+                return valuesWithDateTime.stream().filter(d -> {
+                    LocalDateTime dateTimeNxt = d.dateTimeColumnValues().stream()
+                            .filter(Objects::nonNull)
+                            .findFirst()
+                            .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found"));
+                    return dateTimeNxt.isBefore(d.rootEntityDatetimePropertyForCutoffValue());
                 }).toList();
             });
         }
