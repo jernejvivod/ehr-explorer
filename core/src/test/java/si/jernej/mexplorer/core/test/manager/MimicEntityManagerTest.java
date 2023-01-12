@@ -372,4 +372,79 @@ public class MimicEntityManagerTest extends ACoreTest
         Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100003L));
         Assertions.assertTrue(resList.stream().anyMatch(r -> (long) r[1] == 100006L));
     }
+
+    @Test
+    void testFetchFkPathEndEntitiesAndIdsForForeignKeyPathEmptyForeignKeyPath()
+    {
+        Assertions.assertThrows(Exception.class, () -> mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
+                        List.of(),
+                        "test",
+                        "test",
+                        Set.of(249)
+                )
+        );
+    }
+
+    @Test
+    void testFetchFkPathEndEntitiesAndIdsForForeignKeyPathWrongEntityName()
+    {
+        Assertions.assertThrows(Exception.class, () -> mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
+                        List.of("PatientsEntity", "Wrong"),
+                        "wrong",
+                        "wrong",
+                        Set.of(249)
+                )
+        );
+    }
+
+    @Test
+    void testFetchFkPathEndEntitiesAndIdsForForeignKeyPathWrongEntityIdPropertyName()
+    {
+        Assertions.assertThrows(Exception.class, () -> mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
+                        List.of("PatientsEntity", "IcuStaysEntity"),
+                        "subjectId",
+                        "wrong",
+                        Set.of(249)
+                )
+        );
+
+        Assertions.assertThrows(Exception.class, () -> mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
+                        List.of("PatientsEntity", "IcuStaysEntity"),
+                        "wrong",
+                        "icuStayId",
+                        Set.of(249)
+                )
+        );
+    }
+
+    @Test
+    void testFetchFkPathEndEntitiesAndIdsForForeignKeyPathEmptyIds()
+    {
+        Stream<Object[]> res = mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
+                List.of("PatientsEntity", "IcuStaysEntity"),
+                "subjectId",
+                "icuStayId",
+                Set.of()
+        );
+        Assertions.assertEquals(0, res.count());
+    }
+
+    @Test
+    void testFetchFkPathEndEntitiesAndIdsForForeignKeyPathSimple()
+    {
+        Stream<Object[]> res = mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
+                List.of("PatientsEntity", "IcuStaysEntity"),
+                "subjectId",
+                "icuStayId",
+                Set.of(17L, 21L)
+        );
+
+        Assertions.assertNotNull(res);
+        List<Object[]> resList = res.toList();
+        Assertions.assertEquals(4, resList.size());
+        Assertions.assertTrue(resList.stream().map(e -> e[1]).anyMatch(e -> e.equals(277042L)));
+        Assertions.assertTrue(resList.stream().map(e -> e[1]).anyMatch(e -> e.equals(257980L)));
+        Assertions.assertTrue(resList.stream().map(e -> e[1]).anyMatch(e -> e.equals(217847L)));
+        Assertions.assertTrue(resList.stream().map(e -> e[1]).anyMatch(e -> e.equals(216859L)));
+    }
 }

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import si.jernej.mexplorer.core.processing.IdRetrieval;
 import si.jernej.mexplorer.processorapi.v1.api.IdsApi;
+import si.jernej.mexplorer.processorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.IdRetrievalSpecDto;
 
 @Stateless
@@ -24,5 +25,12 @@ public class IdsEndpoint implements IdsApi
     {
         logger.info("extracting IDs");
         return Response.ok().entity(idRetrieval.retrieveIds(idRetrievalSpecDto)).build();
+    }
+
+    @Override
+    public Response idsFk(ForeignKeyPathIdRetrievalSpecDto foreignKeyPathIdRetrievalSpecDto)
+    {
+        logger.info("extracting IDs of entities on end of foreign key path");
+        return Response.ok().entity(idRetrieval.retrieveIdsUsingForeignKeyPath(foreignKeyPathIdRetrievalSpecDto)).build();
     }
 }

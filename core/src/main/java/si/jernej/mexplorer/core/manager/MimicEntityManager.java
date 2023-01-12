@@ -30,6 +30,9 @@ public class MimicEntityManager
     @PersistenceContext
     private EntityManager em;
 
+    // array of available query variables for dynamic queries
+    private static final String[] QUERY_VARS_POOL = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+
     public Metamodel getMetamodel()
     {
         return em.getMetamodel();
@@ -89,8 +92,7 @@ public class MimicEntityManager
         }
 
         // pool of available query variables
-        String[] queryVarsPool = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
-        List<String> queryVars = Arrays.stream(queryVarsPool).limit(foreignKeyPath.size()).toList();
+        List<String> queryVars = Arrays.stream(QUERY_VARS_POOL).limit(foreignKeyPath.size()).toList();
 
         // construct query template arguments list
         List<String> queryTemplateArgs = new ArrayList<>(5 + dateTimePropertiesNames.size() * 2 + 1 + (foreignKeyPath.size() - 1) * 3 + dateTimePropertiesNames.size() * 2);
@@ -208,9 +210,42 @@ public class MimicEntityManager
     }
 
     /**
+     * Fetch entities on end of foreign key paths as well as their ids.
+     */
+    public Stream<Object[]> fetchFkPathEndEntitiesAndIdsForForeignKeyPath(List<String> foreignKeyPath, String rootEntityIdPropertyName, String endEntityIdPropertyName, Set<?> rootEntityIds)
+    {
+        // assert end entity name and associated id property name valid, assert foreign key path valid
+        EntityUtils.assertForeignKeyPathValid(foreignKeyPath, em.getMetamodel());
+        EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(0), rootEntityIdPropertyName, em.getMetamodel());
+        EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), endEntityIdPropertyName, em.getMetamodel());
+
+        if (rootEntityIds.isEmpty())
+        {
+            return Stream.empty();
+        }
+
+        StringBuilder dynamicQuery = new StringBuilder("SELECT %1$s, %1$s.%2$s FROM %3$s a%n".formatted(QUERY_VARS_POOL[foreignKeyPath.size() - 1], endEntityIdPropertyName, foreignKeyPath.get(0)));
+
+        List<String> foreignKeyPathPropertyNames = foreignKeyPathToPropertyNames(foreignKeyPath);
+
+        for (int i = 0; i < foreignKeyPath.size() - 1; i++)
+        {
+            // get next query variable for entity
+            String entityVarNxt = QUERY_VARS_POOL[i+1];
+
+            // append fetch to query
+            dynamicQuery.append("INNER JOIN %s.%s %s%n".formatted(QUERY_VARS_POOL[i], foreignKeyPathPropertyNames.get(i), entityVarNxt));
+        }
+
+        dynamicQuery.append("WHERE a.%s IN (:ids)".formatted(rootEntityIdPropertyName));
+
+        return em.createQuery(dynamicQuery.toString(), Object[].class)
+                .setParameter("ids", rootEntityIds)
+                .getResultStream();
+    }
+
+    /**
      * Fetch root entities and their ids so that all specified foreign-key paths are loaded.
-     *
-     * @param foreignKeyPaths list of foreign-key paths
      */
     public Stream<Object[]> fetchRootEntitiesAndIdsForForeignKeyPaths(String rootEntityName, List<List<String>> foreignKeyPaths, String rootEntityIdPropertyName, Set<?> ids)
     {
@@ -218,13 +253,11 @@ public class MimicEntityManager
         EntityUtils.assertEntityAndPropertyValid(rootEntityName, rootEntityIdPropertyName, em.getMetamodel());
         foreignKeyPaths.forEach(fkp -> EntityUtils.assertForeignKeyPathValid(fkp, em.getMetamodel()));
 
-        // pool of available query variables
-        String[] queryVarsPool = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
         int queryVarsPoolIdx = 1;
 
         // mapping of entity names to their corresponding variables in the query
         Map<String, String> entityNameToQueryVar = new HashMap<>();
-        entityNameToQueryVar.put(rootEntityName, queryVarsPool[0]);
+        entityNameToQueryVar.put(rootEntityName, QUERY_VARS_POOL[0]);
 
         // initialize dynamic query
         StringBuilder dynamicQuery = new StringBuilder("SELECT a, a.%s FROM %s a%n".formatted(rootEntityIdPropertyName, rootEntityName));
@@ -245,7 +278,7 @@ public class MimicEntityManager
                 String entityVarPrev = entityNameToQueryVar.get(foreignKeyPath.get(i));
 
                 // get next query variable for entity
-                String entityVarNxt = queryVarsPool[queryVarsPoolIdx];
+                String entityVarNxt = QUERY_VARS_POOL[queryVarsPoolIdx];
                 entityNameToQueryVar.put(foreignKeyPath.get(i + 1), entityVarNxt);
                 queryVarsPoolIdx++;
 

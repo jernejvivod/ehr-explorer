@@ -17,7 +17,7 @@ import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 public class PatientsEntity extends AEntity
 {
     @PropertyOrder(2)
-    private int subjectId;                            // patient's ID
+    private Long subjectId;                            // patient's ID
     @PropertyOrder(3)
     private String gender;                            // patient's gender
     @PropertyOrder(4)
@@ -70,12 +70,12 @@ public class PatientsEntity extends AEntity
     private Set<TransfersEntity> transfersEntitys;
 
     @Column(name = "subject_id", nullable = false)
-    public int getSubjectId()
+    public Long getSubjectId()
     {
         return subjectId;
     }
 
-    public void setSubjectId(int subjectId)
+    public void setSubjectId(Long subjectId)
     {
         this.subjectId = subjectId;
     }
