@@ -3,6 +3,7 @@ package si.jernej.mexplorer.core.processing;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,10 +44,24 @@ public class IdRetrieval
                 Optional.ofNullable(idRetrievalSpecDto.getFilterSpecs()).map(List::size).orElse(0)
         );
 
-        // retrieve all specified entities for filtering
-        List<Object> entitiesAll = mimicEntityManager.getAllSpecifiedEntitiesWithNonNullIdProperty(idRetrievalSpecDto.getEntityName(), idRetrievalSpecDto.getIdProperty());  // TODO should fetch based on filters
+        // retrieve ids
+        List<Object> ids = mimicEntityManager.getNonNullIdsOfEntity(idRetrievalSpecDto.getEntityName(), idRetrievalSpecDto.getIdProperty());
 
-        Set<Object> entitiesFiltered = filter(entitiesAll, idRetrievalSpecDto.getFilterSpecs());
+        // fetch entities for filtering
+        List<List<String>> foreignKeyPathsForFilterSpecs = idRetrievalSpecDto.getFilterSpecs().stream()
+                .map(IdRetrievalFilterSpecDto::getForeignKeyPath)
+                .toList();
+
+        List<Object> entitiesFetchedForFiltering = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
+                        idRetrievalSpecDto.getEntityName(),
+                        foreignKeyPathsForFilterSpecs,
+                        idRetrievalSpecDto.getIdProperty(),
+                        new HashSet<>(ids)
+                )
+                .map(e -> e[0])
+                .toList();
+
+        Set<Object> entitiesFiltered = filterEntitiesUsingFilterSpecs(entitiesFetchedForFiltering, idRetrievalSpecDto.getFilterSpecs());
 
         // get and return id values
         return getIdValues(entitiesFiltered, idRetrievalSpecDto.getIdProperty());
@@ -56,23 +71,38 @@ public class IdRetrieval
     {
         List<String> foreignKeyPath = foreignKeyPathIdRetrievalSpecDto.getForeignKeyPath();
 
-        List<Object> entitiesEndFkPath = mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
+        // retrieve ids
+        List<Object> idsEndEntitiesForForeignKeyPath = mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
                         foreignKeyPath,
                         foreignKeyPathIdRetrievalSpecDto.getRootEntityIdProperty(),
                         foreignKeyPathIdRetrievalSpecDto.getEndEntityIdProperty(),
                         new HashSet<>(foreignKeyPathIdRetrievalSpecDto.getRootEntityIds())
                 )
+                .map(e -> e[1])
+                .filter(Objects::nonNull)
+                .toList();
+
+        // fetch entities for filtering
+        List<List<String>> foreignKeyPathsForFilterSpecs = foreignKeyPathIdRetrievalSpecDto.getFilterSpecs().stream()
+                .map(IdRetrievalFilterSpecDto::getForeignKeyPath)
+                .toList();
+
+        List<Object> entitiesFetchedForFiltering = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
+                        foreignKeyPath.get(foreignKeyPath.size() - 1),
+                        foreignKeyPathsForFilterSpecs,
+                        foreignKeyPathIdRetrievalSpecDto.getEndEntityIdProperty(),
+                        new HashSet<>(idsEndEntitiesForForeignKeyPath)
+                )
                 .map(e -> e[0])
                 .toList();
 
-        // TODO map to IDs and perform fetches for filtering
+        Set<Object> entitiesFiltered = filterEntitiesUsingFilterSpecs(entitiesFetchedForFiltering, foreignKeyPathIdRetrievalSpecDto.getFilterSpecs());
 
-        Set<Object> entitiesFiltered = filter(entitiesEndFkPath, foreignKeyPathIdRetrievalSpecDto.getFilterSpecs());
-
+        // get and return id values
         return getIdValues(entitiesFiltered, foreignKeyPathIdRetrievalSpecDto.getEndEntityIdProperty());
     }
 
-    private Set<Object> filter(List<Object> entities, List<IdRetrievalFilterSpecDto> filterSpecs)
+    private Set<Object> filterEntitiesUsingFilterSpecs(List<Object> entities, List<IdRetrievalFilterSpecDto> filterSpecs)
     {
         // set current set of filtered entities and initialize empty set for adding entities for the next filtering
         Set<Object> entitiesFiltered = new HashSet<>(entities);

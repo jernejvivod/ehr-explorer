@@ -143,7 +143,7 @@ public class MimicEntityManager
                                      (rootEntityDatetimePropertyForCutoff != null ? ", a.%s" : "") +    // SELECT root entity property value for cutoff if specified
                                      ", %s.%s".repeat(dateTimePropertiesNames.size()) +                 // SELECT clinical text entity datetime column values
                                      " FROM %s a" +                                                     // FROM root entity table
-                                     " JOIN %s.%s %s".repeat(foreignKeyPath.size() - 1) +         // construct foreign key path using JOINs
+                                     " JOIN %s.%s %s".repeat(foreignKeyPath.size() - 1) +               // construct foreign key path using JOINs
                                      (rootEntityIds != null ? " WHERE a.%1$s IN (:ids)" : "") +         // for specified root entity IDs
                                      " ORDER BY " +                                                     // order by specified clinical text entity datetime column values
                                      StringUtils.repeat("%s.%s", ", ", dateTimePropertiesNames.size()) +
@@ -231,7 +231,7 @@ public class MimicEntityManager
         for (int i = 0; i < foreignKeyPath.size() - 1; i++)
         {
             // get next query variable for entity
-            String entityVarNxt = QUERY_VARS_POOL[i+1];
+            String entityVarNxt = QUERY_VARS_POOL[i + 1];
 
             // append fetch to query
             dynamicQuery.append("INNER JOIN %s.%s %s%n".formatted(QUERY_VARS_POOL[i], foreignKeyPathPropertyNames.get(i), entityVarNxt));
@@ -252,6 +252,11 @@ public class MimicEntityManager
         // assert root entity name and associated id property name valid, assert foreign key paths valid
         EntityUtils.assertEntityAndPropertyValid(rootEntityName, rootEntityIdPropertyName, em.getMetamodel());
         foreignKeyPaths.forEach(fkp -> EntityUtils.assertForeignKeyPathValid(fkp, em.getMetamodel()));
+
+        if (ids.isEmpty())
+        {
+            return Stream.empty();
+        }
 
         int queryVarsPoolIdx = 1;
 
@@ -294,13 +299,13 @@ public class MimicEntityManager
                 .getResultStream();
     }
 
-    public List<Object> getAllSpecifiedEntitiesWithNonNullIdProperty(String entityName, String idProperty)
+    public List<Object> getNonNullIdsOfEntity(String entityName, String idProperty)
     {
         EntityUtils.assertEntityAndPropertyValid(entityName, idProperty, em.getMetamodel());
 
-        return em.createQuery(String.format("SELECT e FROM %s e WHERE e.%s IS NOT NULL",
-                entityName,
-                idProperty
+        return em.createQuery(String.format("SELECT e.%1$s FROM %2$s e WHERE e.%1$s IS NOT NULL",
+                idProperty,
+                entityName
         ), Object.class).getResultList();
     }
 
