@@ -447,4 +447,74 @@ public class MimicEntityManagerTest extends ACoreTest
         Assertions.assertTrue(resList.stream().map(e -> e[1]).anyMatch(e -> e.equals(217847L)));
         Assertions.assertTrue(resList.stream().map(e -> e[1]).anyMatch(e -> e.equals(216859L)));
     }
+
+    @Test
+    void testGetNonNullIdsOfEntity()
+    {
+        List<Object> res = mimicEntityManager.getNonNullIdsOfEntity("AdmissionsEntity", "hadmId");
+        List<Long> expectedIds = em.createQuery("SELECT a.hadmId FROM AdmissionsEntity a WHERE a.hadmId IS NOT NULL", Long.class).getResultList();
+        Assertions.assertEquals(expectedIds.size(), res.size());
+        Assertions.assertTrue(res.containsAll(expectedIds));
+    }
+
+    @Test
+    void getResultListForExtractPatientDiedDuringAdmissionTarget()
+    {
+        List<Long> ids = List.of(
+                100001L,
+                100003L,
+                100006L,
+                100007L,
+                100009L,
+                100010L,
+                100011L,
+                100012L,
+                100014L,
+                100016L,
+                100017L,
+                100018L,
+                100019L,
+                100020L,
+                100021L,
+                100023L,
+                100024L,
+                100025L,
+                100028L,
+                100029L,
+                100030L,
+                100031L,
+                100033L,
+                100034L,
+                100035L,
+                100036L,
+                100037L,
+                100038L,
+                100039L,
+                100040L,
+                100041L,
+                100044L,
+                100045L,
+                100046L,
+                100047L,
+                100050L,
+                100052L,
+                100053L,
+                100055L,
+                100058L,
+                100059L,
+                100060L,
+                100061L
+        );
+
+        List<Object[]> resIdsAndTarget = mimicEntityManager.getResultListForExtractPatientDiedDuringAdmissionTarget(ids);
+
+        for (Object[] res : resIdsAndTarget)
+        {
+            short expectedVal = em.createQuery("SELECT a.hospitalExpireFlag FROM AdmissionsEntity a WHERE a.hadmId=:hadmId", Short.class)
+                    .setParameter("hadmId", res[0])
+                    .getSingleResult();
+
+            Assertions.assertEquals(expectedVal, res[1]);
+        }
+    }
 }
