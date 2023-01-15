@@ -15,6 +15,7 @@ import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
+import si.jernej.mexplorer.entity.PatientsEntity;
 
 public class MimicEntityManagerTest extends ACoreTest
 {
@@ -506,7 +507,7 @@ public class MimicEntityManagerTest extends ACoreTest
                 100061L
         );
 
-        List<Object[]> resIdsAndTarget = mimicEntityManager.getResultListForExtractPatientDiedDuringAdmissionTarget(ids);
+        List<Object[]> resIdsAndTarget = mimicEntityManager.getResultListForExtractPatientDiedDuringAdmissionTarget(ids, null);
 
         for (Object[] res : resIdsAndTarget)
         {
@@ -516,5 +517,52 @@ public class MimicEntityManagerTest extends ACoreTest
 
             Assertions.assertEquals(expectedVal, res[1]);
         }
+    }
+
+    @Test
+    void getResultListForExtractReadmissionTargetEmptyIds()
+    {
+        List<PatientsEntity> res = mimicEntityManager.fetchPatientsWithIds(List.of());
+
+        Assertions.assertNotNull(res);
+        Assertions.assertTrue(res.isEmpty());
+    }
+
+    @Test
+    void getResultListForExtractReadmissionTarget()
+    {
+        List<Long> ids = List.of(
+                249L,
+                250L,
+                251L,
+                252L,
+                253L,
+                255L,
+                256L,
+                257L,
+                258L,
+                260L,
+                261L,
+                262L,
+                263L,
+                264L,
+                265L,
+                266L,
+                267L,
+                268L,
+                269L,
+                270L,
+                663L,
+                664L,
+                665L,
+                666L,
+                667L,
+                668L
+        );
+
+        List<PatientsEntity> res = mimicEntityManager.fetchPatientsWithIds(ids);
+
+        Assertions.assertEquals(ids.size(), res.size());
+        Assertions.assertTrue(ids.containsAll(res.stream().map(PatientsEntity::getSubjectId).toList()));
     }
 }
