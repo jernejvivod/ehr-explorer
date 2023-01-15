@@ -17,12 +17,19 @@ public class TargetExtractionService
 
     public List<ExtractedTargetDto> computeTarget(TargetExtractionSpecDto targetExtractionSpecDto)
     {
-        List<ExtractedTargetDto> targetValues = null;
-        if (targetExtractionSpecDto.getTargetType() == TargetExtractionSpecDto.TargetTypeEnum.PATIENT_DIED_DURING_ADMISSION)
-        {
-            targetValues = targetExtraction.extractPatientDiedDuringAdmissionTarget(targetExtractionSpecDto.getIds());
-        }
-
-        return targetValues;
+        return switch (targetExtractionSpecDto.getTargetType())
+                {
+                    case PATIENT_DIED_DURING_ADMISSION -> targetExtraction.extractPatientDiedDuringAdmissionTarget(
+                            targetExtractionSpecDto.getIds(),
+                            targetExtractionSpecDto.getAgeLim()
+                    );
+                    case HOSPITAL_READMISSION_HAPPENED -> targetExtraction.extractReadmissionTarget(
+                            targetExtractionSpecDto.getIds(),
+                            targetExtractionSpecDto.getAgeLim(),
+                            targetExtractionSpecDto.getMaxDaysIntervalPositive(),
+                            targetExtractionSpecDto.getMaxDaysDeathAfterLastPositive()
+                    );
+                    case ICU_STAY_READMISSION_HAPPENED -> null;  // TODO implement
+                };
     }
 }

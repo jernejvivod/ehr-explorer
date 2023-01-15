@@ -66,6 +66,12 @@
                                 <useBeanValidation>true</useBeanValidation>
                                 <identifierNamingConvention>snake_case</identifierNamingConvention>
                             </configOptions>
+                            <typeMappings>
+                                <typeMapping>Date=LocalDateTime</typeMapping>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>java.util.Date=java.time.LocalDateTime</importMapping>
+                            </importMappings>
                         </configuration>
                     </execution>
                 </executions>

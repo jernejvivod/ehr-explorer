@@ -16,6 +16,7 @@ import javax.annotation.CheckForNull;
 import javax.enterprise.context.Dependent;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Metamodel;
 import javax.ws.rs.InternalServerErrorException;
@@ -23,6 +24,7 @@ import javax.ws.rs.InternalServerErrorException;
 import org.apache.commons.lang3.StringUtils;
 
 import si.jernej.mexplorer.core.util.EntityUtils;
+import si.jernej.mexplorer.entity.PatientsEntity;
 
 @Dependent
 public class MimicEntityManager
@@ -309,9 +311,40 @@ public class MimicEntityManager
         ), Object.class).getResultList();
     }
 
-    public List<Object[]> getResultListForExtractPatientDiedDuringAdmissionTarget(@CheckForNull List<Long> ids)
+    public List<Object[]> getResultListForExtractPatientDiedDuringAdmissionTarget(@CheckForNull List<Long> ids, @CheckForNull Integer ageLim)
     {
-        final String sql = "SELECT a.hadmId, a.hospitalExpireFlag FROM AdmissionsEntity a" + (ids != null ? " WHERE a.hadmId IN (:ids)" : "");
-        return em.createQuery(sql, Object[].class).setParameter("ids", ids).getResultList();
+        if (ids != null && ids.isEmpty())
+        {
+            return List.of();
+        }
+
+        final String query = "SELECT a.hadmId, a.hospitalExpireFlag FROM AdmissionsEntity a WHERE (EXTRACT(DAY FROM (a.admitTime - a.patientsEntity.dob)) / 365.2425) >= :ageLim"
+                             + (ids != null ? " AND a.hadmId IN (:ids)" : "");
+        final TypedQuery<Object[]> q = em.createQuery(query, Object[].class).setParameter("ageLim", ageLim != null ? ageLim.doubleValue() : 0.0);
+
+        if (ids != null)
+        {
+            q.setParameter("ids", ids);
+        }
+
+        return q.getResultList();
+    }
+
+    public List<PatientsEntity> fetchPatientsWithIds(@CheckForNull List<Long> ids)
+    {
+        if (ids != null && ids.isEmpty())
+        {
+            return List.of();
+        }
+
+        final String query = "SELECT DISTINCT p FROM PatientsEntity p INNER JOIN FETCH p.admissionsEntitys adms " + (ids != null ? "WHERE p.subjectId IN (:ids)" : "");
+        TypedQuery<PatientsEntity> q = em.createQuery(query, PatientsEntity.class);
+
+        if (ids != null)
+        {
+            q.setParameter("ids", ids).getResultList();
+        }
+
+        return q.getResultList();
     }
 }
