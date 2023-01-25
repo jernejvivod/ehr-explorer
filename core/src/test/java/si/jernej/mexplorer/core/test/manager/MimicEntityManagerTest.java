@@ -522,7 +522,7 @@ public class MimicEntityManagerTest extends ACoreTest
     @Test
     void getResultListForExtractReadmissionTargetEmptyIds()
     {
-        List<PatientsEntity> res = mimicEntityManager.fetchPatientsWithIds(List.of());
+        List<PatientsEntity> res = mimicEntityManager.fetchPatientForTargetExtractionHospitalReadmission(List.of());
 
         Assertions.assertNotNull(res);
         Assertions.assertTrue(res.isEmpty());
@@ -560,7 +560,7 @@ public class MimicEntityManagerTest extends ACoreTest
                 668L
         );
 
-        List<PatientsEntity> res = mimicEntityManager.fetchPatientsWithIds(ids);
+        List<PatientsEntity> res = mimicEntityManager.fetchPatientForTargetExtractionHospitalReadmission(ids);
 
         Assertions.assertEquals(ids.size(), res.size());
         Assertions.assertTrue(ids.containsAll(res.stream().map(PatientsEntity::getSubjectId).toList()));

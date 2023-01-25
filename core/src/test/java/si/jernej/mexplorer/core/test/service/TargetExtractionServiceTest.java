@@ -1,5 +1,7 @@
 package si.jernej.mexplorer.core.test.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -82,4 +84,72 @@ public class TargetExtractionServiceTest extends ACoreTest
         }
     }
 
+    @Test
+    void testExtractReadmissionTarget()
+    {
+        TargetExtractionSpecDto targetExtractionSpecDto = new TargetExtractionSpecDto();
+        targetExtractionSpecDto.setTargetType(TargetExtractionSpecDto.TargetTypeEnum.HOSPITAL_READMISSION_HAPPENED);
+        targetExtractionSpecDto.setIds(
+                List.of(
+                        36L
+                )
+        );
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        ExtractedTargetDto extractedTargetDto182104 = new ExtractedTargetDto()
+                .rootEntityId(182104L)
+                .targetValue(1)
+                .dateTimeLimit(LocalDateTime.parse("2131-05-08 14:00:00", formatter));
+        ExtractedTargetDto extractedTargetDto122659 = new ExtractedTargetDto()
+                .rootEntityId(122659L)
+                .targetValue(0)
+                .dateTimeLimit(LocalDateTime.parse("2131-05-25 13:30:00", formatter));
+        ExtractedTargetDto extractedTargetDto165660 = new ExtractedTargetDto()
+                .rootEntityId(165660L)
+                .targetValue(0)
+                .dateTimeLimit(LocalDateTime.parse("2134-05-20 13:16:00", formatter));
+
+        // get results and perform assertions
+        List<ExtractedTargetDto> extractedTargetDtos = targetExtractionService.computeTarget(targetExtractionSpecDto);
+
+        Assertions.assertNotNull(extractedTargetDtos);
+        Assertions.assertEquals(3, extractedTargetDtos.size());
+
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto182104));
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto122659));
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto165660));
+    }
+
+    @Test
+    void testExtractIcuReadmissionTarget()
+    {
+        TargetExtractionSpecDto targetExtractionSpecDto = new TargetExtractionSpecDto();
+        targetExtractionSpecDto.setTargetType(TargetExtractionSpecDto.TargetTypeEnum.ICU_STAY_READMISSION_HAPPENED);
+        targetExtractionSpecDto.setIds(
+                List.of(
+                        131L
+                )
+        );
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        ExtractedTargetDto extractedTargetDto237399 = new ExtractedTargetDto()
+                .rootEntityId(237399L)
+                .targetValue(1)
+                .dateTimeLimit(LocalDateTime.parse("2143-12-07 22:12:09", formatter));
+        ExtractedTargetDto extractedTargetDto280415 = new ExtractedTargetDto()
+                .rootEntityId(280415L)
+                .targetValue(0)
+                .dateTimeLimit(LocalDateTime.parse("2143-12-12 12:37:44", formatter));
+
+        // get results and perform assertions
+        List<ExtractedTargetDto> extractedTargetDtos = targetExtractionService.computeTarget(targetExtractionSpecDto);
+
+        Assertions.assertNotNull(extractedTargetDtos);
+        Assertions.assertEquals(2, extractedTargetDtos.size());
+
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto237399));
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto280415));
+    }
 }

@@ -111,6 +111,7 @@ class TargetExtractionTest extends ACoreTest
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+        // for 36L
         ExtractedTargetDto extractedTargetDto182104 = new ExtractedTargetDto()
                 .rootEntityId(182104L)
                 .targetValue(1)
@@ -124,6 +125,7 @@ class TargetExtractionTest extends ACoreTest
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2134-05-20 13:16:00", formatter));
 
+        // for 711L
         ExtractedTargetDto extractedTargetDto167380 = new ExtractedTargetDto()
                 .rootEntityId(167380L)
                 .targetValue(1)
@@ -142,7 +144,7 @@ class TargetExtractionTest extends ACoreTest
                 .dateTimeLimit(LocalDateTime.parse("2184-11-05 14:00:00", formatter));
         ExtractedTargetDto extractedTargetDto158767 = new ExtractedTargetDto()
                 .rootEntityId(158767L)
-                .targetValue(1)
+                .targetValue(2)
                 .dateTimeLimit(LocalDateTime.parse("2185-05-16 17:10:00", formatter));
 
         // get results and perform assertions
@@ -151,10 +153,12 @@ class TargetExtractionTest extends ACoreTest
         Assertions.assertNotNull(extractedTargetDtos);
         Assertions.assertEquals(8, extractedTargetDtos.size());
 
+        // for 36L
         Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto182104));
         Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto122659));
         Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto165660));
 
+        // for 711L
         Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto167380));
         Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto114791));
         Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto120522));
@@ -180,6 +184,121 @@ class TargetExtractionTest extends ACoreTest
 
         // get results and perform assertions
         List<ExtractedTargetDto> extractedTargetDtos = targetExtraction.extractReadmissionTarget(ids, 18, 30, 30);
+
+        Assertions.assertNotNull(extractedTargetDtos);
+        Assertions.assertEquals(1, extractedTargetDtos.size());
+
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto103013));
+    }
+
+    @Test
+    void testExtractIcuReadmissionTargetEmptyIds()
+    {
+        List<Long> ids = List.of();
+
+        List<ExtractedTargetDto> extractedTargetDtos = targetExtraction.extractIcuReadmissionTarget(ids, null, 30, 30);
+
+        Assertions.assertNotNull(extractedTargetDtos);
+        Assertions.assertTrue(extractedTargetDtos.isEmpty());
+    }
+
+    @Test
+    void testExtractIcuReadmissionTarget()
+    {
+        List<Long> ids = List.of(
+                131L,
+                36L,
+                29744L,
+                346L
+        );
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // for 131L
+        ExtractedTargetDto extractedTargetDto237399 = new ExtractedTargetDto()
+                .rootEntityId(237399L)
+                .targetValue(1)
+                .dateTimeLimit(LocalDateTime.parse("2143-12-07 22:12:09", formatter));
+        ExtractedTargetDto extractedTargetDto280415 = new ExtractedTargetDto()
+                .rootEntityId(280415L)
+                .targetValue(0)
+                .dateTimeLimit(LocalDateTime.parse("2143-12-12 12:37:44", formatter));
+
+        // for 36L
+        ExtractedTargetDto extractedTargetDto280987 = new ExtractedTargetDto()
+                .rootEntityId(280987L)
+                .targetValue(2)
+                .dateTimeLimit(LocalDateTime.parse("2131-05-05 13:07:03", formatter));
+        ExtractedTargetDto extractedTargetDto211200 = new ExtractedTargetDto()
+                .rootEntityId(211200L)
+                .targetValue(0)
+                .dateTimeLimit(LocalDateTime.parse("2131-05-23 19:56:11", formatter));
+        ExtractedTargetDto extractedTargetDto241249 = new ExtractedTargetDto()
+                .rootEntityId(241249L)
+                .targetValue(0)
+                .dateTimeLimit(LocalDateTime.parse("2134-05-16 15:14:20", formatter));
+
+        // for 29744L
+        ExtractedTargetDto extractedTargetDto259615 = new ExtractedTargetDto()
+                .rootEntityId(259615L)
+                .targetValue(2)
+                .dateTimeLimit(LocalDateTime.parse("2163-02-12 18:42:39", formatter));
+        ExtractedTargetDto extractedTargetDto246125 = new ExtractedTargetDto()
+                .rootEntityId(246125L)
+                .targetValue(4)
+                .dateTimeLimit(LocalDateTime.parse("2163-03-15 01:10:43", formatter));
+
+        // for 346L
+        ExtractedTargetDto extractedTargetDto258237 = new ExtractedTargetDto()
+                .rootEntityId(258237L)
+                .targetValue(0)
+                .dateTimeLimit(LocalDateTime.parse("2148-12-05 18:30:53", formatter));
+        ExtractedTargetDto extractedTargetDto260798 = new ExtractedTargetDto()
+                .rootEntityId(260798L)
+                .targetValue(3)
+                .dateTimeLimit(LocalDateTime.parse("2149-12-04 17:09:36", formatter));
+
+        // get results and perform assertions
+        List<ExtractedTargetDto> extractedTargetDtos = targetExtraction.extractIcuReadmissionTarget(ids, null, 30, 30);
+
+        Assertions.assertNotNull(extractedTargetDtos);
+        Assertions.assertEquals(9, extractedTargetDtos.size());
+
+        // for 131L
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto237399));
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto280415));
+
+        // for 36L
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto280987));
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto211200));
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto241249));
+
+        // for 29744L
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto259615));
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto246125));
+
+        // for 346L
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto258237));
+        Assertions.assertTrue(extractedTargetDtos.contains(extractedTargetDto260798));
+    }
+
+    @Test
+    void testExtractIcuReadmissionTargetAgeLimit()
+    {
+        List<Long> ids = List.of(
+                303L
+        );
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // The patient is associated with 2 ICU admissions. The patient's age was below 18 years when the first admission happened. They were over 18 when the second admission happened.
+        ExtractedTargetDto extractedTargetDto103013 = new ExtractedTargetDto()
+                .rootEntityId(261797L)
+                .targetValue(0)
+                .dateTimeLimit(LocalDateTime.parse("2163-04-01 17:41:54", formatter));
+
+        // get results and perform assertions
+        List<ExtractedTargetDto> extractedTargetDtos = targetExtraction.extractIcuReadmissionTarget(ids, 18, 30, 30);
 
         Assertions.assertNotNull(extractedTargetDtos);
         Assertions.assertEquals(1, extractedTargetDtos.size());
