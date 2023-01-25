@@ -29,7 +29,12 @@ public class TargetExtractionService
                             targetExtractionSpecDto.getMaxDaysIntervalPositive(),
                             targetExtractionSpecDto.getMaxDaysDeathAfterLastPositive()
                     );
-                    case ICU_STAY_READMISSION_HAPPENED -> null;  // TODO implement
+                    case ICU_STAY_READMISSION_HAPPENED -> targetExtraction.extractIcuReadmissionTarget(
+                            targetExtractionSpecDto.getIds(),
+                            targetExtractionSpecDto.getAgeLim(),
+                            targetExtractionSpecDto.getMaxDaysIntervalPositive(),
+                            targetExtractionSpecDto.getMaxDaysDeathAfterLastPositive()
+                    );
                 };
     }
 }

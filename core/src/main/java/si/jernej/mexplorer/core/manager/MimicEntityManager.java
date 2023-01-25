@@ -330,14 +330,32 @@ public class MimicEntityManager
         return q.getResultList();
     }
 
-    public List<PatientsEntity> fetchPatientsWithIds(@CheckForNull List<Long> ids)
+    public List<PatientsEntity> fetchPatientForTargetExtractionHospitalReadmission(@CheckForNull List<Long> ids)
     {
         if (ids != null && ids.isEmpty())
         {
             return List.of();
         }
 
-        final String query = "SELECT DISTINCT p FROM PatientsEntity p INNER JOIN FETCH p.admissionsEntitys adms " + (ids != null ? "WHERE p.subjectId IN (:ids)" : "");
+        final String query = "SELECT DISTINCT p FROM PatientsEntity p INNER JOIN FETCH p.admissionsEntitys adms" + (ids != null ? " WHERE p.subjectId IN (:ids)" : "");
+        TypedQuery<PatientsEntity> q = em.createQuery(query, PatientsEntity.class);
+
+        if (ids != null)
+        {
+            q.setParameter("ids", ids).getResultList();
+        }
+
+        return q.getResultList();
+    }
+
+    public List<PatientsEntity> fetchPatientsForTargetExtractionIcuReadmission(@CheckForNull List<Long> ids)
+    {
+        if (ids != null && ids.isEmpty())
+        {
+            return List.of();
+        }
+
+        final String query = "SELECT DISTINCT p FROM PatientsEntity p INNER JOIN FETCH p.icuStaysEntitys ics INNER JOIN FETCH ics.admissionsEntity a" + (ids != null ? " WHERE p.subjectId IN (:ids)" : "");
         TypedQuery<PatientsEntity> q = em.createQuery(query, PatientsEntity.class);
 
         if (ids != null)
