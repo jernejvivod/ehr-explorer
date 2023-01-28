@@ -86,14 +86,14 @@ public class ClinicalTextService
                 LocalDateTime initialDateTime = valuesWithDateTime.get(0).dateTimeColumnValues().stream()
                         .filter(Objects::nonNull)
                         .findFirst()
-                        .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found"));
+                        .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
 
                 // filter to specified range
                 return valuesWithDateTime.stream().filter(d -> {
                     LocalDateTime dateTimeNxt = d.dateTimeColumnValues().stream()
                             .filter(Objects::nonNull)
                             .findFirst()
-                            .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found"));
+                            .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
                     return Duration.between(initialDateTime, dateTimeNxt).toMinutes() < clinicalTextExtractionDurationSpec.getFirstMinutes();
                 }).toList();
             });
@@ -105,14 +105,17 @@ public class ClinicalTextService
             rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
 
                 // filter out clinical text where all date/time values are null
-                var valuesWithDateTime = values.stream().filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull)).toList();
+                var valuesWithDateTime = values.stream()
+                        .filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull))
+                        .filter(v -> v.rootEntityDatetimePropertyForCutoffValue() != null)
+                        .toList();
 
                 // filter to specified cutoff time
                 return valuesWithDateTime.stream().filter(d -> {
                     LocalDateTime dateTimeNxt = d.dateTimeColumnValues().stream()
                             .filter(Objects::nonNull)
                             .findFirst()
-                            .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found"));
+                            .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
                     return dateTimeNxt.isBefore(d.rootEntityDatetimePropertyForCutoffValue());
                 }).toList();
             });
