@@ -33,7 +33,7 @@ public class IdRetrieval
      * Retrieve ids of specified entities with specified entity filtering.
      *
      * @param idRetrievalSpecDto specification for filtering of entities
-     * @return list of retrieved ids
+     * @return {@link Set} of retrieved ids
      */
     public Set<Object> retrieveIds(IdRetrievalSpecDto idRetrievalSpecDto)
     {

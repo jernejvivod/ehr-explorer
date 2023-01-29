@@ -318,8 +318,14 @@ public class MimicEntityManager
             return List.of();
         }
 
-        final String query = "SELECT a.hadmId, a.hospitalExpireFlag FROM AdmissionsEntity a WHERE (EXTRACT(DAY FROM (a.admitTime - a.patientsEntity.dob)) / 365.2425) >= :ageLim"
-                             + (ids != null ? " AND a.hadmId IN (:ids)" : "");
+        //language=JPAQL
+        String query = """
+                SELECT a.hadmId, a.hospitalExpireFlag FROM AdmissionsEntity a
+                WHERE (EXTRACT(DAY FROM (a.admitTime - a.patientsEntity.dob)) / 365.2425) >= :ageLim
+                """;
+
+        query += (ids != null ? " AND a.hadmId IN (:ids)" : "");
+
         final TypedQuery<Object[]> q = em.createQuery(query, Object[].class).setParameter("ageLim", ageLim != null ? ageLim.doubleValue() : 0.0);
 
         if (ids != null)
@@ -337,7 +343,15 @@ public class MimicEntityManager
             return List.of();
         }
 
-        final String query = "SELECT DISTINCT p FROM PatientsEntity p INNER JOIN FETCH p.admissionsEntitys adms" + (ids != null ? " WHERE p.subjectId IN (:ids)" : "");
+        //language=JPAQL
+        String query = """
+                SELECT DISTINCT p FROM PatientsEntity p
+                INNER JOIN FETCH p.admissionsEntitys adms
+                WHERE NOT EXISTS(SELECT adms FROM p.admissionsEntitys adms WHERE (adms.admitTime IS NULL OR adms.dischTime IS NULL))
+                """;
+
+        query += (ids != null ? " AND p.subjectId IN (:ids)" : "");
+
         TypedQuery<PatientsEntity> q = em.createQuery(query, PatientsEntity.class);
 
         if (ids != null)
@@ -354,8 +368,16 @@ public class MimicEntityManager
         {
             return List.of();
         }
+        //language=JPAQL
+        String query = """
+                SELECT DISTINCT p FROM PatientsEntity p
+                INNER JOIN FETCH p.icuStaysEntitys ics
+                INNER JOIN FETCH ics.admissionsEntity a
+                WHERE NOT EXISTS(SELECT ics FROM p.icuStaysEntitys ics WHERE (ics.inTime IS NULL OR ics.outTime IS NULL))
+                """;
 
-        final String query = "SELECT DISTINCT p FROM PatientsEntity p INNER JOIN FETCH p.icuStaysEntitys ics INNER JOIN FETCH ics.admissionsEntity a" + (ids != null ? " WHERE p.subjectId IN (:ids)" : "");
+        query += (ids != null ? " AND p.subjectId IN (:ids)" : "");
+
         TypedQuery<PatientsEntity> q = em.createQuery(query, PatientsEntity.class);
 
         if (ids != null)
