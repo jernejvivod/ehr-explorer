@@ -3,11 +3,9 @@ package si.jernej.mexplorer.core.processing.util;
 import static si.jernej.mexplorer.core.util.Constants.COMPOSITE_TABLE_NAME;
 
 import java.lang.reflect.InvocationTargetException;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -91,7 +89,7 @@ public final class WordificationUtil
     /**
      * Add linked collections to BFS queue and apply any sorting.
      */
-    public static void pushLinkedCollectionToStack(LinkedList<Object> dfsStack, PropertySpec propertySpec, Collection<?> collection, Class<?> linkedEntityClass)
+    public static void pushLinkedCollectionToStack(List<Object> dfsStack, PropertySpec propertySpec, Collection<?> collection, Class<?> linkedEntityClass)
     {
         List<?> linkedEntitiesList = propertySpec.getSortProperty(linkedEntityClass.getSimpleName())
                 .<List<?>>map(sp -> {
@@ -154,30 +152,19 @@ public final class WordificationUtil
      */
     public static List<?> applyDurationLimitIfSpecified(List<?> linkedEntitiesList, Class<?> linkedEntityClass, PropertySpec propertySpec)
     {
-        Optional<PropertySpec.DurationLimitSpec> durationLimitSpecForEntity = propertySpec.getDurationLimitSpecForEntity(linkedEntityClass.getSimpleName());
+        Optional<String> durationLimitSpecForEntity = propertySpec.getPropertyForDurationLimitForEntity(linkedEntityClass.getSimpleName());
 
         if (durationLimitSpecForEntity.isPresent())
         {
-            Object firstLinkedEntity = linkedEntitiesList.get(0);
-            LocalDateTime initialDateTime;
-            try
-            {
-                initialDateTime = (LocalDateTime) PropertyUtils.getProperty(firstLinkedEntity, durationLimitSpecForEntity.get().propertyName());
-            }
-            catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
-            {
-                throw new ValidationCoreException("Error accessing property '%s' of entity '%s'".formatted(durationLimitSpecForEntity.get().propertyName(), linkedEntityClass.getSimpleName()));
-            }
-
             return linkedEntitiesList.stream().filter(e -> {
                 try
                 {
-                    Duration currentDuration = Duration.between(initialDateTime, (LocalDateTime) PropertyUtils.getProperty(e, durationLimitSpecForEntity.get().propertyName()));
-                    return currentDuration.compareTo(durationLimitSpecForEntity.get().durationLimit()) <= 0;
+                    LocalDateTime dateTimePropertyForLimVal = (LocalDateTime) PropertyUtils.getProperty(e, durationLimitSpecForEntity.get());
+                    return dateTimePropertyForLimVal.equals(propertySpec.getDurationLim()) || dateTimePropertyForLimVal.isBefore(propertySpec.getDurationLim());
                 }
                 catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
                 {
-                    throw new ValidationCoreException("Error accessing property '%s' of entity '%s'".formatted(durationLimitSpecForEntity.get().propertyName(), linkedEntityClass.getSimpleName()));
+                    throw new ValidationCoreException("Error accessing property '%s' of entity '%s'".formatted(durationLimitSpecForEntity.get(), linkedEntityClass.getSimpleName()));
                 }
             }).toList();
         }

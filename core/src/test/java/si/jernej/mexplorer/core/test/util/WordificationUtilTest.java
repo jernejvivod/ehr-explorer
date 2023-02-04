@@ -1,6 +1,5 @@
 package si.jernej.mexplorer.core.test.util;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -141,7 +140,7 @@ class WordificationUtilTest
     @Test
     void testApplyDurationLimitIfSpecified()
     {
-        List<?> linkedEntitiesList = List.of(
+        List<TestClassWithDateTimeProperty> linkedEntitiesList = List.of(
                 new TestClassWithDateTimeProperty(LocalDateTime.now()),
                 new TestClassWithDateTimeProperty(LocalDateTime.now().plusHours(1)),
                 new TestClassWithDateTimeProperty(LocalDateTime.now().plusHours(2)),
@@ -152,13 +151,16 @@ class WordificationUtilTest
         );
 
         PropertySpec propertySpec1 = new PropertySpec();
-        propertySpec1.addDurationLimitSpec("TestClassWithDateTimeProperty", "a", Duration.ofHours(1).plusSeconds(1));
+        propertySpec1.setDurationLim(linkedEntitiesList.get(1).getA().plusSeconds(1));
+        propertySpec1.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         PropertySpec propertySpec2 = new PropertySpec();
-        propertySpec2.addDurationLimitSpec("TestClassWithDateTimeProperty", "a", Duration.ofHours(3).plusSeconds(1));
+        propertySpec2.setDurationLim(linkedEntitiesList.get(3).getA().plusSeconds(1));
+        propertySpec2.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         PropertySpec propertySpec3 = new PropertySpec();
-        propertySpec3.addDurationLimitSpec("TestClassWithDateTimeProperty", "a", Duration.ofHours(5).plusSeconds(1));
+        propertySpec3.setDurationLim(linkedEntitiesList.get(5).getA().plusSeconds(1));
+        propertySpec3.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         List<?> res1 = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClassWithDateTimeProperty.class, propertySpec1);
         List<?> res2 = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClassWithDateTimeProperty.class, propertySpec2);
@@ -171,7 +173,7 @@ class WordificationUtilTest
     @Test
     void testAddLinkedCollectionToStackWithSortingAndDurationLimit()
     {
-        Collection<?> linkedEntitiesList = Set.of(
+        List<TestClassWithDateTimeProperty> linkedEntitiesList = List.of(
                 new TestClassWithDateTimeProperty(LocalDateTime.now().plusHours(3)),
                 new TestClassWithDateTimeProperty(LocalDateTime.now()),
                 new TestClassWithDateTimeProperty(LocalDateTime.now().plusHours(5)),
@@ -182,16 +184,19 @@ class WordificationUtilTest
         );
 
         PropertySpec propertySpec1 = new PropertySpec();
+        propertySpec1.setDurationLim(linkedEntitiesList.get(4).getA().plusSeconds(1));
         propertySpec1.addSort("TestClassWithDateTimeProperty", "a");
-        propertySpec1.addDurationLimitSpec("TestClassWithDateTimeProperty", "a", Duration.ofHours(1).plusSeconds(1));
+        propertySpec1.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         PropertySpec propertySpec2 = new PropertySpec();
+        propertySpec2.setDurationLim(linkedEntitiesList.get(0).getA().plusSeconds(1));
         propertySpec2.addSort("TestClassWithDateTimeProperty", "a");
-        propertySpec2.addDurationLimitSpec("TestClassWithDateTimeProperty", "a", Duration.ofHours(3).plusSeconds(1));
+        propertySpec2.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         PropertySpec propertySpec3 = new PropertySpec();
+        propertySpec3.setDurationLim(linkedEntitiesList.get(2).getA().plusSeconds(1));
         propertySpec3.addSort("TestClassWithDateTimeProperty", "a");
-        propertySpec3.addDurationLimitSpec("TestClassWithDateTimeProperty", "a", Duration.ofHours(5).plusSeconds(1));
+        propertySpec3.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         LinkedList<Object> dfsStack1 = new LinkedList<>();
         WordificationUtil.pushLinkedCollectionToStack(dfsStack1, propertySpec1, linkedEntitiesList, TestClassWithDateTimeProperty.class);

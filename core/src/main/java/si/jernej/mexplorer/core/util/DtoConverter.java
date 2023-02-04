@@ -95,9 +95,16 @@ public final class DtoConverter
     {
         PropertySpec propertySpec = new PropertySpec();
 
+        propertySpec.setDurationLim(propertySpecDto.getDurationLim());
+
         for (PropertySpecEntryDto entry : propertySpecDto.getEntries())
         {
             propertySpec.addEntry(entry.getEntity(), entry.getProperties());
+
+            if (entry.getPropertyForLimit() != null)
+            {
+                propertySpec.addEntityAndPropertyForDurationLimit(entry.getEntity(), entry.getPropertyForLimit());
+            }
         }
         return propertySpec;
     }

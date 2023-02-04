@@ -1,6 +1,6 @@
 package si.jernej.mexplorer.core.processing.spec;
 
-import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,17 +20,14 @@ public class PropertySpec
 {
     private final Map<String, Set<String>> entityToPropertiesToProcess;
     private final Map<String, String> sortSpecs;
-    private final Map<String, DurationLimitSpec> durationLimitSpecs;
-
-    public record DurationLimitSpec(String propertyName, Duration durationLimit)
-    {
-    }
+    private final Map<String, String> entityToPropertyForDurationLimit;
+    private LocalDateTime durationLim;
 
     public PropertySpec()
     {
         this.entityToPropertiesToProcess = new HashMap<>();
         this.sortSpecs = new HashMap<>();
-        this.durationLimitSpecs = new HashMap<>();
+        this.entityToPropertyForDurationLimit = new HashMap<>();
     }
 
     /**
@@ -68,7 +65,7 @@ public class PropertySpec
     }
 
     /**
-     * Add sort specification
+     * Add sort specification.
      *
      * @param entity entity for which to apply the sorting
      * @param property the property by which to sort
@@ -79,7 +76,7 @@ public class PropertySpec
     }
 
     /**
-     * Get sort property for entity
+     * Get sort property for entity.
      *
      * @param entity name of entity
      */
@@ -89,25 +86,34 @@ public class PropertySpec
     }
 
     /**
-     * Add specification for limiting linked records based on duration.
+     * Add property of entity for limiting linked records based on duration.
      *
      * @param entity entity for which to apply the limit
      * @param property property specifying the time
-     * @param limit duration specifying the amount of time for which to take the records (measured from the time of the first record)
      */
-    public void addDurationLimitSpec(String entity, String property, Duration limit)
+    public void addEntityAndPropertyForDurationLimit(String entity, String property)
     {
-        this.durationLimitSpecs.put(entity, new DurationLimitSpec(property, limit));
+        this.entityToPropertyForDurationLimit.put(entity, property);
+    }
+
+    public LocalDateTime getDurationLim()
+    {
+        return durationLim;
+    }
+
+    public void setDurationLim(LocalDateTime durationLim)
+    {
+        this.durationLim = durationLim;
     }
 
     /**
-     * Get duration limit specification for entity
+     * Get property of entity used to apply duration limits.
      *
      * @param entity name of entity
      */
-    public Optional<DurationLimitSpec> getDurationLimitSpecForEntity(String entity)
+    public Optional<String> getPropertyForDurationLimitForEntity(String entity)
     {
-        return Optional.ofNullable(this.durationLimitSpecs.get(entity));
+        return Optional.ofNullable(this.entityToPropertyForDurationLimit.get(entity));
     }
 
     // getter
@@ -131,8 +137,8 @@ public class PropertySpec
                 (entityName, propertyName) -> EntityUtils.assertEntityAndPropertyValid(entityName, propertyName, metamodel)
         );
 
-        durationLimitSpecs.forEach(
-                (entityName, durationLimitSpec) -> EntityUtils.assertEntityAndPropertyValid(entityName, durationLimitSpec.propertyName(), metamodel)
+        entityToPropertyForDurationLimit.forEach(
+                (entityName, durationLimitSpec) -> EntityUtils.assertEntityAndPropertyValid(entityName, durationLimitSpec, metamodel)
         );
     }
 }
