@@ -1,6 +1,6 @@
 package si.jernej.mexplorer.core.test.processing.spec;
 
-import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
@@ -52,7 +52,8 @@ class PropertySpecTest extends ACoreTest
         propertySpec.addEntry("AdmissionsEntity", "rowId");
         propertySpec.addEntry("PatientsEntity", "gender");
         propertySpec.addSort("PatientsEntity", "dod");
-        propertySpec.addDurationLimitSpec("MicrobiologyEventsEntity", "chartTime", Duration.ofHours(1));
+        propertySpec.addEntityAndPropertyForDurationLimit("MicrobiologyEventsEntity", "chartTime");
+        propertySpec.setDurationLim(LocalDateTime.now());
 
         Assertions.assertDoesNotThrow(() -> propertySpec.assertValid(em.getMetamodel()));
     }
@@ -106,7 +107,8 @@ class PropertySpecTest extends ACoreTest
         propertySpec.addEntry("AdmissionsEntity", "patientsEntity");
         propertySpec.addEntry("AdmissionsEntity", "rowId");
         propertySpec.addEntry("PatientsEntity", "gender");
-        propertySpec.addDurationLimitSpec("MicrobiologyEventsEntity", "wrong", Duration.ofHours(1));
+        propertySpec.addEntityAndPropertyForDurationLimit("MicrobiologyEventsEntity", "wrong");
+        propertySpec.setDurationLim(LocalDateTime.now());
 
         Assertions.assertThrows(ValidationCoreException.class, () -> propertySpec.assertValid(em.getMetamodel()));
     }

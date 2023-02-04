@@ -10,13 +10,16 @@ import org.junit.jupiter.api.Timeout;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.service.PropositionalizationService;
+import si.jernej.mexplorer.core.service.TargetExtractionService;
 import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.CompositeColumnsSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.CompositeColumnsSpecEntryDto;
 import si.jernej.mexplorer.processorapi.v1.model.ConcatenationSpecDto;
+import si.jernej.mexplorer.processorapi.v1.model.ExtractedTargetDto;
 import si.jernej.mexplorer.processorapi.v1.model.PropertySpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.PropertySpecEntryDto;
 import si.jernej.mexplorer.processorapi.v1.model.RootEntitiesSpecDto;
+import si.jernej.mexplorer.processorapi.v1.model.TargetExtractionSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.TransformDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecEntryDto;
@@ -27,6 +30,8 @@ public class PropositionalizationServiceTest extends ACoreTest
 {
     @Inject
     private PropositionalizationService propositionalizationService;
+    @Inject
+    private TargetExtractionService targetExtractionService;
 
     @Test
     public void testComputeWordificationWrongEntity()
@@ -389,7 +394,7 @@ public class PropositionalizationServiceTest extends ACoreTest
 
     @Test
     @Timeout(value = 180)
-    public void testComputeWoridificationSimpleTwoLinkedEntities50PercentAdmissionsEntries()
+    public void testComputeWordificationSimpleTwoLinkedEntities50PercentAdmissionsEntries()
     {
         WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
 
@@ -457,4 +462,62 @@ public class PropositionalizationServiceTest extends ACoreTest
         Assertions.assertFalse(res.isEmpty());
     }
 
+    @Test
+    void testWordificationPatientsEntityWithDurationLimitFromTarget()
+    {
+        long patientSubjectId = 291L;
+
+        TargetExtractionSpecDto targetExtractionSpecDto = new TargetExtractionSpecDto();
+        targetExtractionSpecDto.setTargetType(TargetExtractionSpecDto.TargetTypeEnum.ICU_STAY_READMISSION_HAPPENED);
+        targetExtractionSpecDto.setIds(List.of(patientSubjectId));
+
+        List<ExtractedTargetDto> extractedTargetDtos = targetExtractionService.computeTarget(targetExtractionSpecDto);
+
+        WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
+
+        ConcatenationSpecDto concatenationSpecDto = new ConcatenationSpecDto();
+        concatenationSpecDto.setConcatenationScheme(ConcatenationSpecDto.ConcatenationSchemeEnum.ZERO);
+        wordificationConfigDto.setConcatenationSpec(concatenationSpecDto);
+
+        RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
+        rootEntitiesSpecDto.setRootEntity("PatientsEntity");
+        rootEntitiesSpecDto.setIdProperty("subjectId");
+        rootEntitiesSpecDto.setIds(List.of(patientSubjectId));
+
+        wordificationConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
+
+        PropertySpecDto propertySpecDto = new PropertySpecDto();
+
+        PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
+        propertySpecEntryDto1.setEntity("PatientsEntity");
+        propertySpecEntryDto1.setProperties(List.of("gender", "icuStaysEntitys"));
+        propertySpecDto.addEntriesItem(propertySpecEntryDto1);
+
+        PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
+        propertySpecEntryDto2.setEntity("IcuStaysEntity");
+        propertySpecEntryDto2.setProperties(List.of("dbSource"));
+        propertySpecEntryDto2.setPropertyForLimit("outTime");
+        propertySpecDto.addEntriesItem(propertySpecEntryDto2);
+
+        propertySpecDto.setDurationLim(extractedTargetDtos.get(0).getDateTimeLimit());
+        wordificationConfigDto.setPropertySpec(propertySpecDto);
+
+        List<WordificationResultDto> res1 = propositionalizationService.computeWordification(wordificationConfigDto);
+        Assertions.assertEquals(1, res1.size());
+        Assertions.assertEquals(2, res1.get(0).getWords().size());
+
+        propertySpecDto.setDurationLim(extractedTargetDtos.get(1).getDateTimeLimit());
+        wordificationConfigDto.setPropertySpec(propertySpecDto);
+
+        List<WordificationResultDto> res2 = propositionalizationService.computeWordification(wordificationConfigDto);
+        Assertions.assertEquals(1, res2.size());
+        Assertions.assertEquals(3, res2.get(0).getWords().size());
+
+        propertySpecDto.setDurationLim(extractedTargetDtos.get(2).getDateTimeLimit());
+        wordificationConfigDto.setPropertySpec(propertySpecDto);
+
+        List<WordificationResultDto> res3 = propositionalizationService.computeWordification(wordificationConfigDto);
+        Assertions.assertEquals(1, res3.size());
+        Assertions.assertEquals(4, res3.get(0).getWords().size());
+    }
 }
