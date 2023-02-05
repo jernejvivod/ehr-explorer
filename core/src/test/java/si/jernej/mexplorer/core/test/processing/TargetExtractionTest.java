@@ -111,39 +111,45 @@ class TargetExtractionTest extends ACoreTest
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // for 36L
         ExtractedTargetDto extractedTargetDto182104 = new ExtractedTargetDto()
-                .rootEntityId(182104L)
+                .rootEntityId(36L)
+                .targetEntityId(182104L)
                 .targetValue(1)
                 .dateTimeLimit(LocalDateTime.parse("2131-05-08 14:00:00", formatter));
         ExtractedTargetDto extractedTargetDto122659 = new ExtractedTargetDto()
-                .rootEntityId(122659L)
+                .rootEntityId(36L)
+                .targetEntityId(122659L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2131-05-25 13:30:00", formatter));
         ExtractedTargetDto extractedTargetDto165660 = new ExtractedTargetDto()
-                .rootEntityId(165660L)
+                .rootEntityId(36L)
+                .targetEntityId(165660L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2134-05-20 13:16:00", formatter));
 
-        // for 711L
         ExtractedTargetDto extractedTargetDto167380 = new ExtractedTargetDto()
-                .rootEntityId(167380L)
+                .rootEntityId(711L)
+                .targetEntityId(167380L)
                 .targetValue(1)
                 .dateTimeLimit(LocalDateTime.parse("2184-05-15 15:05:00", formatter));
         ExtractedTargetDto extractedTargetDto114791 = new ExtractedTargetDto()
-                .rootEntityId(114791L)
+                .rootEntityId(711L)
+                .targetEntityId(114791L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2184-06-20 10:50:00", formatter));
         ExtractedTargetDto extractedTargetDto120522 = new ExtractedTargetDto()
-                .rootEntityId(120522L)
+                .rootEntityId(711L)
+                .targetEntityId(120522L)
                 .targetValue(1)
                 .dateTimeLimit(LocalDateTime.parse("2184-10-15 18:11:00", formatter));
         ExtractedTargetDto extractedTargetDto168530 = new ExtractedTargetDto()
-                .rootEntityId(168530L)
+                .rootEntityId(711L)
+                .targetEntityId(168530L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2184-11-05 14:00:00", formatter));
         ExtractedTargetDto extractedTargetDto158767 = new ExtractedTargetDto()
-                .rootEntityId(158767L)
+                .rootEntityId(711L)
+                .targetEntityId(158767L)
                 .targetValue(2)
                 .dateTimeLimit(LocalDateTime.parse("2185-05-16 17:10:00", formatter));
 
@@ -178,7 +184,8 @@ class TargetExtractionTest extends ACoreTest
         // The patient is associated with 3 admissions. The patient's age was below 18 years when the first admission happened. They were over 18 when the second admission happened.
 
         ExtractedTargetDto extractedTargetDto103013 = new ExtractedTargetDto()
-                .rootEntityId(103013L)
+                .rootEntityId(303L)
+                .targetEntityId(103013L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2163-04-04 20:45:00", formatter));
 
@@ -214,47 +221,52 @@ class TargetExtractionTest extends ACoreTest
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        // for 131L
         ExtractedTargetDto extractedTargetDto237399 = new ExtractedTargetDto()
-                .rootEntityId(237399L)
+                .rootEntityId(131L)
+                .targetEntityId(237399L)
                 .targetValue(1)
                 .dateTimeLimit(LocalDateTime.parse("2143-12-07 22:12:09", formatter));
         ExtractedTargetDto extractedTargetDto280415 = new ExtractedTargetDto()
-                .rootEntityId(280415L)
+                .rootEntityId(131L)
+                .targetEntityId(280415L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2143-12-12 12:37:44", formatter));
 
-        // for 36L
         ExtractedTargetDto extractedTargetDto280987 = new ExtractedTargetDto()
-                .rootEntityId(280987L)
+                .rootEntityId(36L)
+                .targetEntityId(280987L)
                 .targetValue(2)
                 .dateTimeLimit(LocalDateTime.parse("2131-05-05 13:07:03", formatter));
         ExtractedTargetDto extractedTargetDto211200 = new ExtractedTargetDto()
-                .rootEntityId(211200L)
+                .rootEntityId(36L)
+                .targetEntityId(211200L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2131-05-23 19:56:11", formatter));
         ExtractedTargetDto extractedTargetDto241249 = new ExtractedTargetDto()
-                .rootEntityId(241249L)
+                .rootEntityId(36L)
+                .targetEntityId(241249L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2134-05-16 15:14:20", formatter));
 
-        // for 29744L
         ExtractedTargetDto extractedTargetDto259615 = new ExtractedTargetDto()
-                .rootEntityId(259615L)
+                .rootEntityId(29744L)
+                .targetEntityId(259615L)
                 .targetValue(2)
                 .dateTimeLimit(LocalDateTime.parse("2163-02-12 18:42:39", formatter));
         ExtractedTargetDto extractedTargetDto246125 = new ExtractedTargetDto()
-                .rootEntityId(246125L)
+                .rootEntityId(29744L)
+                .targetEntityId(246125L)
                 .targetValue(4)
                 .dateTimeLimit(LocalDateTime.parse("2163-03-15 01:10:43", formatter));
 
-        // for 346L
         ExtractedTargetDto extractedTargetDto258237 = new ExtractedTargetDto()
-                .rootEntityId(258237L)
+                .rootEntityId(346L)
+                .targetEntityId(258237L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2148-12-05 18:30:53", formatter));
         ExtractedTargetDto extractedTargetDto260798 = new ExtractedTargetDto()
-                .rootEntityId(260798L)
+                .rootEntityId(346L)
+                .targetEntityId(260798L)
                 .targetValue(3)
                 .dateTimeLimit(LocalDateTime.parse("2149-12-04 17:09:36", formatter));
 
@@ -293,7 +305,8 @@ class TargetExtractionTest extends ACoreTest
 
         // The patient is associated with 2 ICU admissions. The patient's age was below 18 years when the first admission happened. They were over 18 when the second admission happened.
         ExtractedTargetDto extractedTargetDto103013 = new ExtractedTargetDto()
-                .rootEntityId(261797L)
+                .rootEntityId(303L)
+                .targetEntityId(261797L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2163-04-01 17:41:54", formatter));
 

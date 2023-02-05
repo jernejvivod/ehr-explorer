@@ -87,7 +87,7 @@ class WordificationUtilTest
                 new TestClass(2)
         );
 
-        WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, collection, linkedEntityClass);
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, collection, linkedEntityClass, null);
 
         Assertions.assertFalse(dfsStack.isEmpty());
         dfsStack.forEach(e -> Assertions.assertTrue(collection.contains(e)));
@@ -113,7 +113,7 @@ class WordificationUtilTest
                 new TestClass(5)
         );
 
-        WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, collection, linkedEntityClass);
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, collection, linkedEntityClass, null);
 
         Assertions.assertFalse(dfsStack.isEmpty());
         Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6, 7), dfsStack.stream().map(e -> ((TestClass) e).getA()).toList());
@@ -133,7 +133,7 @@ class WordificationUtilTest
                 new TestClassWithDateTimeProperty(LocalDateTime.now().plusHours(random.nextInt()))
         );
 
-        List<?> res = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClass.class, new PropertySpec());
+        List<?> res = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClass.class, new PropertySpec(), null);
         Assertions.assertEquals(linkedEntitiesList, res);
     }
 
@@ -151,20 +151,17 @@ class WordificationUtilTest
         );
 
         PropertySpec propertySpec1 = new PropertySpec();
-        propertySpec1.setDurationLim(linkedEntitiesList.get(1).getA().plusSeconds(1));
         propertySpec1.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         PropertySpec propertySpec2 = new PropertySpec();
-        propertySpec2.setDurationLim(linkedEntitiesList.get(3).getA().plusSeconds(1));
         propertySpec2.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         PropertySpec propertySpec3 = new PropertySpec();
-        propertySpec3.setDurationLim(linkedEntitiesList.get(5).getA().plusSeconds(1));
         propertySpec3.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
-        List<?> res1 = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClassWithDateTimeProperty.class, propertySpec1);
-        List<?> res2 = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClassWithDateTimeProperty.class, propertySpec2);
-        List<?> res3 = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClassWithDateTimeProperty.class, propertySpec3);
+        List<?> res1 = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClassWithDateTimeProperty.class, propertySpec1, linkedEntitiesList.get(1).getA().plusSeconds(1));
+        List<?> res2 = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClassWithDateTimeProperty.class, propertySpec2, linkedEntitiesList.get(3).getA().plusSeconds(1));
+        List<?> res3 = WordificationUtil.applyDurationLimitIfSpecified(linkedEntitiesList, TestClassWithDateTimeProperty.class, propertySpec3, linkedEntitiesList.get(5).getA().plusSeconds(1));
         Assertions.assertEquals(linkedEntitiesList.subList(0, 2), res1);
         Assertions.assertEquals(linkedEntitiesList.subList(0, 4), res2);
         Assertions.assertEquals(linkedEntitiesList.subList(0, 6), res3);
@@ -184,28 +181,25 @@ class WordificationUtilTest
         );
 
         PropertySpec propertySpec1 = new PropertySpec();
-        propertySpec1.setDurationLim(linkedEntitiesList.get(4).getA().plusSeconds(1));
         propertySpec1.addSort("TestClassWithDateTimeProperty", "a");
         propertySpec1.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         PropertySpec propertySpec2 = new PropertySpec();
-        propertySpec2.setDurationLim(linkedEntitiesList.get(0).getA().plusSeconds(1));
         propertySpec2.addSort("TestClassWithDateTimeProperty", "a");
         propertySpec2.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         PropertySpec propertySpec3 = new PropertySpec();
-        propertySpec3.setDurationLim(linkedEntitiesList.get(2).getA().plusSeconds(1));
         propertySpec3.addSort("TestClassWithDateTimeProperty", "a");
         propertySpec3.addEntityAndPropertyForDurationLimit("TestClassWithDateTimeProperty", "a");
 
         LinkedList<Object> dfsStack1 = new LinkedList<>();
-        WordificationUtil.pushLinkedCollectionToStack(dfsStack1, propertySpec1, linkedEntitiesList, TestClassWithDateTimeProperty.class);
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack1, propertySpec1, linkedEntitiesList, TestClassWithDateTimeProperty.class, linkedEntitiesList.get(4).getA().plusSeconds(1));
 
         LinkedList<Object> dfsStack2 = new LinkedList<>();
-        WordificationUtil.pushLinkedCollectionToStack(dfsStack2, propertySpec2, linkedEntitiesList, TestClassWithDateTimeProperty.class);
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack2, propertySpec2, linkedEntitiesList, TestClassWithDateTimeProperty.class, linkedEntitiesList.get(0).getA().plusSeconds(1));
 
         LinkedList<Object> dfsStack3 = new LinkedList<>();
-        WordificationUtil.pushLinkedCollectionToStack(dfsStack3, propertySpec3, linkedEntitiesList, TestClassWithDateTimeProperty.class);
+        WordificationUtil.pushLinkedCollectionToStack(dfsStack3, propertySpec3, linkedEntitiesList, TestClassWithDateTimeProperty.class, linkedEntitiesList.get(2).getA().plusSeconds(1));
 
         Assertions.assertEquals(2, dfsStack1.size());
         Assertions.assertEquals(4, dfsStack2.size());

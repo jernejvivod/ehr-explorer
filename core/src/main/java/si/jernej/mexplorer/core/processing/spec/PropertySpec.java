@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -21,13 +22,14 @@ public class PropertySpec
     private final Map<String, Set<String>> entityToPropertiesToProcess;
     private final Map<String, String> sortSpecs;
     private final Map<String, String> entityToPropertyForDurationLimit;
-    private LocalDateTime durationLim;
+    private Map<Object, List<LocalDateTime>> rootEntityIdToTimeLims;
 
     public PropertySpec()
     {
         this.entityToPropertiesToProcess = new HashMap<>();
         this.sortSpecs = new HashMap<>();
         this.entityToPropertyForDurationLimit = new HashMap<>();
+        this.rootEntityIdToTimeLims = new HashMap<>();
     }
 
     /**
@@ -96,14 +98,9 @@ public class PropertySpec
         this.entityToPropertyForDurationLimit.put(entity, property);
     }
 
-    public LocalDateTime getDurationLim()
+    public Map<Object, List<LocalDateTime>> getRootEntityIdToTimeLims()
     {
-        return durationLim;
-    }
-
-    public void setDurationLim(LocalDateTime durationLim)
-    {
-        this.durationLim = durationLim;
+        return rootEntityIdToTimeLims;
     }
 
     /**

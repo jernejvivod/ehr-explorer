@@ -40,12 +40,11 @@ public class TargetExtraction
 
         List<Object[]> results = mimicEntityManager.getResultListForExtractPatientDiedDuringAdmissionTarget(ids, ageLim);
 
-        return results.stream().map(r -> {
-            ExtractedTargetDto extractedTargetDto = new ExtractedTargetDto();
-            extractedTargetDto.setRootEntityId((Long) r[0]);
-            extractedTargetDto.setTargetValue(((Short) r[1]).intValue());
-            return extractedTargetDto;
-        }).toList();
+        return results.stream().map(r -> new ExtractedTargetDto()
+                .rootEntityId((Long) r[0])
+                .targetEntityId((Long) r[0])
+                .targetValue(((Short) r[1]).intValue())
+        ).toList();
     }
 
     public List<ExtractedTargetDto> extractIcuReadmissionTarget(@CheckForNull List<Long> ids, @CheckForNull Integer ageLim, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
@@ -54,16 +53,17 @@ public class TargetExtraction
 
         List<PatientsEntity> patients = mimicEntityManager.fetchPatientsForTargetExtractionIcuReadmission(ids);
 
-        record FilteredIcuStaysForPatientAndDod(List<IcuStaysEntity> icuStays, LocalDateTime dod)
+        record FilteredIcuStaysForPatientAndDod(long subjectId, List<IcuStaysEntity> icuStays, LocalDateTime dod)
         {
         }
 
         // sort ICU stays by time and filter out ICU stays for which the patient's age was below the specified limit
-        List<FilteredIcuStaysForPatientAndDod> icuStaysForpatient = new ArrayList<>();
+        List<FilteredIcuStaysForPatientAndDod> filteredIcuStaysForPatients = new ArrayList<>();
         for (PatientsEntity p : patients)
         {
-            icuStaysForpatient.add(
+            filteredIcuStaysForPatients.add(
                     new FilteredIcuStaysForPatientAndDod(
+                            p.getSubjectId(),
                             p.getIcuStaysEntitys().stream()
                                     .sorted(Comparator.comparing(IcuStaysEntity::getInTime))
                                     .filter(a -> Duration.between(p.getDob(), a.getInTime()).toDays() / 365.2425 >= (ageLim != null ? ageLim.doubleValue() : 0.0))
@@ -75,15 +75,15 @@ public class TargetExtraction
 
         // extract target from ICU stays of patients
         List<ExtractedTargetDto> extractTargetResults = new ArrayList<>();
-        for (FilteredIcuStaysForPatientAndDod icuStaysForPatient : icuStaysForpatient)
+        for (FilteredIcuStaysForPatientAndDod icuStaysForPatient : filteredIcuStaysForPatients)
         {
-            extractTargetResults.addAll(extractIcuReadmissionTargetFromAdmissionsForPatient(icuStaysForPatient.icuStays(), icuStaysForPatient.dod(), maxDaysBetweenAdmissionsConsiderPositive, deathDaysAfterDischargeConsiderPositive));
+            extractTargetResults.addAll(extractIcuReadmissionTargetFromAdmissionsForPatient(icuStaysForPatient.subjectId(), icuStaysForPatient.icuStays(), icuStaysForPatient.dod(), maxDaysBetweenAdmissionsConsiderPositive, deathDaysAfterDischargeConsiderPositive));
         }
 
         return extractTargetResults;
     }
 
-    private static List<ExtractedTargetDto> extractIcuReadmissionTargetFromAdmissionsForPatient(List<IcuStaysEntity> icuStaysForPatient, @CheckForNull LocalDateTime dod, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
+    private static List<ExtractedTargetDto> extractIcuReadmissionTargetFromAdmissionsForPatient(long subjectId, List<IcuStaysEntity> icuStaysForPatient, @CheckForNull LocalDateTime dod, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
     {
         List<ExtractedTargetDto> extractedTargetDtos = new ArrayList<>(icuStaysForPatient.size());
 
@@ -93,7 +93,8 @@ public class TargetExtraction
             IcuStaysEntity icuStayNext = icuStaysForPatient.get(i + 1);
 
             ExtractedTargetDto extractedTargetDto = new ExtractedTargetDto()
-                    .rootEntityId(icuStayCurrent.getIcuStayId())
+                    .rootEntityId(subjectId)
+                    .targetEntityId(icuStayCurrent.getIcuStayId())
                     .dateTimeLimit(icuStayCurrent.getOutTime());
 
             // # (1) The patient was transferred to a low-level ward from ICU, but returned to ICU again.
@@ -120,7 +121,8 @@ public class TargetExtraction
         IcuStaysEntity icuStayLast = icuStaysForPatient.get(icuStaysForPatient.size() - 1);
 
         ExtractedTargetDto extractedTargetDto = new ExtractedTargetDto()
-                .rootEntityId(icuStayLast.getIcuStayId())
+                .rootEntityId(subjectId)
+                .targetEntityId(icuStayLast.getIcuStayId())
                 .dateTimeLimit(icuStayLast.getOutTime())
                 .targetValue(0);
 
@@ -147,7 +149,7 @@ public class TargetExtraction
 
         List<PatientsEntity> patients = mimicEntityManager.fetchPatientForTargetExtractionHospitalReadmission(ids);
 
-        record FilteredAdmissionsForPatientAndDod(List<AdmissionsEntity> admissions, LocalDateTime dod)
+        record FilteredAdmissionsForPatientAndDod(long subjectId, List<AdmissionsEntity> admissions, LocalDateTime dod)
         {
         }
 
@@ -157,6 +159,7 @@ public class TargetExtraction
         {
             admissionsForPatients.add(
                     new FilteredAdmissionsForPatientAndDod(
+                            p.getSubjectId(),
                             p.getAdmissionsEntitys().stream()
                                     .sorted(Comparator.comparing(AdmissionsEntity::getAdmitTime))
                                     .filter(a -> Duration.between(p.getDob(), a.getAdmitTime()).toDays() / 365.2425 >= (ageLim != null ? ageLim.doubleValue() : 0.0))
@@ -170,13 +173,13 @@ public class TargetExtraction
         List<ExtractedTargetDto> extractTargetResults = new ArrayList<>();
         for (FilteredAdmissionsForPatientAndDod admissionsForPatient : admissionsForPatients)
         {
-            extractTargetResults.addAll(extractHospitalReadmissionTargetFromAdmissionsForPatient(admissionsForPatient.admissions(), admissionsForPatient.dod(), maxDaysBetweenAdmissionsConsiderPositive, deathDaysAfterDischargeConsiderPositive));
+            extractTargetResults.addAll(extractHospitalReadmissionTargetFromAdmissionsForPatient(admissionsForPatient.subjectId(), admissionsForPatient.admissions(), admissionsForPatient.dod(), maxDaysBetweenAdmissionsConsiderPositive, deathDaysAfterDischargeConsiderPositive));
         }
 
         return extractTargetResults;
     }
 
-    private static List<ExtractedTargetDto> extractHospitalReadmissionTargetFromAdmissionsForPatient(List<AdmissionsEntity> admissionsForPatient, @CheckForNull LocalDateTime dod, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
+    private static List<ExtractedTargetDto> extractHospitalReadmissionTargetFromAdmissionsForPatient(long subjectId, List<AdmissionsEntity> admissionsForPatient, @CheckForNull LocalDateTime dod, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
     {
         List<ExtractedTargetDto> extractedTargetDtos = new ArrayList<>(admissionsForPatient.size());
 
@@ -186,9 +189,10 @@ public class TargetExtraction
             AdmissionsEntity admission = admissionsForPatient.get(i);
             AdmissionsEntity nxtAdmission = admissionsForPatient.get(i + 1);
 
-            ExtractedTargetDto extractedTargetDto = new ExtractedTargetDto();
-            extractedTargetDto.setRootEntityId(admission.getHadmId());
-            extractedTargetDto.setDateTimeLimit(admission.getDischTime());
+            ExtractedTargetDto extractedTargetDto = new ExtractedTargetDto()
+                    .rootEntityId(subjectId)
+                    .targetEntityId(admission.getHadmId())
+                    .dateTimeLimit(admission.getDischTime());
 
             // # (1) If duration between admission less than specified number of days, consider positive.
             if (Duration.between(admission.getDischTime(), nxtAdmission.getAdmitTime()).toDays() < maxDaysBetweenAdmissionsConsiderPositive)
@@ -206,9 +210,10 @@ public class TargetExtraction
         // extract target for last admission
         AdmissionsEntity admissionLast = admissionsForPatient.get(admissionsForPatient.size() - 1);
 
-        ExtractedTargetDto extractedTargetDto = new ExtractedTargetDto();
-        extractedTargetDto.setRootEntityId(admissionLast.getHadmId());
-        extractedTargetDto.setDateTimeLimit(admissionLast.getDischTime());
+        ExtractedTargetDto extractedTargetDto = new ExtractedTargetDto()
+                .rootEntityId(subjectId)
+                .targetEntityId(admissionLast.getHadmId())
+                .dateTimeLimit(admissionLast.getDischTime());
 
         // # (2) If patient died specified number of days after being discharged, consider positive.
         if (admissionLast.getHospitalExpireFlag() == 0 && dod != null && Duration.between(admissionLast.getDischTime(), dod).toDays() < deathDaysAfterDischargeConsiderPositive)

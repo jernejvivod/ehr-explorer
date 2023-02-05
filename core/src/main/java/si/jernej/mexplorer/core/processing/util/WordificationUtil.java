@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.annotation.CheckForNull;
+
 import org.apache.commons.beanutils.PropertyUtils;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
@@ -89,7 +91,7 @@ public final class WordificationUtil
     /**
      * Add linked collections to BFS queue and apply any sorting.
      */
-    public static void pushLinkedCollectionToStack(List<Object> dfsStack, PropertySpec propertySpec, Collection<?> collection, Class<?> linkedEntityClass)
+    public static void pushLinkedCollectionToStack(List<Object> dfsStack, PropertySpec propertySpec, Collection<?> collection, Class<?> linkedEntityClass, @CheckForNull LocalDateTime timeLim)
     {
         List<?> linkedEntitiesList = propertySpec.getSortProperty(linkedEntityClass.getSimpleName())
                 .<List<?>>map(sp -> {
@@ -144,23 +146,23 @@ public final class WordificationUtil
                 )
                 .orElse(new ArrayList<>(collection));
 
-        dfsStack.addAll(0, applyDurationLimitIfSpecified(linkedEntitiesList, linkedEntityClass, propertySpec));
+        dfsStack.addAll(0, applyDurationLimitIfSpecified(linkedEntitiesList, linkedEntityClass, propertySpec, timeLim));
     }
 
     /**
      * Apply any specified duration limit to linked entities representing time series data.
      */
-    public static List<?> applyDurationLimitIfSpecified(List<?> linkedEntitiesList, Class<?> linkedEntityClass, PropertySpec propertySpec)
+    public static List<?> applyDurationLimitIfSpecified(List<?> linkedEntitiesList, Class<?> linkedEntityClass, PropertySpec propertySpec, @CheckForNull LocalDateTime timeLim)
     {
         Optional<String> durationLimitSpecForEntity = propertySpec.getPropertyForDurationLimitForEntity(linkedEntityClass.getSimpleName());
 
-        if (durationLimitSpecForEntity.isPresent())
+        if (durationLimitSpecForEntity.isPresent() && timeLim != null)
         {
             return linkedEntitiesList.stream().filter(e -> {
                 try
                 {
                     LocalDateTime dateTimePropertyForLimVal = (LocalDateTime) PropertyUtils.getProperty(e, durationLimitSpecForEntity.get());
-                    return dateTimePropertyForLimVal.equals(propertySpec.getDurationLim()) || dateTimePropertyForLimVal.isBefore(propertySpec.getDurationLim());
+                    return dateTimePropertyForLimVal.equals(timeLim) || dateTimePropertyForLimVal.isBefore(timeLim);
                 }
                 catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
                 {

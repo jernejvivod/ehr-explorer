@@ -3,6 +3,7 @@ package si.jernej.mexplorer.core.processing;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.CheckForNull;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.persistence.Entity;
@@ -51,6 +53,7 @@ public class Wordification
      * @param compositeColumnCreator {@link CompositeColumnCreator} instance used to specify the creation of composite columns
      * @param concatenationScheme {@link ConcatenationScheme} instance used to specify the word concatenations
      * @param transitionPairsFromForeignKeyPath set of pairs of entity names that occur on foreign key paths obtained from the specified {@link PropertySpec}
+     * @param timeLim time limit to apply to linked entities
      * @return {@code List} of obtained words for specified root entity
      */
     public List<String> wordify(
@@ -59,7 +62,8 @@ public class Wordification
             ValueTransformer valueTransformer,
             CompositeColumnCreator compositeColumnCreator,
             ConcatenationScheme concatenationScheme,
-            Set<Pair<String, String>> transitionPairsFromForeignKeyPath
+            Set<Pair<String, String>> transitionPairsFromForeignKeyPath,
+            @CheckForNull LocalDateTime timeLim
     )
     {
         // list of resulting words
@@ -110,7 +114,7 @@ public class Wordification
                         )
                         {
                             Collection<?> nxtPropertyVal = (Collection<?>) propertyDescriptor.getReadMethod().invoke(nxt);
-                            WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, nxtPropertyVal, linkedEntityClass);
+                            WordificationUtil.pushLinkedCollectionToStack(dfsStack, propertySpec, nxtPropertyVal, linkedEntityClass, timeLim);
                         }
                     }
                     else if (propertyType.isAnnotationPresent(Entity.class))
