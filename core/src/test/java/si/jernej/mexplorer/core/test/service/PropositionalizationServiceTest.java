@@ -19,6 +19,7 @@ import si.jernej.mexplorer.processorapi.v1.model.ExtractedTargetDto;
 import si.jernej.mexplorer.processorapi.v1.model.PropertySpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.PropertySpecEntryDto;
 import si.jernej.mexplorer.processorapi.v1.model.RootEntitiesSpecDto;
+import si.jernej.mexplorer.processorapi.v1.model.RootEntityAndTimeLimitDto;
 import si.jernej.mexplorer.processorapi.v1.model.TargetExtractionSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.TransformDto;
 import si.jernej.mexplorer.processorapi.v1.model.ValueTransformationSpecDto;
@@ -499,25 +500,20 @@ public class PropositionalizationServiceTest extends ACoreTest
         propertySpecEntryDto2.setPropertyForLimit("outTime");
         propertySpecDto.addEntriesItem(propertySpecEntryDto2);
 
-        propertySpecDto.setDurationLim(extractedTargetDtos.get(0).getDateTimeLimit());
+        propertySpecDto.setRootEntityAndLimeLimit(
+                extractedTargetDtos.stream()
+                        .map(d -> new RootEntityAndTimeLimitDto()
+                                .rootEntityId(d.getRootEntityId())
+                                .timeLim(d.getDateTimeLimit())
+                        ).toList()
+        );
+
         wordificationConfigDto.setPropertySpec(propertySpecDto);
 
-        List<WordificationResultDto> res1 = propositionalizationService.computeWordification(wordificationConfigDto);
-        Assertions.assertEquals(1, res1.size());
-        Assertions.assertEquals(2, res1.get(0).getWords().size());
-
-        propertySpecDto.setDurationLim(extractedTargetDtos.get(1).getDateTimeLimit());
-        wordificationConfigDto.setPropertySpec(propertySpecDto);
-
-        List<WordificationResultDto> res2 = propositionalizationService.computeWordification(wordificationConfigDto);
-        Assertions.assertEquals(1, res2.size());
-        Assertions.assertEquals(3, res2.get(0).getWords().size());
-
-        propertySpecDto.setDurationLim(extractedTargetDtos.get(2).getDateTimeLimit());
-        wordificationConfigDto.setPropertySpec(propertySpecDto);
-
-        List<WordificationResultDto> res3 = propositionalizationService.computeWordification(wordificationConfigDto);
-        Assertions.assertEquals(1, res3.size());
-        Assertions.assertEquals(4, res3.get(0).getWords().size());
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
+        Assertions.assertEquals(3, res.size());
+        Assertions.assertEquals(2, res.get(0).getWords().size());
+        Assertions.assertEquals(3, res.get(1).getWords().size());
+        Assertions.assertEquals(4, res.get(2).getWords().size());
     }
 }

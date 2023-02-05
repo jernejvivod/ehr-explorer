@@ -1,5 +1,6 @@
 package si.jernej.mexplorer.core.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -102,22 +103,49 @@ public class PropositionalizationService
             Object rootEntity = rootEntityWithId[0];
             long rootEntityId = (long) rootEntityWithId[1];
 
-            WordificationResultDto wordificationResultDtoNxt = new WordificationResultDto();
-            wordificationResultDtoNxt.setRootEntityId(rootEntityId);
+            List<LocalDateTime> timeLimsForRootEntity = propertySpec.getRootEntityIdToTimeLims().get(rootEntityId);
 
-            // compute wordification
-            wordificationResultDtoNxt.setWords(
-                    wordification.wordify(
-                            rootEntity,
-                            propertySpec,
-                            valueTransformer,
-                            compositeColumnCreator,
-                            concatenationSchemeEnumMapping.get(wordificationConfigDto.getConcatenationSpec().getConcatenationScheme()),
-                            EntityUtils.getTransitionPairsFromForeignKeyPath(foreignKeyPaths)
-                    )
-            );
+            if (timeLimsForRootEntity != null)
+            {
+                for (final LocalDateTime timeLim : timeLimsForRootEntity)
+                {
+                    WordificationResultDto wordificationResultDtoNxt = new WordificationResultDto()
+                            .rootEntityId(rootEntityId);
 
-            wordificationResults.add(wordificationResultDtoNxt);
+                    wordificationResultDtoNxt.setTimeLim(timeLim);
+                    wordificationResultDtoNxt.setWords(
+                            wordification.wordify(
+                                    rootEntity,
+                                    propertySpec,
+                                    valueTransformer,
+                                    compositeColumnCreator,
+                                    concatenationSchemeEnumMapping.get(wordificationConfigDto.getConcatenationSpec().getConcatenationScheme()),
+                                    EntityUtils.getTransitionPairsFromForeignKeyPath(foreignKeyPaths),
+                                    timeLim
+                            )
+                    );
+                    wordificationResults.add(wordificationResultDtoNxt);
+                }
+            }
+            else
+            {
+                WordificationResultDto wordificationResultDtoNxt = new WordificationResultDto()
+                        .rootEntityId(rootEntityId);
+
+                wordificationResultDtoNxt.setWords(
+                        wordification.wordify(
+                                rootEntity,
+                                propertySpec,
+                                valueTransformer,
+                                compositeColumnCreator,
+                                concatenationSchemeEnumMapping.get(wordificationConfigDto.getConcatenationSpec().getConcatenationScheme()),
+                                EntityUtils.getTransitionPairsFromForeignKeyPath(foreignKeyPaths),
+                                null
+                        )
+                );
+                wordificationResults.add(wordificationResultDtoNxt);
+            }
+
         }
 
         return wordificationResults;

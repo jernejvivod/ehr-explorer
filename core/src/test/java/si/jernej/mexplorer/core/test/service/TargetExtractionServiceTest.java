@@ -98,15 +98,18 @@ public class TargetExtractionServiceTest extends ACoreTest
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         ExtractedTargetDto extractedTargetDto182104 = new ExtractedTargetDto()
-                .rootEntityId(182104L)
+                .rootEntityId(36L)
+                .targetEntityId(182104L)
                 .targetValue(1)
                 .dateTimeLimit(LocalDateTime.parse("2131-05-08 14:00:00", formatter));
         ExtractedTargetDto extractedTargetDto122659 = new ExtractedTargetDto()
-                .rootEntityId(122659L)
+                .rootEntityId(36L)
+                .targetEntityId(122659L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2131-05-25 13:30:00", formatter));
         ExtractedTargetDto extractedTargetDto165660 = new ExtractedTargetDto()
-                .rootEntityId(165660L)
+                .rootEntityId(36L)
+                .targetEntityId(165660L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2134-05-20 13:16:00", formatter));
 
@@ -135,11 +138,13 @@ public class TargetExtractionServiceTest extends ACoreTest
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         ExtractedTargetDto extractedTargetDto237399 = new ExtractedTargetDto()
-                .rootEntityId(237399L)
+                .rootEntityId(131L)
+                .targetEntityId(237399L)
                 .targetValue(1)
                 .dateTimeLimit(LocalDateTime.parse("2143-12-07 22:12:09", formatter));
         ExtractedTargetDto extractedTargetDto280415 = new ExtractedTargetDto()
-                .rootEntityId(280415L)
+                .rootEntityId(131L)
+                .targetEntityId(280415L)
                 .targetValue(0)
                 .dateTimeLimit(LocalDateTime.parse("2143-12-12 12:37:44", formatter));
 

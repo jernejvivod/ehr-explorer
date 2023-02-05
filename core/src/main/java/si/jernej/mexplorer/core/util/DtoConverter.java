@@ -2,6 +2,7 @@ package si.jernej.mexplorer.core.util;
 
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -95,7 +96,11 @@ public final class DtoConverter
     {
         PropertySpec propertySpec = new PropertySpec();
 
-        propertySpec.setDurationLim(propertySpecDto.getDurationLim());
+        propertySpecDto.getRootEntityAndLimeLimit()
+                .forEach(r -> propertySpec.getRootEntityIdToTimeLims()
+                        .computeIfAbsent(r.getRootEntityId(), id -> new ArrayList<>())
+                        .add(r.getTimeLim())
+                );
 
         for (PropertySpecEntryDto entry : propertySpecDto.getEntries())
         {

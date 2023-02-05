@@ -60,7 +60,7 @@ class WordificationTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
 
         Assertions.assertTrue(res.isEmpty());
     }
@@ -82,7 +82,7 @@ class WordificationTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -106,7 +106,7 @@ class WordificationTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ONE, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ONE, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -130,7 +130,7 @@ class WordificationTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -163,7 +163,7 @@ class WordificationTest extends ACoreTest
                 (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -202,7 +202,7 @@ class WordificationTest extends ACoreTest
                 DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -260,7 +260,7 @@ class WordificationTest extends ACoreTest
                 DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())));
+        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
 
         Assertions.assertEquals(expectedWords, res);
     }
