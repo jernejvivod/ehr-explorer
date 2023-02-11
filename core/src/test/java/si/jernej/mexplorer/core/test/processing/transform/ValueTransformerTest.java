@@ -179,8 +179,8 @@ class ValueTransformerTest extends ACoreTest
     void testValueTransformerValidationValid()
     {
         ValueTransformer valueTransformer = new ValueTransformer();
-        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
-        valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
+        valueTransformer.addTransform("AdmissionsEntity", "language", new ValueTransformer.Transform(x -> x));
+        valueTransformer.addTransform("PatientsEntity", "gender", new ValueTransformer.Transform(x -> x));
         Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), null));
     }
 
@@ -195,9 +195,9 @@ class ValueTransformerTest extends ACoreTest
     void testValueTransformerValidationWrongEntity()
     {
         ValueTransformer valueTransformer = new ValueTransformer();
-        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
-        valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
-        valueTransformer.addTransform("Wrong", "dbSource", x -> x);
+        valueTransformer.addTransform("AdmissionsEntity", "language", new ValueTransformer.Transform(x -> x));
+        valueTransformer.addTransform("PatientsEntity", "gender", new ValueTransformer.Transform(x -> x));
+        valueTransformer.addTransform("Wrong", "dbSource", new ValueTransformer.Transform(x -> x));
         Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), null));
     }
 
@@ -205,8 +205,8 @@ class ValueTransformerTest extends ACoreTest
     void testValueTransformerValidationWrongProperty()
     {
         ValueTransformer valueTransformer = new ValueTransformer();
-        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
-        valueTransformer.addTransform("PatientsEntity", "wrong", x -> x);
+        valueTransformer.addTransform("AdmissionsEntity", "language", new ValueTransformer.Transform(x -> x));
+        valueTransformer.addTransform("PatientsEntity", "wrong", new ValueTransformer.Transform(x -> x));
         Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), null));
     }
 
@@ -216,9 +216,9 @@ class ValueTransformerTest extends ACoreTest
         final String compositeName = "compositeName";
 
         ValueTransformer valueTransformer = new ValueTransformer();
-        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
-        valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
-        valueTransformer.addTransform(Constants.COMPOSITE_TABLE_NAME, compositeName, x -> x);
+        valueTransformer.addTransform("AdmissionsEntity", "language", new ValueTransformer.Transform(x -> x));
+        valueTransformer.addTransform("PatientsEntity", "gender", new ValueTransformer.Transform(x -> x));
+        valueTransformer.addTransform(Constants.COMPOSITE_TABLE_NAME, compositeName, new ValueTransformer.Transform(x -> x));
 
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
         compositeColumnCreator.addEntry(
@@ -239,9 +239,9 @@ class ValueTransformerTest extends ACoreTest
         final String compositeName = "compositeName";
 
         ValueTransformer valueTransformer = new ValueTransformer();
-        valueTransformer.addTransform("AdmissionsEntity", "language", x -> x);
-        valueTransformer.addTransform("PatientsEntity", "gender", x -> x);
-        valueTransformer.addTransform(Constants.COMPOSITE_TABLE_NAME, "wrong", x -> x);
+        valueTransformer.addTransform("AdmissionsEntity", "language", new ValueTransformer.Transform(x -> x));
+        valueTransformer.addTransform("PatientsEntity", "gender", new ValueTransformer.Transform(x -> x));
+        valueTransformer.addTransform(Constants.COMPOSITE_TABLE_NAME, "wrong", new ValueTransformer.Transform(x -> x));
 
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
         compositeColumnCreator.addEntry(

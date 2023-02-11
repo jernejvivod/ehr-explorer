@@ -283,7 +283,7 @@ class WordificationUtilTest
         Assertions.assertEquals(List.of("composite@composite_column_name@-1"), res1);
 
         ValueTransformer valueTransformer = new ValueTransformer();
-        valueTransformer.addTransform("composite", "composite_column_name", o -> ((int) o) + 8);
+        valueTransformer.addTransform("composite", "composite_column_name", new ValueTransformer.Transform(o -> ((int) o) + 8));
         List<String> res2 = WordificationUtil.getWordsForCompositeColumns(compositeColumnCreator, valueTransformer, a);
         Assertions.assertEquals(List.of("composite@composite_column_name@7"), res2);
     }

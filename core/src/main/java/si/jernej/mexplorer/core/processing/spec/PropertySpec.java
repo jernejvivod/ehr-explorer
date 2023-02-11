@@ -22,7 +22,7 @@ public class PropertySpec
     private final Map<String, Set<String>> entityToPropertiesToProcess;
     private final Map<String, String> sortSpecs;
     private final Map<String, String> entityToPropertyForDurationLimit;
-    private Map<Object, List<LocalDateTime>> rootEntityIdToTimeLims;
+    private final Map<Object, List<LocalDateTime>> rootEntityIdToTimeLims;
 
     public PropertySpec()
     {

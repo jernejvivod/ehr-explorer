@@ -70,17 +70,17 @@ public final class DtoConverter
      * @param transformDto model for the function
      * @return function used in {@link ValueTransformer}
      */
-    private static Function<Object, ?> transformDtoToTransformFunction(TransformDto transformDto)
+    private static ValueTransformer.Transform transformDtoToTransformFunction(TransformDto transformDto)
     {
-        Function<Object, ?> res = null;
+        ValueTransformer.Transform res = null;
 
         if (transformDto.getKind() == TransformDto.KindEnum.ROUNDING)
         {
-            res = x -> transformDto.getRoundingMultiple() * Math.round(((double) x) / transformDto.getRoundingMultiple());
+            res = new ValueTransformer.Transform(x -> transformDto.getRoundingMultiple() * Math.round(((double) x) / transformDto.getRoundingMultiple()));
         }
         else if (transformDto.getKind() == TransformDto.KindEnum.DATE_DIFF_ROUND)
         {
-            res = dateDiffRoundTypeKindToTransformFunction.get(transformDto.getDateDiffRoundType());
+            res = new ValueTransformer.Transform(dateDiffRoundTypeKindToTransformFunction.get(transformDto.getDateDiffRoundType()));
         }
 
         return Optional.ofNullable(res).orElseThrow(() -> new ValidationCoreException("Error setting value transformations"));
