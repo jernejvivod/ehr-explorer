@@ -121,7 +121,8 @@ public class PropositionalizationService
                                     compositeColumnCreator,
                                     concatenationSchemeEnumMapping.get(wordificationConfigDto.getConcatenationSpec().getConcatenationScheme()),
                                     EntityUtils.getTransitionPairsFromForeignKeyPath(foreignKeyPaths),
-                                    timeLim
+                                    timeLim,
+                                    false
                             )
                     );
                     wordificationResults.add(wordificationResultDtoNxt);
@@ -140,7 +141,8 @@ public class PropositionalizationService
                                 compositeColumnCreator,
                                 concatenationSchemeEnumMapping.get(wordificationConfigDto.getConcatenationSpec().getConcatenationScheme()),
                                 EntityUtils.getTransitionPairsFromForeignKeyPath(foreignKeyPaths),
-                                null
+                                null,
+                                false
                         )
                 );
                 wordificationResults.add(wordificationResultDtoNxt);

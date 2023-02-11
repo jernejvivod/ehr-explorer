@@ -60,7 +60,16 @@ class WordificationTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
+        List<String> res = wordification.wordify(
+                rootAdmissionsEntity,
+                propertySpec,
+                valueTransformer,
+                compositeColumnCreator,
+                Wordification.ConcatenationScheme.ZERO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
 
         Assertions.assertTrue(res.isEmpty());
     }
@@ -82,7 +91,15 @@ class WordificationTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ZERO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
+        List<String> res = wordification.wordify(rootAdmissionsEntity,
+                propertySpec,
+                valueTransformer,
+                compositeColumnCreator,
+                Wordification.ConcatenationScheme.ZERO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -106,7 +123,16 @@ class WordificationTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.ONE, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
+        List<String> res = wordification.wordify(
+                rootAdmissionsEntity,
+                propertySpec,
+                valueTransformer,
+                compositeColumnCreator,
+                Wordification.ConcatenationScheme.ONE,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -130,7 +156,15 @@ class WordificationTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
+        List<String> res = wordification.wordify(rootAdmissionsEntity,
+                propertySpec,
+                valueTransformer,
+                compositeColumnCreator,
+                Wordification.ConcatenationScheme.TWO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -163,7 +197,16 @@ class WordificationTest extends ACoreTest
                 (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
+        List<String> res = wordification.wordify(
+                rootAdmissionsEntity,
+                propertySpec,
+                valueTransformer,
+                compositeColumnCreator,
+                Wordification.ConcatenationScheme.TWO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -189,7 +232,7 @@ class WordificationTest extends ACoreTest
         valueTransformer.addTransform(
                 "composite",
                 "ageAtAdmission",
-                x -> String.valueOf((int) 20.0 * Math.round(Double.parseDouble(((String) x).split(" ")[0]) / 20.0))
+                new ValueTransformer.Transform(x -> String.valueOf((int) 20.0 * Math.round(Double.parseDouble(((String) x).split(" ")[0]) / 20.0)))
         );
 
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
@@ -202,7 +245,15 @@ class WordificationTest extends ACoreTest
                 DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
+        List<String> res = wordification.wordify(rootAdmissionsEntity,
+                propertySpec,
+                valueTransformer,
+                compositeColumnCreator,
+                Wordification.ConcatenationScheme.TWO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
 
         Assertions.assertEquals(expectedWords, res);
     }
@@ -242,12 +293,12 @@ class WordificationTest extends ACoreTest
         valueTransformer.addTransform(
                 "composite",
                 "ageAtAdmission",
-                x -> String.valueOf((int) 20.0 * Math.round(Double.parseDouble(((String) x).split(" ")[0]) / 20.0))
+                new ValueTransformer.Transform(x -> String.valueOf((int) 20.0 * Math.round(Double.parseDouble(((String) x).split(" ")[0]) / 20.0)))
         );
         valueTransformer.addTransform(
                 "IcuStaysEntity",
                 "los",
-                x -> 1.0 * Math.round(((double) x) / 1.0)
+                new ValueTransformer.Transform(x -> 1.0 * Math.round(((double) x) / 1.0))
         );
 
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
@@ -260,8 +311,70 @@ class WordificationTest extends ACoreTest
                 DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
         );
 
-        List<String> res = wordification.wordify(rootAdmissionsEntity, propertySpec, valueTransformer, compositeColumnCreator, Wordification.ConcatenationScheme.TWO, EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())), null);
+        List<String> res = wordification.wordify(rootAdmissionsEntity,
+                propertySpec,
+                valueTransformer,
+                compositeColumnCreator,
+                Wordification.ConcatenationScheme.TWO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("AdmissionsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
 
         Assertions.assertEquals(expectedWords, res);
+    }
+
+    @Test
+    void testWordificationNullValuesIgnoredOrNotIgnored()
+    {
+        PatientsEntity patientsEntity = new PatientsEntity();
+        patientsEntity.setGender("M");
+
+        IcuStaysEntity icuStaysEntity = new IcuStaysEntity();
+        icuStaysEntity.setFirstCareUnit(null);
+        icuStaysEntity.setLastCareUnit("lastCareUnit");
+        icuStaysEntity.setPatientsEntity(patientsEntity);
+        patientsEntity.setIcuStaysEntitys(Set.of(icuStaysEntity));
+
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "icuStaysEntitys"));
+        propertySpec.addEntry("IcuStaysEntity", List.of("firstCareUnit", "lastCareUnit"));
+
+        List<String> expectedWordsNullValuesNotIgnored = List.of(
+                "patientsentity@gender@m",
+                "icustaysentity@firstcareunit@null",
+                "icustaysentity@lastcareunit@lastcareunit"
+        );
+
+        List<String> expectedWordsNullValuesIgnored = List.of(
+                "patientsentity@gender@m",
+                "icustaysentity@lastcareunit@lastcareunit"
+        );
+
+        List<String> resNullValuesNotIgnored = wordification.wordify(
+                patientsEntity,
+                propertySpec,
+                new ValueTransformer(),
+                new CompositeColumnCreator(),
+                Wordification.ConcatenationScheme.ZERO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("PatientsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
+
+        Assertions.assertEquals(expectedWordsNullValuesNotIgnored, resNullValuesNotIgnored);
+
+        List<String> resNullValuesIgnored = wordification.wordify(
+                patientsEntity,
+                propertySpec,
+                new ValueTransformer(),
+                new CompositeColumnCreator(),
+                Wordification.ConcatenationScheme.ZERO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("PatientsEntity", propertySpec, em.getMetamodel())),
+                null,
+                true
+        );
+
+        Assertions.assertEquals(expectedWordsNullValuesIgnored, resNullValuesIgnored);
     }
 }

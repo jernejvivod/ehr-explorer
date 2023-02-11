@@ -29,6 +29,15 @@ public class ValueTransformer
         this.defaultTransform = defaultTransform;
     }
 
+    public record Transform(Function<Object, ?> transformFunction) implements Function<Object, Object>
+    {
+        @Override
+        public Object apply(Object o)
+        {
+            return o != null ? transformFunction.apply(o) : null;
+        }
+    }
+
     /**
      * Add transformation for an entity's property.
      *
@@ -36,7 +45,7 @@ public class ValueTransformer
      * @param property name of property for which to add a transformation
      * @param transform the transformation to perform
      */
-    public void addTransform(String entity, String property, Function<Object, ?> transform)
+    public void addTransform(String entity, String property, Transform transform)
     {
         entityToPropertyToTransform.computeIfAbsent(entity, e -> new HashMap<>()).put(property, transform);
     }

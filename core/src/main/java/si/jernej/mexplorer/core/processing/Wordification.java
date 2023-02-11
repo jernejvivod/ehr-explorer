@@ -54,6 +54,7 @@ public class Wordification
      * @param concatenationScheme {@link ConcatenationScheme} instance used to specify the word concatenations
      * @param transitionPairsFromForeignKeyPath set of pairs of entity names that occur on foreign key paths obtained from the specified {@link PropertySpec}
      * @param timeLim time limit to apply to linked entities
+     * @param ignoreNull ignore null values when computing Wordification results or treat them as valid values
      * @return {@code List} of obtained words for specified root entity
      */
     public List<String> wordify(
@@ -63,7 +64,8 @@ public class Wordification
             CompositeColumnCreator compositeColumnCreator,
             ConcatenationScheme concatenationScheme,
             Set<Pair<String, String>> transitionPairsFromForeignKeyPath,
-            @CheckForNull LocalDateTime timeLim
+            @CheckForNull LocalDateTime timeLim,
+            boolean ignoreNull
     )
     {
         // list of resulting words
@@ -93,14 +95,18 @@ public class Wordification
                     if (propertySpec.containsEntry(entityName, propertyDescriptor.getName()) && !propertyType.isAnnotationPresent(Entity.class) && !Collection.class.isAssignableFrom(propertyType))
                     {
                         Object nxtPropertyVal = propertyDescriptor.getReadMethod().invoke(nxt);
+                        Object nxtPropertyValTransformed = valueTransformer.applyTransform(entityName, propertyDescriptor.getName(), nxtPropertyVal);
 
-                        wordsForEntity.add("%s@%s@%s".formatted(
-                                        entityName,
-                                        propertyDescriptor.getName(),
-                                        valueTransformer.applyTransform(entityName, propertyDescriptor.getName(), nxtPropertyVal)
-                                )
-                                .toLowerCase()
-                                .replace(' ', '_'));
+                        if (!(ignoreNull && nxtPropertyValTransformed == null))
+                        {
+                            wordsForEntity.add("%s@%s@%s".formatted(
+                                            entityName,
+                                            propertyDescriptor.getName(),
+                                            nxtPropertyValTransformed
+                                    )
+                                    .toLowerCase()
+                                    .replace(' ', '_'));
+                        }
                     }
 
                     else if (Collection.class.isAssignableFrom(propertyType))
