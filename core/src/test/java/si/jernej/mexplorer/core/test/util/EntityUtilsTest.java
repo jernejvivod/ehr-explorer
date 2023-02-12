@@ -19,6 +19,7 @@ import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.core.util.Constants;
+import si.jernej.mexplorer.core.util.DtoConverter;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
 import si.jernej.mexplorer.entity.PatientsEntity;
@@ -350,7 +351,7 @@ class EntityUtilsTest extends ACoreTest
                 (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
         );
 
-        Assertions.assertDoesNotThrow(() -> EntityUtils.assertEntityAndPropertyValid(Constants.COMPOSITE_TABLE_NAME, compositeName, em.getMetamodel(), compositeColumnCreator));
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertEntityAndPropertyValid(Constants.COMPOSITE_TABLE_NAME, compositeName, em.getMetamodel(), compositeColumnCreator, null));
     }
 
     @Test
@@ -368,7 +369,41 @@ class EntityUtilsTest extends ACoreTest
                 (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
         );
 
-        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityAndPropertyValid(Constants.COMPOSITE_TABLE_NAME, "wrong", em.getMetamodel(), compositeColumnCreator));
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityAndPropertyValid(Constants.COMPOSITE_TABLE_NAME, "wrong", em.getMetamodel(), compositeColumnCreator, null));
+    }
+
+    @Test
+    void testAssertEntityAndPropertyValidPropertySpec()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("IcuStaysEntity", Set.of("gender"), Set.of(
+                new PropertySpec.CompositePropertySpec(
+                        "inTime",
+                        "dob",
+                        List.of("IcuStaysEntity", "PatientsEntity"),
+                        "ageAtAdmission",
+                        DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
+                )
+        ));
+
+        Assertions.assertDoesNotThrow(() -> EntityUtils.assertEntityAndPropertyValid("IcuStaysEntity", "ageAtAdmission", em.getMetamodel(), null, propertySpec));
+    }
+
+    @Test
+    void testAssertEntityAndPropertyValidPropertySpecWrongProperty()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("IcuStaysEntity", Set.of("gender"), Set.of(
+                new PropertySpec.CompositePropertySpec(
+                        "inTime",
+                        "dob",
+                        List.of("IcuStaysEntity", "PatientsEntity"),
+                        "ageAtAdmission",
+                        DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
+                )
+        ));
+
+        Assertions.assertThrows(ValidationCoreException.class, () -> EntityUtils.assertEntityAndPropertyValid("IcuStaysEntity", "wrong", em.getMetamodel(), null, propertySpec));
     }
 
     @Test

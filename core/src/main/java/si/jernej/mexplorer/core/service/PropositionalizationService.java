@@ -82,7 +82,7 @@ public class PropositionalizationService
         ValueTransformer valueTransformer = Optional.ofNullable(wordificationConfigDto.getValueTransformationSpec())
                 .map(DtoConverter::toValueTransformer)
                 .orElse(new ValueTransformer());
-        valueTransformer.assertValid(mimicEntityManager.getMetamodel(), compositeColumnCreator);
+        valueTransformer.assertValid(mimicEntityManager.getMetamodel(), compositeColumnCreator, propertySpec);
 
         List<List<String>> foreignKeyPaths = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, mimicEntityManager.getMetamodel());
 

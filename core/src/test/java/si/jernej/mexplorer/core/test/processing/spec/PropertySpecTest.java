@@ -1,5 +1,6 @@
 package si.jernej.mexplorer.core.test.processing.spec;
 
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.test.ACoreTest;
+import si.jernej.mexplorer.core.util.DtoConverter;
 
 class PropertySpecTest extends ACoreTest
 {
@@ -33,8 +35,8 @@ class PropertySpecTest extends ACoreTest
         Assertions.assertTrue(propertySpec1.containsEntry(ENTITY2, ENTITY2_PROPERTY2));
 
         PropertySpec propertySpec2 = new PropertySpec();
-        propertySpec2.addEntry(ENTITY1, Set.of(ENTITY1_PROPERTY1, ENTITY1_PROPERTY2));
-        propertySpec2.addEntry(ENTITY2, Set.of(ENTITY2_PROPERTY1, ENTITY2_PROPERTY2));
+        propertySpec2.addEntry(ENTITY1, Set.of(ENTITY1_PROPERTY1, ENTITY1_PROPERTY2), null);
+        propertySpec2.addEntry(ENTITY2, Set.of(ENTITY2_PROPERTY1, ENTITY2_PROPERTY2), null);
 
         Assertions.assertTrue(propertySpec2.containsEntry(ENTITY1, ENTITY1_PROPERTY1));
         Assertions.assertTrue(propertySpec2.containsEntry(ENTITY1, ENTITY1_PROPERTY2));
@@ -107,6 +109,24 @@ class PropertySpecTest extends ACoreTest
         propertySpec.addEntry("PatientsEntity", "gender");
         propertySpec.addEntityAndPropertyForDurationLimit("MicrobiologyEventsEntity", "wrong");
 
+        Assertions.assertThrows(ValidationCoreException.class, () -> propertySpec.assertValid(em.getMetamodel()));
+    }
+
+    @Test
+    void testPropertySpecValidationInvalidCompositePropertySpecProperty()
+    {
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "icuStaysEntitys"), null);
+        propertySpec.addEntry("IcuStaysEntity", List.of("dbSource"), List.of(
+                        new PropertySpec.CompositePropertySpec(
+                                "inTime",
+                                "wrong",
+                                List.of("IcuStaysEntity", "PatientsEntity"),
+                                "ageAtAdmission",
+                                DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
+                        )
+                )
+        );
         Assertions.assertThrows(ValidationCoreException.class, () -> propertySpec.assertValid(em.getMetamodel()));
     }
 }

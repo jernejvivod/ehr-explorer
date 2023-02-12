@@ -85,8 +85,8 @@ class WordificationTest extends ACoreTest
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
-        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"), null);
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"), null);
 
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
@@ -117,8 +117,8 @@ class WordificationTest extends ACoreTest
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
-        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"), null);
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"), null);
 
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
@@ -150,8 +150,8 @@ class WordificationTest extends ACoreTest
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
-        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"), null);
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"), null);
 
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
@@ -183,8 +183,8 @@ class WordificationTest extends ACoreTest
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
-        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"), null);
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"), null);
 
         ValueTransformer valueTransformer = new ValueTransformer();
         CompositeColumnCreator compositeColumnCreator = new CompositeColumnCreator();
@@ -225,8 +225,8 @@ class WordificationTest extends ACoreTest
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"));
-        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity"), null);
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"), null);
 
         ValueTransformer valueTransformer = new ValueTransformer();
         valueTransformer.addTransform(
@@ -285,9 +285,9 @@ class WordificationTest extends ACoreTest
         );
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity", "icuStaysEntitys"));
-        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"));
-        propertySpec.addEntry("IcuStaysEntity", List.of("firstCareUnit", "lastCareUnit", "los"));
+        propertySpec.addEntry("AdmissionsEntity", List.of("admissionType", "insurance", "patientsEntity", "icuStaysEntitys"), null);
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "dod"), null);
+        propertySpec.addEntry("IcuStaysEntity", List.of("firstCareUnit", "lastCareUnit", "los"), null);
 
         ValueTransformer valueTransformer = new ValueTransformer();
         valueTransformer.addTransform(
@@ -325,6 +325,60 @@ class WordificationTest extends ACoreTest
     }
 
     @Test
+    void basicWithCompositePropertyAndValueTransformerRounding()
+    {
+        PatientsEntity patientsEntity = new PatientsEntity();
+        patientsEntity.setDob(LocalDateTime.of(2132, 2, 21, 0, 0, 0));
+        patientsEntity.setGender("M");
+
+        IcuStaysEntity icuStaysEntity = new IcuStaysEntity();
+        icuStaysEntity.setFirstCareUnit("firstCareUnit");
+        icuStaysEntity.setLastCareUnit("lastCareUnit");
+        icuStaysEntity.setInTime(LocalDateTime.of(2198, 2, 14, 23, 27, 38));
+
+        icuStaysEntity.setPatientsEntity(patientsEntity);
+        patientsEntity.setIcuStaysEntitys(Set.of(icuStaysEntity));
+
+        List<String> expectedWords = List.of(
+                "patientsentity@gender@m",
+                "icustaysentity@firstcareunit@firstcareunit",
+                "icustaysentity@lastcareunit@lastcareunit",
+                "icustaysentity@ageatadmission@70"
+        );
+
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "icuStaysEntitys"), null);
+        propertySpec.addEntry("IcuStaysEntity", List.of("firstCareUnit", "lastCareUnit"), Set.of(
+                new PropertySpec.CompositePropertySpec(
+                        "inTime",
+                        "dob",
+                        List.of("IcuStaysEntity", "PatientsEntity"),
+                        "ageAtAdmission",
+                        DtoConverter.CombinerEnum.DATE_DIFF.getBinaryOperator()
+                )
+        ));
+
+        ValueTransformer valueTransformer = new ValueTransformer();
+        valueTransformer.addTransform(
+                "IcuStaysEntity",
+                "ageAtAdmission",
+                new ValueTransformer.Transform(x -> String.valueOf((int) 10.0 * Math.round(Double.parseDouble(((String) x).split(" ")[0]) / 10.0)))
+        );
+
+        List<String> res = wordification.wordify(patientsEntity,
+                propertySpec,
+                valueTransformer,
+                new CompositeColumnCreator(),
+                Wordification.ConcatenationScheme.ZERO,
+                EntityUtils.getTransitionPairsFromForeignKeyPath(EntityUtils.getForeignKeyPathsFromPropertySpec("PatientsEntity", propertySpec, em.getMetamodel())),
+                null,
+                false
+        );
+
+        Assertions.assertEquals(expectedWords, res);
+    }
+
+    @Test
     void testWordificationNullValuesIgnoredOrNotIgnored()
     {
         PatientsEntity patientsEntity = new PatientsEntity();
@@ -337,8 +391,8 @@ class WordificationTest extends ACoreTest
         patientsEntity.setIcuStaysEntitys(Set.of(icuStaysEntity));
 
         PropertySpec propertySpec = new PropertySpec();
-        propertySpec.addEntry("PatientsEntity", List.of("gender", "icuStaysEntitys"));
-        propertySpec.addEntry("IcuStaysEntity", List.of("firstCareUnit", "lastCareUnit"));
+        propertySpec.addEntry("PatientsEntity", List.of("gender", "icuStaysEntitys"), null);
+        propertySpec.addEntry("IcuStaysEntity", List.of("firstCareUnit", "lastCareUnit"), null);
 
         List<String> expectedWordsNullValuesNotIgnored = List.of(
                 "patientsentity@gender@m",

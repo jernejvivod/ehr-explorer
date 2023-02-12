@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import javax.persistence.metamodel.Metamodel;
 
@@ -23,6 +24,7 @@ public class PropertySpec
     private final Map<String, String> sortSpecs;
     private final Map<String, String> entityToPropertyForDurationLimit;
     private final Map<Object, List<LocalDateTime>> rootEntityIdToTimeLims;
+    private final Map<String, Set<CompositePropertySpec>> entityToCompositePropertySpecs;
 
     public PropertySpec()
     {
@@ -30,6 +32,11 @@ public class PropertySpec
         this.sortSpecs = new HashMap<>();
         this.entityToPropertyForDurationLimit = new HashMap<>();
         this.rootEntityIdToTimeLims = new HashMap<>();
+        this.entityToCompositePropertySpecs = new HashMap<>();
+    }
+
+    public record CompositePropertySpec(String propertyOnThisEntity, String propertyOnOtherEntity, List<String> foreignKeyPath, String compositePropertyName, BiFunction<Object, Object, Object> combiner)
+    {
     }
 
     /**
@@ -48,10 +55,16 @@ public class PropertySpec
      *
      * @param entity name of entity
      * @param properties name of entity's property
+     * @param compositePropertySpecs {@link CompositePropertySpec} instance specifying how to construct composite properties for entity
      */
-    public void addEntry(String entity, Collection<String> properties)
+    public void addEntry(String entity, Collection<String> properties, Collection<CompositePropertySpec> compositePropertySpecs)
     {
         entityToPropertiesToProcess.computeIfAbsent(entity, e -> new HashSet<>()).addAll(properties);
+
+        if (compositePropertySpecs != null)
+        {
+            entityToCompositePropertySpecs.computeIfAbsent(entity, e -> new HashSet<>()).addAll(compositePropertySpecs);
+        }
     }
 
     /**
@@ -64,6 +77,16 @@ public class PropertySpec
     public boolean containsEntry(String entity, String propertyName)
     {
         return this.entityToPropertiesToProcess.containsKey(entity) && this.entityToPropertiesToProcess.get(entity).contains(propertyName);
+    }
+
+    /**
+     * Get {@link CompositePropertySpec} instances for specified entity.
+     *
+     * @param entity name of entity
+     */
+    public Optional<Set<CompositePropertySpec>> getCompositePropertySpecsForEntity(String entity)
+    {
+        return Optional.ofNullable(entityToCompositePropertySpecs.get(entity));
     }
 
     /**
@@ -137,5 +160,17 @@ public class PropertySpec
         entityToPropertyForDurationLimit.forEach(
                 (entityName, durationLimitSpec) -> EntityUtils.assertEntityAndPropertyValid(entityName, durationLimitSpec, metamodel)
         );
+
+        entityToCompositePropertySpecs.forEach((entityName, compositePropertySpecs) -> {
+            for (CompositePropertySpec compositePropertySpec : compositePropertySpecs)
+            {
+                EntityUtils.assertEntityAndPropertyValid(entityName, compositePropertySpec.propertyOnThisEntity(), metamodel);
+
+                List<String> foreignKeyPath = compositePropertySpec.foreignKeyPath();
+                EntityUtils.assertForeignKeyPathValid(foreignKeyPath, metamodel);
+                EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), compositePropertySpec.propertyOnThisEntity(), metamodel);
+            }
+        });
+
     }
 }
