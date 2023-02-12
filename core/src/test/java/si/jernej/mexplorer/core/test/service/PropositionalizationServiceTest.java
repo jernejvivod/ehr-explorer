@@ -327,7 +327,7 @@ public class PropositionalizationServiceTest extends ACoreTest
                         new CompositePropertySpecEntryDto()
                                 .propertyOnThisEntity("inTime")
                                 .propertyOnOtherEntity("dob")
-                                .foreignkeyPath(List.of("IcuStaysEntity", "PatientsEntity"))
+                                .foreignKeyPath(List.of("IcuStaysEntity", "PatientsEntity"))
                                 .compositePropertyName("ageAtAdmission")
                                 .combiner(CompositePropertySpecEntryDto.CombinerEnum.DATE_DIFF)
                 )

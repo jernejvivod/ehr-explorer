@@ -41,7 +41,7 @@ class DtoConverterTest
                         new CompositePropertySpecEntryDto()
                                 .propertyOnThisEntity("dateAtAdmission")
                                 .propertyOnOtherEntity("dob")
-                                .foreignkeyPath(List.of("AdmissionsEntity", "PatientsEntity"))
+                                .foreignKeyPath(List.of("AdmissionsEntity", "PatientsEntity"))
                                 .compositePropertyName("ageAtAdmission")
                                 .combiner(CompositePropertySpecEntryDto.CombinerEnum.DATE_DIFF)
                 )
