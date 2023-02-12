@@ -168,7 +168,7 @@ public class PropertySpec
 
                 List<String> foreignKeyPath = compositePropertySpec.foreignKeyPath();
                 EntityUtils.assertForeignKeyPathValid(foreignKeyPath, metamodel);
-                EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), compositePropertySpec.propertyOnThisEntity(), metamodel);
+                EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(foreignKeyPath.size() - 1), compositePropertySpec.propertyOnOtherEntity(), metamodel);
             }
         });
 

@@ -115,7 +115,7 @@ public final class DtoConverter
                             .map(c -> new PropertySpec.CompositePropertySpec(
                                             c.getPropertyOnThisEntity(),
                                             c.getPropertyOnOtherEntity(),
-                                            c.getForeignkeyPath(),
+                                            c.getForeignKeyPath(),
                                             c.getCompositePropertyName(),
                                             compositePropertiesCombinerEnumMapping.get(c.getCombiner()).getBinaryOperator()
                                     )
