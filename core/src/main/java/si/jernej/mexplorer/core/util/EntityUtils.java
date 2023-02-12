@@ -17,6 +17,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.CheckForNull;
 import javax.persistence.Id;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
@@ -350,18 +351,10 @@ public final class EntityUtils
 
     public static void assertEntityAndPropertyValid(String entityName, String propertyName, Metamodel metamodel)
     {
-        EntityType<?> entity = metamodel.getEntities().stream()
-                .filter(e -> e.getName().equals(entityName))
-                .findAny()
-                .orElseThrow(() -> new ValidationCoreException("Entity '%s' not recognized.".formatted(entityName)));
-
-        if (entity.getAttributes().stream().noneMatch(a -> a.getName().equals(propertyName)))
-        {
-            throw new ValidationCoreException("Property '%s' of entity '%s' not recognized".formatted(propertyName, entityName));
-        }
+        assertEntityAndPropertyValid(entityName, propertyName, metamodel, null, null);
     }
 
-    public static void assertEntityAndPropertyValid(String entityName, String propertyName, Metamodel metamodel, CompositeColumnCreator compositeColumnCreator)
+    public static void assertEntityAndPropertyValid(String entityName, String propertyName, Metamodel metamodel, @CheckForNull CompositeColumnCreator compositeColumnCreator, @CheckForNull PropertySpec propertySpec)
     {
         Optional<EntityType<?>> entityOpt = metamodel.getEntities().stream()
                 .filter(e -> e.getName().equals(entityName))
@@ -369,7 +362,7 @@ public final class EntityUtils
 
         if (entityOpt.isEmpty())
         {
-            if (entityName.equals(Constants.COMPOSITE_TABLE_NAME))
+            if (compositeColumnCreator != null && entityName.equals(Constants.COMPOSITE_TABLE_NAME))
             {
                 if (compositeColumnCreator.getEntries().stream().noneMatch(e -> e.getCompositeName().equals(propertyName)))
                 {
@@ -385,7 +378,13 @@ public final class EntityUtils
         {
             if (entityOpt.get().getAttributes().stream().noneMatch(a -> a.getName().equals(propertyName)))
             {
-                throw new ValidationCoreException("Property '%s' of entity '%s' not recognized".formatted(propertyName, entityName));
+                boolean isCompositeProperty = propertySpec != null && propertySpec.getCompositePropertySpecsForEntity(entityName).map(cs -> cs.stream().anyMatch(c -> propertyName.equals(c.compositePropertyName())))
+                        .orElseThrow(() -> new ValidationCoreException("Property '%s' of entity '%s' not recognized".formatted(entityName, propertyName)));
+
+                if (!isCompositeProperty)
+                {
+                    throw new ValidationCoreException("Property '%s' of entity '%s' not recognized".formatted(propertyName, entityName));
+                }
             }
         }
     }

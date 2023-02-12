@@ -181,14 +181,14 @@ class ValueTransformerTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         valueTransformer.addTransform("AdmissionsEntity", "language", new ValueTransformer.Transform(x -> x));
         valueTransformer.addTransform("PatientsEntity", "gender", new ValueTransformer.Transform(x -> x));
-        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), null));
+        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), null, null));
     }
 
     @Test
     void testValueTransformerValidationEmpty()
     {
         ValueTransformer valueTransformer = new ValueTransformer();
-        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), null));
+        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), null, null));
     }
 
     @Test
@@ -198,7 +198,7 @@ class ValueTransformerTest extends ACoreTest
         valueTransformer.addTransform("AdmissionsEntity", "language", new ValueTransformer.Transform(x -> x));
         valueTransformer.addTransform("PatientsEntity", "gender", new ValueTransformer.Transform(x -> x));
         valueTransformer.addTransform("Wrong", "dbSource", new ValueTransformer.Transform(x -> x));
-        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), null));
+        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), null, null));
     }
 
     @Test
@@ -207,7 +207,7 @@ class ValueTransformerTest extends ACoreTest
         ValueTransformer valueTransformer = new ValueTransformer();
         valueTransformer.addTransform("AdmissionsEntity", "language", new ValueTransformer.Transform(x -> x));
         valueTransformer.addTransform("PatientsEntity", "wrong", new ValueTransformer.Transform(x -> x));
-        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), null));
+        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), null, null));
     }
 
     @Test
@@ -230,7 +230,7 @@ class ValueTransformerTest extends ACoreTest
                 (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
         );
 
-        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), compositeColumnCreator));
+        Assertions.assertDoesNotThrow(() -> valueTransformer.assertValid(em.getMetamodel(), compositeColumnCreator, null));
     }
 
     @Test
@@ -253,7 +253,7 @@ class ValueTransformerTest extends ACoreTest
                 (dateAdmission, dateBirth) -> ChronoUnit.YEARS.between((LocalDateTime) dateBirth, (LocalDateTime) dateAdmission)
         );
 
-        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), compositeColumnCreator));
+        Assertions.assertThrows(ValidationCoreException.class, () -> valueTransformer.assertValid(em.getMetamodel(), compositeColumnCreator, null));
     }
 
 }

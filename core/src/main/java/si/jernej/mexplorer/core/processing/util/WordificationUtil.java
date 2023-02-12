@@ -9,16 +9,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.CheckForNull;
 
 import org.apache.commons.beanutils.PropertyUtils;
+
+import com.google.common.collect.Iterables;
 
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.Wordification;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;
+import si.jernej.mexplorer.core.util.EntityUtils;
 
 public final class WordificationUtil
 {
@@ -193,5 +197,46 @@ public final class WordificationUtil
                 )
         );
         return wordsForComposite;
+    }
+
+    /**
+     * Get words for composite properties for entity as defined in {@link PropertySpec}.
+     */
+    public static List<String> getCompositePropertiesForEntity(Object entity, String entityName, PropertySpec propertySpec, ValueTransformer valueTransformer)
+    {
+        Optional<Set<PropertySpec.CompositePropertySpec>> compositePropertySpecsForEntity = propertySpec.getCompositePropertySpecsForEntity(entityName);
+
+        return compositePropertySpecsForEntity.map(cs -> cs.stream().map(c -> {
+                            Object propertyOnThisEntityVal;
+                            Object propertyOnOtherEntity;
+
+                            try
+                            {
+                                propertyOnThisEntityVal = PropertyUtils.getProperty(entity, c.propertyOnThisEntity());
+                            }
+                            catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
+                            {
+                                throw new ValidationCoreException("Error accessing property '%s'".formatted(c.propertyOnThisEntity()));
+                            }
+
+                            Object otherEntity = Iterables.getOnlyElement(EntityUtils.traverseSingularForeignKeyPath(List.of(entity), c.foreignKeyPath()));
+
+                            try
+                            {
+                                propertyOnOtherEntity = PropertyUtils.getProperty(otherEntity, c.propertyOnOtherEntity());
+                            }
+                            catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
+                            {
+                                throw new ValidationCoreException("Error accessing property '%s'".formatted(c.propertyOnOtherEntity()));
+                            }
+
+                            Object combinedValue = c.combiner().apply(propertyOnThisEntityVal, propertyOnOtherEntity);
+
+                            return String.format("%s@%s@%s", entityName, c.compositePropertyName(), valueTransformer.applyTransform(entityName, c.compositePropertyName(), combinedValue))
+                                    .toLowerCase()
+                                    .replace(' ', '_');
+                        }
+                ).toList()
+        ).orElseGet(ArrayList::new);
     }
 }

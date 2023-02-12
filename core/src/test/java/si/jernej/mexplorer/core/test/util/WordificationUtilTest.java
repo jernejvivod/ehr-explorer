@@ -208,8 +208,19 @@ class WordificationUtilTest
 
     public static class A
     {
+        private int a;
         private B b;
         private C c;
+
+        public int getA()
+        {
+            return a;
+        }
+
+        public void setA(int a)
+        {
+            this.a = a;
+        }
 
         public B getB()
         {
@@ -286,5 +297,44 @@ class WordificationUtilTest
         valueTransformer.addTransform("composite", "composite_column_name", new ValueTransformer.Transform(o -> ((int) o) + 8));
         List<String> res2 = WordificationUtil.getWordsForCompositeColumns(compositeColumnCreator, valueTransformer, a);
         Assertions.assertEquals(List.of("composite@composite_column_name@7"), res2);
+    }
+
+    @Test
+    void testGetCompositePropertiesForEntity()
+    {
+        A a = new A();
+        a.setA(3);
+        a.setB(new B(4));
+
+        PropertySpec propertySpec = new PropertySpec();
+        propertySpec.addEntry("A", List.of("a"), Set.of(
+                new PropertySpec.CompositePropertySpec(
+                        "a",
+                        "b",
+                        List.of("A", "B"),
+                        "compositeProperty",
+                        (o1, o2) -> ((int) o1) + ((int) o2)
+                )
+        ));
+
+        List<String> res1 = WordificationUtil.getCompositePropertiesForEntity(
+                a,
+                "A",
+                propertySpec,
+                new ValueTransformer()
+        );
+
+        Assertions.assertEquals(List.of("a@compositeproperty@7"), res1);
+
+        ValueTransformer valueTransformer = new ValueTransformer();
+        valueTransformer.addTransform("A", "compositeProperty", new ValueTransformer.Transform(o -> ((int) o) + 8));
+        List<String> res2 = WordificationUtil.getCompositePropertiesForEntity(
+                a,
+                "A",
+                propertySpec,
+                valueTransformer
+        );
+
+        Assertions.assertEquals(List.of("a@compositeproperty@15"), res2);
     }
 }

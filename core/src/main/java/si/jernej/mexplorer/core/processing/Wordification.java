@@ -142,6 +142,9 @@ public class Wordification
                     }
                 }
 
+                // add words for composite properties for entity
+                wordsForEntity.addAll(WordificationUtil.getCompositePropertiesForEntity(nxt, entityName, propertySpec, valueTransformer));
+
                 // add all words and concatenations for entity to results list
                 wordsAll.addAll(WordificationUtil.addConcatenations(wordsForEntity, concatenationScheme));
             }

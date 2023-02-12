@@ -1,12 +1,15 @@
 package si.jernej.mexplorer.core.test.util;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.util.DtoConverter;
+import si.jernej.mexplorer.processorapi.v1.model.CompositePropertySpecEntryDto;
 import si.jernej.mexplorer.processorapi.v1.model.PropertySpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.PropertySpecEntryDto;
 
@@ -33,10 +36,20 @@ class DtoConverterTest
         PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
         propertySpecEntryDto1.setEntity(ENTITY1);
         propertySpecEntryDto1.setProperties(PROPERTIES_LIST1);
+        propertySpecEntryDto1.setCompositePropertySpecEntries(
+                List.of(
+                        new CompositePropertySpecEntryDto()
+                                .propertyOnThisEntity("dateAtAdmission")
+                                .propertyOnOtherEntity("dob")
+                                .foreignkeyPath(List.of("AdmissionsEntity", "PatientsEntity"))
+                                .compositePropertyName("ageAtAdmission")
+                                .combiner(CompositePropertySpecEntryDto.CombinerEnum.DATE_DIFF)
+                )
+        );
 
         PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
-        propertySpecEntryDto1.setEntity(ENTITY2);
-        propertySpecEntryDto1.setProperties(PROPERTIES_LIST2);
+        propertySpecEntryDto2.setEntity(ENTITY2);
+        propertySpecEntryDto2.setProperties(PROPERTIES_LIST2);
 
         propertySpecDto.setEntries(List.of(propertySpecEntryDto1, propertySpecEntryDto2));
 
@@ -49,6 +62,20 @@ class DtoConverterTest
     {
         for (PropertySpecEntryDto entry : propertySpecDto.getEntries())
         {
+            Optional<Set<PropertySpec.CompositePropertySpec>> compositePropertySpecsForEntity = propertySpec.getCompositePropertySpecsForEntity(entry.getEntity());
+
+            if (entry.getCompositePropertySpecEntries() != null)
+            {
+                Assertions.assertTrue(compositePropertySpecsForEntity.isPresent());
+
+                Set<PropertySpec.CompositePropertySpec> compositePropertySpecs = compositePropertySpecsForEntity.get();
+                Assertions.assertEquals(entry.getCompositePropertySpecEntries().size(), compositePropertySpecs.size());
+            }
+            else
+            {
+                Assertions.assertTrue(compositePropertySpecsForEntity.isEmpty());
+            }
+
             for (String property : entry.getProperties())
             {
                 Assertions.assertTrue(propertySpec.containsEntry(entry.getEntity(), property));

@@ -14,6 +14,7 @@ import si.jernej.mexplorer.core.service.TargetExtractionService;
 import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.CompositeColumnsSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.CompositeColumnsSpecEntryDto;
+import si.jernej.mexplorer.processorapi.v1.model.CompositePropertySpecEntryDto;
 import si.jernej.mexplorer.processorapi.v1.model.ConcatenationSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.ExtractedTargetDto;
 import si.jernej.mexplorer.processorapi.v1.model.PropertySpecDto;
@@ -293,6 +294,74 @@ public class PropositionalizationServiceTest extends ACoreTest
                 "patientsentity@gender@f",
                 "patientsentity@expireflag@0",
                 "composite@ageatadmission@40"
+        );
+
+        Assertions.assertEquals(1, res.size());
+        Assertions.assertEquals(expectedWords, res.get(0).getWords());
+    }
+
+    @Test
+    public void testComputeWordificationSimpleTwoLinkedEntitiesWithCompositePropertyAndValueTransformerRounding()
+    {
+        WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
+
+        RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
+        rootEntitiesSpecDto.setRootEntity("PatientsEntity");
+        rootEntitiesSpecDto.setIdProperty("subjectId");
+        rootEntitiesSpecDto.setIds(List.of(268L));
+
+        wordificationConfigDto.setRootEntitiesSpec(rootEntitiesSpecDto);
+
+        PropertySpecDto propertySpecDto = new PropertySpecDto();
+
+        PropertySpecEntryDto propertySpecEntryDto1 = new PropertySpecEntryDto();
+        propertySpecEntryDto1.setEntity("PatientsEntity");
+        propertySpecEntryDto1.setProperties(List.of("gender", "icuStaysEntitys"));
+        propertySpecDto.addEntriesItem(propertySpecEntryDto1);
+
+        PropertySpecEntryDto propertySpecEntryDto2 = new PropertySpecEntryDto();
+        propertySpecEntryDto2.setEntity("IcuStaysEntity");
+        propertySpecEntryDto2.setProperties(List.of("firstCareUnit", "dbSource"));
+        propertySpecEntryDto2.setCompositePropertySpecEntries(
+                List.of(
+                        new CompositePropertySpecEntryDto()
+                                .propertyOnThisEntity("inTime")
+                                .propertyOnOtherEntity("dob")
+                                .foreignkeyPath(List.of("IcuStaysEntity", "PatientsEntity"))
+                                .compositePropertyName("ageAtAdmission")
+                                .combiner(CompositePropertySpecEntryDto.CombinerEnum.DATE_DIFF)
+                )
+        );
+        propertySpecDto.addEntriesItem(propertySpecEntryDto2);
+
+        wordificationConfigDto.setPropertySpec(propertySpecDto);
+
+        ConcatenationSpecDto concatenationSpecDto = new ConcatenationSpecDto();
+        concatenationSpecDto.setConcatenationScheme(ConcatenationSpecDto.ConcatenationSchemeEnum.ZERO);
+
+        wordificationConfigDto.setConcatenationSpec(concatenationSpecDto);
+
+        ValueTransformationSpecDto valueTransformationSpecDto = new ValueTransformationSpecDto();
+        ValueTransformationSpecEntryDto valueTransformationSpecEntryDto = new ValueTransformationSpecEntryDto();
+        valueTransformationSpecEntryDto.setEntity("IcuStaysEntity");
+        valueTransformationSpecEntryDto.setProperty("ageAtAdmission");
+
+        TransformDto transformDto = new TransformDto();
+        transformDto.setDateDiffRoundType(TransformDto.DateDiffRoundTypeEnum.TEN_YEARS);
+        transformDto.setKind(TransformDto.KindEnum.DATE_DIFF_ROUND);
+        valueTransformationSpecEntryDto.setTransform(transformDto);
+
+        valueTransformationSpecDto.addEntriesItem(valueTransformationSpecEntryDto);
+
+        wordificationConfigDto.setValueTransformationSpec(valueTransformationSpecDto);
+
+        List<WordificationResultDto> res = propositionalizationService.computeWordification(wordificationConfigDto);
+
+        List<String> expectedWords = List.of(
+                "patientsentity@gender@f",
+                "icustaysentity@dbsource@carevue",
+                "icustaysentity@firstcareunit@micu",
+                "icustaysentity@ageatadmission@70"
         );
 
         Assertions.assertEquals(1, res.size());
