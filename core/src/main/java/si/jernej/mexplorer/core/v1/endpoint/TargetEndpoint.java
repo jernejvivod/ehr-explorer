@@ -22,8 +22,7 @@ public class TargetEndpoint implements TargetApi
     @Override
     public Response targetExtraction(TargetExtractionSpecDto targetExtractionSpecDto)
     {
-        logger.info("extracting target values");
+        logger.info("Extracting target values (request={}).", targetExtractionSpecDto);
         return Response.ok().entity(targetExtractionService.computeTarget(targetExtractionSpecDto)).build();
     }
-
 }

@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -37,12 +36,7 @@ public class IdRetrieval
      */
     public Set<Object> retrieveIds(IdRetrievalSpecDto idRetrievalSpecDto)
     {
-        logger.info(".retrieveIds extracting ids");
-        logger.info(".retrieveIds root entity name: {}, root entity ID property {}, number of filter specifications {}",
-                idRetrievalSpecDto.getEntityName(),
-                idRetrievalSpecDto.getIdProperty(),
-                Optional.ofNullable(idRetrievalSpecDto.getFilterSpecs()).map(List::size).orElse(0)
-        );
+        logger.info("Retrieving IDs.");
 
         // retrieve ids
         List<Object> ids = mimicEntityManager.getNonNullIdsOfEntity(idRetrievalSpecDto.getEntityName(), idRetrievalSpecDto.getIdProperty());
@@ -69,6 +63,8 @@ public class IdRetrieval
 
     public Set<Object> retrieveIdsUsingForeignKeyPath(ForeignKeyPathIdRetrievalSpecDto foreignKeyPathIdRetrievalSpecDto)
     {
+        logger.info("Retrieving IDs using FK path.");
+
         List<String> foreignKeyPath = foreignKeyPathIdRetrievalSpecDto.getForeignKeyPath();
 
         // retrieve ids

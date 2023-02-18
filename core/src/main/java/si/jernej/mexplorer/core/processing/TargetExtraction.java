@@ -36,7 +36,7 @@ public class TargetExtraction
      */
     public List<ExtractedTargetDto> extractPatientDiedDuringAdmissionTarget(@CheckForNull List<Long> ids, @CheckForNull Integer ageLim)
     {
-        logger.info("extracting target 'patient died during admission' ({} ids)", ids != null ? ids.size() : "ALL");
+        logger.info("Extracting target 'patient died during admission' ({} ids).", ids != null ? ids.size() : "ALL");
 
         List<Object[]> results = mimicEntityManager.getResultListForExtractPatientDiedDuringAdmissionTarget(ids, ageLim);
 
@@ -49,7 +49,7 @@ public class TargetExtraction
 
     public List<ExtractedTargetDto> extractIcuReadmissionTarget(@CheckForNull List<Long> ids, @CheckForNull Integer ageLim, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
     {
-        logger.info("extracting target 'ICU readmission happened' ({} ids)", ids != null ? ids.size() : "ALL");
+        logger.info("Extracting target 'ICU readmission happened' ({} ids).", ids != null ? ids.size() : "ALL");
 
         List<PatientsEntity> patients = mimicEntityManager.fetchPatientsForTargetExtractionIcuReadmission(ids);
 
@@ -145,7 +145,7 @@ public class TargetExtraction
 
     public List<ExtractedTargetDto> extractReadmissionTarget(@CheckForNull List<Long> ids, @CheckForNull Integer ageLim, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
     {
-        logger.info("extracting target 'readmission happened' ({} ids)", ids != null ? ids.size() : "ALL");
+        logger.info("Extracting target 'readmission happened' ({} ids).", ids != null ? ids.size() : "ALL");
 
         List<PatientsEntity> patients = mimicEntityManager.fetchPatientForTargetExtractionHospitalReadmission(ids);
 

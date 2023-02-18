@@ -151,7 +151,7 @@ public class Wordification
         }
         catch (IllegalAccessException | InvocationTargetException | NoSuchFieldException e)
         {
-            throw new InternalServerErrorException("Error computing Wordification");
+            throw new InternalServerErrorException("Error computing Wordification.");
         }
 
         // add all words and concatenations for composite table to result list

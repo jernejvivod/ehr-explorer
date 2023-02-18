@@ -13,6 +13,9 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.processing.Wordification;
@@ -28,6 +31,8 @@ import si.jernej.mexplorer.processorapi.v1.model.WordificationResultDto;
 @Stateless
 public class PropositionalizationService
 {
+    private static final Logger logger = LoggerFactory.getLogger(PropositionalizationService.class);
+
     @Inject
     private MimicEntityManager mimicEntityManager;
     @Inject
@@ -57,6 +62,8 @@ public class PropositionalizationService
      */
     public List<WordificationResultDto> computeWordification(WordificationConfigDto wordificationConfigDto)
     {
+        logger.info("Computing Wordification.");
+
         // check specified root entity and id property names
         String rootEntityName = wordificationConfigDto.getRootEntitiesSpec().getRootEntity();
         String idPropertyName = wordificationConfigDto.getRootEntitiesSpec().getIdProperty();

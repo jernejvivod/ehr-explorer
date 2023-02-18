@@ -22,7 +22,7 @@ public class ClinicalTextEndpoint implements ClinicalTextApi
     @Override
     public Response clinicalText(ClinicalTextConfigDto clinicalTextConfigDto)
     {
-        logger.info("extracting clinical text");
+        logger.info("Extracting clinical text (request={}).", clinicalTextConfigDto);
         return Response.ok().entity(clinicalTextService.extractClinicalText(clinicalTextConfigDto)).build();
     }
 }
