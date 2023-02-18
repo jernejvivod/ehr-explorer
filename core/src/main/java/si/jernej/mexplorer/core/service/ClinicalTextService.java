@@ -39,12 +39,7 @@ public class ClinicalTextService
      */
     public Set<ClinicalTextResultDto> extractClinicalText(ClinicalTextConfigDto clinicalTextConfigDto)
     {
-        logger.info(".extractClinicalText extracting clinical text");
-        logger.info(".extractClinicalText root entity name: {}, root entity ID property {}, number of IDs {}",
-                clinicalTextConfigDto.getRootEntitiesSpec().getRootEntity(),
-                clinicalTextConfigDto.getRootEntitiesSpec().getIdProperty(),
-                clinicalTextConfigDto.getRootEntitiesSpec().getIds().size()
-        );
+        logger.info("Extracting clinical text.");
 
         // if no root entity IDs specified, return empty Set
         if (clinicalTextConfigDto.getRootEntitiesSpec().getIds() != null && clinicalTextConfigDto.getRootEntitiesSpec().getIds().isEmpty())

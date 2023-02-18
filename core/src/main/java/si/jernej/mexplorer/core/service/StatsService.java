@@ -10,6 +10,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.metamodel.EntityType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import si.jernej.mexplorer.core.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.manager.MimicEntityManager;
 import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
@@ -20,6 +23,8 @@ import si.jernej.mexplorer.processorapi.v1.model.PropertyStatsDto;
 @Stateless
 public class StatsService
 {
+    private static final Logger logger = LoggerFactory.getLogger(StatsService.class);
+
     @Inject
     private MimicEntityManager mimicEntityManager;
     @Inject
@@ -27,6 +32,8 @@ public class StatsService
 
     public List<EntityStatsDto> allStats()
     {
+        logger.info("Computing all stats.");
+
         // compute table stats for all tables/entities
         Set<EntityType<?>> entitys = mimicEntityManager.getMetamodel().getEntities();
         List<EntityStatsDto> tableStatsDtoList = new ArrayList<>(entitys.size());
@@ -39,6 +46,8 @@ public class StatsService
 
     public EntityStatsDto tableStats(String entityName)
     {
+        logger.info("Computing stats for table '{}'.", entityName);
+
         EntityUtils.assertEntityValid(entityName, mimicEntityManager.getMetamodel());
 
         EntityType<?> tableEntity = mimicEntityManager.getMetamodel().getEntities()

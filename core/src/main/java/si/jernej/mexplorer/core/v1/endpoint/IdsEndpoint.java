@@ -23,14 +23,14 @@ public class IdsEndpoint implements IdsApi
     @Override
     public Response ids(IdRetrievalSpecDto idRetrievalSpecDto)
     {
-        logger.info("extracting IDs");
+        logger.info("Extracting IDs (request={}).", idRetrievalSpecDto);
         return Response.ok().entity(idRetrieval.retrieveIds(idRetrievalSpecDto)).build();
     }
 
     @Override
     public Response idsFk(ForeignKeyPathIdRetrievalSpecDto foreignKeyPathIdRetrievalSpecDto)
     {
-        logger.info("extracting IDs of entities on end of foreign key path");
+        logger.info("Extracting IDs of entities on end of foreign key path (request={}).", foreignKeyPathIdRetrievalSpecDto);
         return Response.ok().entity(idRetrieval.retrieveIdsUsingForeignKeyPath(foreignKeyPathIdRetrievalSpecDto)).build();
     }
 }
