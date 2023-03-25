@@ -41,7 +41,7 @@ public class ClinicalTextService
     {
         logger.info("Extracting clinical text.");
 
-        // if no root entity IDs specified, return empty Set
+        // if no root entity IDs specified, return empty Set. null IDs specify that all IDs should be used.
         if (clinicalTextConfigDto.getRootEntitiesSpec().getIds() != null && clinicalTextConfigDto.getRootEntitiesSpec().getIds().isEmpty())
         {
             return Collections.emptySet();
@@ -67,56 +67,71 @@ public class ClinicalTextService
         // if range of data limited, filter
         if (clinicalTextExtractionDurationSpec != null)
         {
-            rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
-
-                // filter out clinical text where all date/time values are null
-                var valuesWithDateTime = values.stream().filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull)).toList();
-
-                if (valuesWithDateTime.isEmpty())
-                {
-                    return List.of();
-                }
-
-                // initial date/time
-                LocalDateTime initialDateTime = valuesWithDateTime.get(0).dateTimeColumnValues().stream()
-                        .filter(Objects::nonNull)
-                        .findFirst()
-                        .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
-
-                // filter to specified range
-                return valuesWithDateTime.stream().filter(d -> {
-                    LocalDateTime dateTimeNxt = d.dateTimeColumnValues().stream()
-                            .filter(Objects::nonNull)
-                            .findFirst()
-                            .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
-                    return Duration.between(initialDateTime, dateTimeNxt).toMinutes() < clinicalTextExtractionDurationSpec.getFirstMinutes();
-                }).toList();
-            });
+            filterToSpecifiedTimeRange(rootEntityIdToClinicalTextData, clinicalTextExtractionDurationSpec.getFirstMinutes());
         }
 
         // if property containing cut-off value specified, apply cut-off
         if (clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoff() != null)
         {
-            rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
-
-                // filter out clinical text where all date/time values are null
-                var valuesWithDateTime = values.stream()
-                        .filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull))
-                        .filter(v -> v.rootEntityDatetimePropertyForCutoffValue() != null)
-                        .toList();
-
-                // filter to specified cutoff time
-                return valuesWithDateTime.stream().filter(d -> {
-                    LocalDateTime dateTimeNxt = d.dateTimeColumnValues().stream()
-                            .filter(Objects::nonNull)
-                            .findFirst()
-                            .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
-                    return dateTimeNxt.isBefore(d.rootEntityDatetimePropertyForCutoffValue());
-                }).toList();
-            });
+            applyTimeRangeCutoffFromProperty(rootEntityIdToClinicalTextData);
         }
 
-        // convert results to a set of ClinicalTextResultDto instances
+        // convert results to a set of ClinicalTextResultDto instances and return
+        return toClinicalTextResultDtos(rootEntityIdToClinicalTextData);
+    }
+
+    private void filterToSpecifiedTimeRange(Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData, int firstMinutes)
+    {
+        rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
+
+            // filter out clinical text where all date/time values are null
+            var valuesWithDateTime = values.stream().filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull)).toList();
+
+            if (valuesWithDateTime.isEmpty())
+            {
+                return List.of();
+            }
+
+            // initial date/time
+            LocalDateTime initialDateTime = valuesWithDateTime.get(0).dateTimeColumnValues().stream()
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
+
+            // filter to specified range
+            return valuesWithDateTime.stream().filter(d -> {
+                LocalDateTime dateTimeNxt = d.dateTimeColumnValues().stream()
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
+                return Duration.between(initialDateTime, dateTimeNxt).toMinutes() < firstMinutes;
+            }).toList();
+        });
+    }
+
+    private static void applyTimeRangeCutoffFromProperty(Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData)
+    {
+        rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
+
+            // filter out clinical text where all date/time values are null
+            var valuesWithDateTime = values.stream()
+                    .filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull))
+                    .filter(v -> v.rootEntityDatetimePropertyForCutoffValue() != null)
+                    .toList();
+
+            // filter to specified cutoff time
+            return valuesWithDateTime.stream().filter(d -> {
+                LocalDateTime dateTimeNxt = d.dateTimeColumnValues().stream()
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
+                return dateTimeNxt.isBefore(d.rootEntityDatetimePropertyForCutoffValue());
+            }).toList();
+        });
+    }
+
+    private static Set<ClinicalTextResultDto> toClinicalTextResultDtos(Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData)
+    {
         Set<ClinicalTextResultDto> res = new HashSet<>();
         rootEntityIdToClinicalTextData.forEach((id, values) -> res.add(
                         new ClinicalTextResultDto()
@@ -128,7 +143,6 @@ public class ClinicalTextService
                                 )
                 )
         );
-
         return res;
     }
 }

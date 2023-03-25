@@ -41,37 +41,47 @@ public class MdcFilter implements ContainerRequestFilter
     {
         if (!"GET".equals(requestContext.getMethod()) && requestContext.hasEntity())
         {
-            try
-            {
-                String requestString = entityStreamToString(requestContext.getEntityStream());
-                requestContext.setEntityStream(new ByteArrayInputStream(requestString.getBytes()));
-                return requestString;
-
-            }
-            catch (Exception e)
-            {
-                requestContext.setEntityStream(new ByteArrayInputStream(new byte[0]));
-                return null;
-            }
+            return parseRequestEntityForRequestBody(requestContext);
         }
         else
         {
-            StringBuilder properties = new StringBuilder("Query parameters: {");
+            return parseRequestWithoutEntityForRequestBody(requestContext);
+        }
+    }
 
-            BiConsumer<String, List<String>> paramAppender = (p, v) -> properties.append(String.format("%n\t%s:%s", p, v));
+    private static String parseRequestWithoutEntityForRequestBody(ContainerRequestContext requestContext)
+    {
+        StringBuilder properties = new StringBuilder("Query parameters: {");
 
-            requestContext.getUriInfo()
-                    .getQueryParameters()
-                    .forEach(paramAppender);
+        BiConsumer<String, List<String>> paramAppender = (p, v) -> properties.append(String.format("%n\t%s:%s", p, v));
 
-            properties.append("\n}\nPath parameters: {");
+        requestContext.getUriInfo()
+                .getQueryParameters()
+                .forEach(paramAppender);
 
-            requestContext.getUriInfo()
-                    .getPathParameters()
-                    .forEach(paramAppender);
+        properties.append("\n}\nPath parameters: {");
 
-            properties.append("\n}");
-            return properties.toString();
+        requestContext.getUriInfo()
+                .getPathParameters()
+                .forEach(paramAppender);
+
+        properties.append("\n}");
+        return properties.toString();
+    }
+
+    private static String parseRequestEntityForRequestBody(ContainerRequestContext requestContext)
+    {
+        try
+        {
+            String requestString = entityStreamToString(requestContext.getEntityStream());
+            requestContext.setEntityStream(new ByteArrayInputStream(requestString.getBytes()));
+            return requestString;
+
+        }
+        catch (Exception e)
+        {
+            requestContext.setEntityStream(new ByteArrayInputStream(new byte[0]));
+            return null;
         }
     }
 
