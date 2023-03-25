@@ -69,13 +69,10 @@ public class PropositionalizationService
         String idPropertyName = wordificationConfigDto.getRootEntitiesSpec().getIdProperty();
 
         if (!entityNameToAttributes.containsKey(rootEntityName))
-        {
             throw new ValidationCoreException("Unknown entity '%s'".formatted(rootEntityName));
-        }
+
         if (entityNameToAttributes.containsKey(rootEntityName) && !entityNameToAttributes.get(rootEntityName).contains(idPropertyName))
-        {
             throw new ValidationCoreException("Unknown property name '%s' of entity '%s'".formatted(idPropertyName, rootEntityName));
-        }
 
         // get PropertySpec, ValueTransformer and CompositeColumnCreator instances
         PropertySpec propertySpec = DtoConverter.toPropertySpec(wordificationConfigDto.getPropertySpec());
