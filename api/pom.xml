@@ -24,11 +24,6 @@
             <artifactId>jackson-annotations</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.10.14</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -45,7 +40,9 @@
                         </goals>
                         <configuration>
                             <modelNameSuffix>Dto</modelNameSuffix>
-                            <inputSpec>${project.basedir}/mimic-iii-explorer-api/doc/rest-spec/v1/mexplorer-openapi.yaml</inputSpec>
+                            <inputSpec>
+                                ${project.basedir}/mimic-iii-explorer-api/doc/rest-spec/v1/mexplorer-openapi.yaml
+                            </inputSpec>
                             <apiPackage>true</apiPackage>
                             <modelPackage>true</modelPackage>
                             <apiPackage>si.jernej.mexplorer.processorapi.v1.api</apiPackage>

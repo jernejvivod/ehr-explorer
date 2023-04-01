@@ -16,9 +16,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 import javax.ws.rs.InternalServerErrorException;
 
+import si.jernej.mexplorer.annotation.PropertyOrder;
 import si.jernej.mexplorer.core.util.EntityUtils;
-import si.jernej.mexplorer.entity.annotation.PropertyOrder;
 
+// TODO refactor, add support for unannotated properties
 @Singleton
 public class OrderedEntityPropertyDescriptors
 {

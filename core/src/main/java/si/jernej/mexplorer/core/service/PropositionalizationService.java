@@ -16,8 +16,8 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
+import si.jernej.mexplorer.core.manager.DbEntityManager;
 import si.jernej.mexplorer.core.processing.Wordification;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
@@ -34,7 +34,7 @@ public class PropositionalizationService
     private static final Logger logger = LoggerFactory.getLogger(PropositionalizationService.class);
 
     @Inject
-    private MimicEntityManager mimicEntityManager;
+    private DbEntityManager dbEntityManager;
     @Inject
     private Wordification wordification;
 
@@ -51,7 +51,7 @@ public class PropositionalizationService
     @PostConstruct
     public void init()
     {
-        entityNameToAttributes = EntityUtils.computeEntityNameToAttributes(mimicEntityManager.getMetamodel());
+        entityNameToAttributes = EntityUtils.computeEntityNameToAttributes(dbEntityManager.getMetamodel());
     }
 
     /**
@@ -76,22 +76,22 @@ public class PropositionalizationService
 
         // get PropertySpec, ValueTransformer and CompositeColumnCreator instances
         PropertySpec propertySpec = DtoConverter.toPropertySpec(wordificationConfigDto.getPropertySpec());
-        propertySpec.assertValid(mimicEntityManager.getMetamodel());
+        propertySpec.assertValid(dbEntityManager.getMetamodel());
 
         CompositeColumnCreator compositeColumnCreator = Optional.ofNullable(wordificationConfigDto.getCompositeColumnsSpec())
                 .map(DtoConverter::toCompositeColumnCreator)
                 .orElse(new CompositeColumnCreator());
-        compositeColumnCreator.assertValid(mimicEntityManager.getMetamodel());
+        compositeColumnCreator.assertValid(dbEntityManager.getMetamodel());
 
         ValueTransformer valueTransformer = Optional.ofNullable(wordificationConfigDto.getValueTransformationSpec())
                 .map(DtoConverter::toValueTransformer)
                 .orElse(new ValueTransformer());
-        valueTransformer.assertValid(mimicEntityManager.getMetamodel(), compositeColumnCreator, propertySpec);
+        valueTransformer.assertValid(dbEntityManager.getMetamodel(), compositeColumnCreator, propertySpec);
 
-        List<List<String>> foreignKeyPaths = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, mimicEntityManager.getMetamodel());
+        List<List<String>> foreignKeyPaths = EntityUtils.getForeignKeyPathsFromPropertySpec(rootEntityName, propertySpec, dbEntityManager.getMetamodel());
 
         // get list of root entities
-        List<Object[]> rootEntities = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
+        List<Object[]> rootEntities = dbEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
                 rootEntityName,
                 foreignKeyPaths,
                 idPropertyName,

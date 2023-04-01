@@ -13,7 +13,7 @@ import javax.persistence.metamodel.Metamodel;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.util.EntityUtils;
 
 /**
