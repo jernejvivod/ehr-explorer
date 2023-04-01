@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.service.StatsService;
 import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.EntityStatsDto;

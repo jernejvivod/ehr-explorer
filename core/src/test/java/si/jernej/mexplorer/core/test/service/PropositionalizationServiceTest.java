@@ -1,5 +1,6 @@
 package si.jernej.mexplorer.core.test.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,9 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.service.PropositionalizationService;
-import si.jernej.mexplorer.core.service.TargetExtractionService;
 import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.CompositeColumnsSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.CompositeColumnsSpecEntryDto;
@@ -32,8 +32,34 @@ public class PropositionalizationServiceTest extends ACoreTest
 {
     @Inject
     private PropositionalizationService propositionalizationService;
-    @Inject
-    private TargetExtractionService targetExtractionService;
+
+    private class DummyTargetExtractionService
+    {
+        public List<ExtractedTargetDto> computeTarget(TargetExtractionSpecDto targetExtractionSpecDto)
+        {
+            ExtractedTargetDto extractedTargetDto1 = new ExtractedTargetDto();
+            extractedTargetDto1.setRootEntityId(291L);
+            extractedTargetDto1.setTargetEntityId(256641L);
+            extractedTargetDto1.setTargetValue(0);
+            extractedTargetDto1.setDateTimeLimit(LocalDateTime.of(2102, 4, 9, 11, 20, 11));
+
+            ExtractedTargetDto extractedTargetDto2 = new ExtractedTargetDto();
+            extractedTargetDto2.setRootEntityId(291L);
+            extractedTargetDto2.setTargetEntityId(275109L);
+            extractedTargetDto2.setTargetValue(0);
+            extractedTargetDto2.setDateTimeLimit(LocalDateTime.of(2106, 4, 18, 22, 5, 39));
+
+            ExtractedTargetDto extractedTargetDto3 = new ExtractedTargetDto();
+            extractedTargetDto3.setRootEntityId(291L);
+            extractedTargetDto3.setTargetEntityId(246725L);
+            extractedTargetDto3.setTargetValue(4);
+            extractedTargetDto3.setDateTimeLimit(LocalDateTime.of(2107, 9, 14, 18, 34, 48));
+
+            return List.of(extractedTargetDto1, extractedTargetDto2, extractedTargetDto3);
+        }
+    }
+
+    private final DummyTargetExtractionService dummyTargetExtractionService = new DummyTargetExtractionService();
 
     @Test
     public void testComputeWordificationWrongEntity()
@@ -541,7 +567,7 @@ public class PropositionalizationServiceTest extends ACoreTest
         targetExtractionSpecDto.setTargetType(TargetExtractionSpecDto.TargetTypeEnum.ICU_STAY_READMISSION_HAPPENED);
         targetExtractionSpecDto.setIds(List.of(patientSubjectId));
 
-        List<ExtractedTargetDto> extractedTargetDtos = targetExtractionService.computeTarget(targetExtractionSpecDto);
+        List<ExtractedTargetDto> extractedTargetDtos = dummyTargetExtractionService.computeTarget(targetExtractionSpecDto);
 
         WordificationConfigDto wordificationConfigDto = new WordificationConfigDto();
 

@@ -17,7 +17,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import com.google.common.collect.Iterables;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.Wordification;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;

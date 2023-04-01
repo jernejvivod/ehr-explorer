@@ -10,9 +10,12 @@
     <version>0.1.0-SNAPSHOT</version>
 
     <modules>
-        <module>entity</module>
-        <module>core</module>
         <module>api</module>
+        <module>mimic-iii-entity</module>
+        <module>core</module>
+        <module>mimic-iii-target-extraction</module>
+        <module>common</module>
+        <module>annotation</module>
     </modules>
 
     <name>me-explorer</name>
@@ -36,10 +39,13 @@
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <api.version>0.1.0-SNAPSHOT</api.version>
-        <entity.version>0.1.0-SNAPSHOT</entity.version>
+        <mimic-iii-entity.version>0.1.0-SNAPSHOT</mimic-iii-entity.version>
+        <common.version>0.1.0-SNAPSHOT</common.version>
+        <annotation.version>0.1.0-SNAPSHOT</annotation.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <weld-junit5.version>2.0.2.Final</weld-junit5.version>
+        <weld-core-impl.version>3.1.8.Final</weld-core-impl.version>
         <mockito.version>4.4.0</mockito.version>
         <aeonbits-owner.version>1.0.12</aeonbits-owner.version>
         <slf4j-api.version>1.7.32</slf4j-api.version>
@@ -62,8 +68,18 @@
             </dependency>
             <dependency>
                 <groupId>si.jernej.mexplorer</groupId>
-                <artifactId>entity</artifactId>
-                <version>${entity.version}</version>
+                <artifactId>mimic-iii-entity</artifactId>
+                <version>${mimic-iii-entity.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>si.jernej.mexplorer</groupId>
+                <artifactId>common</artifactId>
+                <version>${common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>si.jernej.mexplorer</groupId>
+                <artifactId>annotation</artifactId>
+                <version>${common.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax</groupId>
@@ -119,6 +135,12 @@
                 <type>jar</type>
             </dependency>
             <dependency>
+                <groupId>org.jboss.weld</groupId>
+                <artifactId>weld-core-impl</artifactId>
+                <version>${weld-core-impl.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
@@ -165,8 +187,8 @@
             </dependency>
             <dependency>
                 <groupId>si.jernej.mexplorer</groupId>
-                <artifactId>entity</artifactId>
-                <version>${entity.version}</version>
+                <artifactId>mimic-iii-entity</artifactId>
+                <version>${mimic-iii-entity.version}</version>
                 <type>test-jar</type>
             </dependency>
             <dependency>
@@ -243,6 +265,10 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven-jar-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

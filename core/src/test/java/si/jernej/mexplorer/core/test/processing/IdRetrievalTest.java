@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.IdRetrieval;
 import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.processorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;

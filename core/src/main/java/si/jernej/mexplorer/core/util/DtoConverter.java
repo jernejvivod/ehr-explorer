@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
 import si.jernej.mexplorer.core.processing.spec.PropertySpec;
 import si.jernej.mexplorer.core.processing.transform.CompositeColumnCreator;
 import si.jernej.mexplorer.core.processing.transform.ValueTransformer;

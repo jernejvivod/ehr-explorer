@@ -13,8 +13,8 @@ import javax.persistence.metamodel.EntityType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
+import si.jernej.mexplorer.core.manager.DbEntityManager;
 import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.processorapi.v1.model.EntityStatsDto;
@@ -26,7 +26,7 @@ public class StatsService
     private static final Logger logger = LoggerFactory.getLogger(StatsService.class);
 
     @Inject
-    private MimicEntityManager mimicEntityManager;
+    private DbEntityManager dbEntityManager;
     @Inject
     private OrderedEntityPropertyDescriptors orderedEntityPropertyDescriptors;
 
@@ -35,7 +35,7 @@ public class StatsService
         logger.info("Computing all stats.");
 
         // compute table stats for all tables/entities
-        Set<EntityType<?>> entitys = mimicEntityManager.getMetamodel().getEntities();
+        Set<EntityType<?>> entitys = dbEntityManager.getMetamodel().getEntities();
         List<EntityStatsDto> tableStatsDtoList = new ArrayList<>(entitys.size());
         for (EntityType<?> entity : entitys)
         {
@@ -48,9 +48,9 @@ public class StatsService
     {
         logger.info("Computing stats for table '{}'.", entityName);
 
-        EntityUtils.assertEntityValid(entityName, mimicEntityManager.getMetamodel());
+        EntityUtils.assertEntityValid(entityName, dbEntityManager.getMetamodel());
 
-        EntityType<?> tableEntity = mimicEntityManager.getMetamodel().getEntities()
+        EntityType<?> tableEntity = dbEntityManager.getMetamodel().getEntities()
                 .stream()
                 .filter(e -> e.getName().equals(entityName))
                 .findAny()
@@ -76,7 +76,7 @@ public class StatsService
         query.append("FROM %s e".formatted(entityName));
 
         // get results
-        Object[] resultsForColumnStatsQuery = mimicEntityManager.getResultsForColumnStatsQuery(query.toString());
+        Object[] resultsForColumnStatsQuery = dbEntityManager.getResultsForColumnStatsQuery(query.toString());
 
         // construct result DTO
         tableStatsDto.setNumEntries((Long) resultsForColumnStatsQuery[0]);

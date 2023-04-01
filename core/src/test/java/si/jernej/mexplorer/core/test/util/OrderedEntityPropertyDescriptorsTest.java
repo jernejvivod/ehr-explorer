@@ -13,7 +13,7 @@ import si.jernej.mexplorer.core.processing.util.OrderedEntityPropertyDescriptors
 import si.jernej.mexplorer.core.test.ACoreTest;
 import si.jernej.mexplorer.entity.AEntity;
 import si.jernej.mexplorer.entity.AdmissionsEntity;
-import si.jernej.mexplorer.entity.annotation.PropertyOrder;
+import si.jernej.mexplorer.annotation.PropertyOrder;
 
 public class OrderedEntityPropertyDescriptorsTest extends ACoreTest
 {

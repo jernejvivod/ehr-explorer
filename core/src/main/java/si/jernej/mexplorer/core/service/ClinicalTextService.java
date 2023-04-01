@@ -17,7 +17,7 @@ import javax.ws.rs.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
+import si.jernej.mexplorer.core.manager.DbEntityManager;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 import si.jernej.mexplorer.processorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
@@ -29,7 +29,7 @@ public class ClinicalTextService
     private static final Logger logger = LoggerFactory.getLogger(ClinicalTextService.class);
 
     @Inject
-    private MimicEntityManager mimicEntityManager;
+    private DbEntityManager dbEntityManager;
 
     /**
      * Extract clinical text given specified configuration.
@@ -47,14 +47,14 @@ public class ClinicalTextService
             return Collections.emptySet();
         }
 
-        EntityUtils.assertForeignKeyPathValid(clinicalTextConfigDto.getForeignKeyPath(), mimicEntityManager.getMetamodel());
-        EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, mimicEntityManager.getMetamodel());
+        EntityUtils.assertForeignKeyPathValid(clinicalTextConfigDto.getForeignKeyPath(), dbEntityManager.getMetamodel());
+        EntityUtils.assertDateTimeLimitSpecValidForClinicalTextExtraction(clinicalTextConfigDto, dbEntityManager.getMetamodel());
 
         ClinicalTextExtractionDurationSpecDto clinicalTextExtractionDurationSpec = clinicalTextConfigDto.getClinicalTextExtractionDurationSpec();
         String idPropertyName = clinicalTextConfigDto.getRootEntitiesSpec().getIdProperty();
 
         // map ids of root entities to clinical text
-        Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData = mimicEntityManager.mapRootEntityIdsToClinicalText(
+        Map<Long, List<DbEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData = dbEntityManager.mapRootEntityIdsToClinicalText(
                 new HashSet<>(clinicalTextConfigDto.getRootEntitiesSpec().getIds()),
                 clinicalTextConfigDto.getForeignKeyPath(),
                 idPropertyName,
@@ -80,7 +80,7 @@ public class ClinicalTextService
         return toClinicalTextResultDtos(rootEntityIdToClinicalTextData);
     }
 
-    private void filterToSpecifiedTimeRange(Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData, int firstMinutes)
+    private void filterToSpecifiedTimeRange(Map<Long, List<DbEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData, int firstMinutes)
     {
         rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
 
@@ -109,7 +109,7 @@ public class ClinicalTextService
         });
     }
 
-    private static void applyTimeRangeCutoffFromProperty(Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData)
+    private static void applyTimeRangeCutoffFromProperty(Map<Long, List<DbEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData)
     {
         rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
 
@@ -130,7 +130,7 @@ public class ClinicalTextService
         });
     }
 
-    private static Set<ClinicalTextResultDto> toClinicalTextResultDtos(Map<Long, List<MimicEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData)
+    private static Set<ClinicalTextResultDto> toClinicalTextResultDtos(Map<Long, List<DbEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData)
     {
         Set<ClinicalTextResultDto> res = new HashSet<>();
         rootEntityIdToClinicalTextData.forEach((id, values) -> res.add(
@@ -138,7 +138,7 @@ public class ClinicalTextService
                                 .rootEntityId(id)
                                 .text(
                                         values.stream()
-                                                .map(MimicEntityManager.ClinicalTextExtractionQueryResult::clinicalText)
+                                                .map(DbEntityManager.ClinicalTextExtractionQueryResult::clinicalText)
                                                 .collect(Collectors.joining(" "))
                                 )
                 )

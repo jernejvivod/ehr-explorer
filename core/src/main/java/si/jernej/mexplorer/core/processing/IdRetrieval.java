@@ -13,8 +13,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import si.jernej.mexplorer.core.exception.ValidationCoreException;
-import si.jernej.mexplorer.core.manager.MimicEntityManager;
+import si.jernej.mexplorer.common.exception.ValidationCoreException;
+import si.jernej.mexplorer.core.manager.DbEntityManager;
 import si.jernej.mexplorer.core.util.EntityUtils;
 import si.jernej.mexplorer.processorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;
 import si.jernej.mexplorer.processorapi.v1.model.IdRetrievalFilterSpecDto;
@@ -26,7 +26,7 @@ public class IdRetrieval
     private static final Logger logger = LoggerFactory.getLogger(IdRetrieval.class);
 
     @Inject
-    private MimicEntityManager mimicEntityManager;
+    private DbEntityManager dbEntityManager;
 
     /**
      * Retrieve ids of specified entities with specified entity filtering.
@@ -39,14 +39,14 @@ public class IdRetrieval
         logger.info("Retrieving IDs.");
 
         // retrieve ids
-        List<Object> ids = mimicEntityManager.getNonNullIdsOfEntity(idRetrievalSpecDto.getEntityName(), idRetrievalSpecDto.getIdProperty());
+        List<Object> ids = dbEntityManager.getNonNullIdsOfEntity(idRetrievalSpecDto.getEntityName(), idRetrievalSpecDto.getIdProperty());
 
         // fetch entities for filtering
         List<List<String>> foreignKeyPathsForFilterSpecs = idRetrievalSpecDto.getFilterSpecs().stream()
                 .map(IdRetrievalFilterSpecDto::getForeignKeyPath)
                 .toList();
 
-        List<Object> entitiesFetchedForFiltering = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
+        List<Object> entitiesFetchedForFiltering = dbEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
                         idRetrievalSpecDto.getEntityName(),
                         foreignKeyPathsForFilterSpecs,
                         idRetrievalSpecDto.getIdProperty(),
@@ -68,7 +68,7 @@ public class IdRetrieval
         List<String> foreignKeyPath = foreignKeyPathIdRetrievalSpecDto.getForeignKeyPath();
 
         // retrieve ids
-        List<Object> idsEndEntitiesForForeignKeyPath = mimicEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
+        List<Object> idsEndEntitiesForForeignKeyPath = dbEntityManager.fetchFkPathEndEntitiesAndIdsForForeignKeyPath(
                         foreignKeyPath,
                         foreignKeyPathIdRetrievalSpecDto.getRootEntityIdProperty(),
                         foreignKeyPathIdRetrievalSpecDto.getEndEntityIdProperty(),
@@ -83,7 +83,7 @@ public class IdRetrieval
                 .map(IdRetrievalFilterSpecDto::getForeignKeyPath)
                 .toList();
 
-        List<Object> entitiesFetchedForFiltering = mimicEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
+        List<Object> entitiesFetchedForFiltering = dbEntityManager.fetchRootEntitiesAndIdsForForeignKeyPaths(
                         foreignKeyPath.get(foreignKeyPath.size() - 1),
                         foreignKeyPathsForFilterSpecs,
                         foreignKeyPathIdRetrievalSpecDto.getEndEntityIdProperty(),
@@ -111,7 +111,7 @@ public class IdRetrieval
                 for (Object entity : entitiesFiltered)
                 {
                     // get entity at end of foreign key path and make sure path is singular
-                    EntityUtils.assertForeignKeyPathValid(filterSpec.getForeignKeyPath(), mimicEntityManager.getMetamodel());
+                    EntityUtils.assertForeignKeyPathValid(filterSpec.getForeignKeyPath(), dbEntityManager.getMetamodel());
                     Set<Object> entityEndFkPath = EntityUtils.traverseForeignKeyPath(entity, filterSpec.getForeignKeyPath());
 
                     if (entityEndFkPath.size() > 1)
