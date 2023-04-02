@@ -4,34 +4,34 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
     <persistence-unit name="primary">
-        <jta-data-source>java:/MExplorerDS</jta-data-source>
+        <jta-data-source>java:/EhrExplorerDS</jta-data-source>
 
-        <class>si.jernej.mexplorer.entity.PatientsEntity</class>
-        <class>si.jernej.mexplorer.entity.AdmissionsEntity</class>
-        <class>si.jernej.mexplorer.entity.CalloutEntity</class>
-        <class>si.jernej.mexplorer.entity.CareGiversEntity</class>
-        <class>si.jernej.mexplorer.entity.ChartEventsEntity</class>
-        <class>si.jernej.mexplorer.entity.CptEventsEntity</class>
-        <class>si.jernej.mexplorer.entity.DCptEntity</class>
-        <class>si.jernej.mexplorer.entity.DIcdDiagnosesEntity</class>
-        <class>si.jernej.mexplorer.entity.DIcdProceduresEntity</class>
-        <class>si.jernej.mexplorer.entity.DItemsEntity</class>
-        <class>si.jernej.mexplorer.entity.DLabitemsEntity</class>
-        <class>si.jernej.mexplorer.entity.DatetimeEventsEntity</class>
-        <class>si.jernej.mexplorer.entity.DiagnosesIcdEntity</class>
-        <class>si.jernej.mexplorer.entity.DrgCodesEntity</class>
-        <class>si.jernej.mexplorer.entity.IcuStaysEntity</class>
-        <class>si.jernej.mexplorer.entity.InputEventsCvEntity</class>
-        <class>si.jernej.mexplorer.entity.InputEventsMvEntity</class>
-        <class>si.jernej.mexplorer.entity.LabEventsEntity</class>
-        <class>si.jernej.mexplorer.entity.MicrobiologyEventsEntity</class>
-        <class>si.jernej.mexplorer.entity.NoteEventsEntity</class>
-        <class>si.jernej.mexplorer.entity.OutputEventsEntity</class>
-        <class>si.jernej.mexplorer.entity.PrescriptionsEntity</class>
-        <class>si.jernej.mexplorer.entity.ProcedureEventsMvEntity</class>
-        <class>si.jernej.mexplorer.entity.ProceduresIcdEntity</class>
-        <class>si.jernej.mexplorer.entity.ServicesEntity</class>
-        <class>si.jernej.mexplorer.entity.TransfersEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.PatientsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.AdmissionsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.CalloutEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.CareGiversEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.ChartEventsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.CptEventsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.DCptEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.DIcdDiagnosesEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.DIcdProceduresEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.DItemsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.DLabitemsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.DatetimeEventsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.DiagnosesIcdEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.DrgCodesEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.IcuStaysEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.InputEventsCvEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.InputEventsMvEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.LabEventsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.MicrobiologyEventsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.NoteEventsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.OutputEventsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.PrescriptionsEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.ProcedureEventsMvEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.ProceduresIcdEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.ServicesEntity</class>
+        <class>com.github.jernejvivod.ehrexplorer.mimiciii.entity.TransfersEntity</class>
         <properties>
             <!-- <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/postgres"/> -->
             <!-- <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/> -->
@@ -49,7 +49,7 @@
             <property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
             <property name="eclipselink.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres"/>
             <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
-            
+
             <property name="javax.persistence.query.timeout" value="1200000"/>
             <!-- <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres" /> -->
             <!-- <property name="javax.persistence.jdbc.user" value="postgres" /> -->

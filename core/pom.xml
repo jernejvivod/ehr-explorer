@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>mexplorer</artifactId>
-        <groupId>si.jernej.mexplorer</groupId>
+        <artifactId>ehrexplorer</artifactId>
+        <groupId>com.github.jernejvivod.ehrexplorer</groupId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>core</artifactId>
@@ -15,15 +15,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>annotation</artifactId>
         </dependency>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>mimic-iii-entity</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -40,7 +40,7 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
@@ -67,7 +67,7 @@
             <artifactId>wildfly-ejb3</artifactId>
         </dependency>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>mimic-iii-entity</artifactId>
             <type>test-jar</type>
             <scope>test</scope>

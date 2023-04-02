@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>si.jernej.mexplorer</groupId>
-        <artifactId>mexplorer</artifactId>
+        <groupId>com.github.jernejvivod.ehrexplorer</groupId>
+        <artifactId>ehrexplorer</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>mimic-iii-target-extraction</artifactId>
@@ -12,15 +12,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>mimic-iii-entity</artifactId>
         </dependency>
         <dependency>
@@ -43,7 +43,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>si.jernej.mexplorer</groupId>
+            <groupId>com.github.jernejvivod.ehrexplorer</groupId>
             <artifactId>mimic-iii-entity</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
