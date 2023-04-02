@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>si.jernej.mexplorer</groupId>
-    <artifactId>mexplorer</artifactId>
+    <groupId>com.github.jernejvivod.ehrexplorer</groupId>
+    <artifactId>ehrexplorer</artifactId>
     <packaging>pom</packaging>
     <version>0.1.0-SNAPSHOT</version>
 
@@ -18,8 +18,8 @@
         <module>annotation</module>
     </modules>
 
-    <name>me-explorer</name>
-    <url>https://github.com/jernejvivod/mimic-iii-explorer</url>
+    <name>ehr-explorer</name>
+    <url>https://github.com/jernejvivod/ehr-explorer</url>
 
     <properties>
         <java.version>17</java.version>
@@ -62,22 +62,22 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>si.jernej.mexplorer</groupId>
+                <groupId>com.github.jernejvivod.ehrexplorer</groupId>
                 <artifactId>api</artifactId>
                 <version>${api.version}</version>
             </dependency>
             <dependency>
-                <groupId>si.jernej.mexplorer</groupId>
+                <groupId>com.github.jernejvivod.ehrexplorer</groupId>
                 <artifactId>mimic-iii-entity</artifactId>
                 <version>${mimic-iii-entity.version}</version>
             </dependency>
             <dependency>
-                <groupId>si.jernej.mexplorer</groupId>
+                <groupId>com.github.jernejvivod.ehrexplorer</groupId>
                 <artifactId>common</artifactId>
                 <version>${common.version}</version>
             </dependency>
             <dependency>
-                <groupId>si.jernej.mexplorer</groupId>
+                <groupId>com.github.jernejvivod.ehrexplorer</groupId>
                 <artifactId>annotation</artifactId>
                 <version>${common.version}</version>
             </dependency>
@@ -186,7 +186,7 @@
                 <version>${hibernate-core.version}</version>
             </dependency>
             <dependency>
-                <groupId>si.jernej.mexplorer</groupId>
+                <groupId>com.github.jernejvivod.ehrexplorer</groupId>
                 <artifactId>mimic-iii-entity</artifactId>
                 <version>${mimic-iii-entity.version}</version>
                 <type>test-jar</type>

@@ -1,10 +1,10 @@
-# MIMIC-III Explorer
+# EHR Explorer
 
-MIMIC-III explorer is an application used to visualize and preprocess the <a href="https://physionet.org/content/mimiciii/1.4/">MIMIC-III dataset</a>. 
+EHR Explorer is an application used to visualize and preprocess the <a href="https://physionet.org/content/mimiciii/1.4/">MIMIC-III dataset</a>. 
 
 ## Setting Up the Environment
 
-This section describes how to set up the environment for the MIMIC-III explorer project.
+This section describes how to set up the environment for the EHR Explorer project.
 
 ### Initializing the Database and Adding the Data
 

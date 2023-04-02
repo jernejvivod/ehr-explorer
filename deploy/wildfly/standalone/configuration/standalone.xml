@@ -97,7 +97,7 @@
             <logger category="sun.rmi">
                 <level name="WARN"/>
             </logger>
-            <logger category="si.jernej.mexplorer">
+            <logger category="com.github.jernejvivod.ehrexplorer">
                 <level name="TRACE"/>
             </logger>
             <logger category="org.hibernate.SQL">
@@ -140,7 +140,7 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:/MExplorerDS" pool-name="PostgrePool">
+                <datasource jndi-name="java:/EhrExplorerDS" pool-name="PostgrePool">
                     <connection-url>jdbc:postgresql://localhost:5432/mimic</connection-url>
                     <driver>postgres</driver>
                     <security>
