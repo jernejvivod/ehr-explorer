@@ -6,8 +6,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import com.github.jernejvivod.ehrexplorer.mimiciii.targetextraction.processing.TargetExtraction;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ExtractedTargetDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TargetExtractionSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ExtractedTargetDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TargetExtractionSpecDto;
 
 @Stateless
 public class TargetExtractionService

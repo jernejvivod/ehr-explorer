@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jernejvivod.ehrexplorer.core.service.PropositionalizationService;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.api.PropositionalizationApi;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.WordificationConfigDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.WordificationConfigDto;
 
 @Stateless
 public class PropositionalizationEndpoint implements PropositionalizationApi

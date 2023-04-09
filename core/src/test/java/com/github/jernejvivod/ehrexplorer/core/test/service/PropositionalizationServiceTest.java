@@ -12,28 +12,28 @@ import org.junit.jupiter.api.Timeout;
 import com.github.jernejvivod.ehrexplorer.common.exception.ValidationCoreException;
 import com.github.jernejvivod.ehrexplorer.core.service.PropositionalizationService;
 import com.github.jernejvivod.ehrexplorer.core.test.ACoreTest;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.CompositeColumnsSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.CompositeColumnsSpecEntryDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.CompositePropertySpecEntryDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ConcatenationSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ExtractedTargetDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.PropertySpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.PropertySpecEntryDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.RootEntitiesSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.RootEntityAndTimeLimitDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TargetExtractionSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TransformDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ValueTransformationSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ValueTransformationSpecEntryDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.WordificationConfigDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.WordificationResultDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.CompositeColumnsSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.CompositeColumnsSpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.CompositePropertySpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ConcatenationSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ExtractedTargetDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.PropertySpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.PropertySpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.RootEntitiesSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.RootEntityAndTimeLimitDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TargetExtractionSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TransformDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ValueTransformationSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ValueTransformationSpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.WordificationConfigDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.WordificationResultDto;
 
 public class PropositionalizationServiceTest extends ACoreTest
 {
     @Inject
     private PropositionalizationService propositionalizationService;
 
-    private class DummyTargetExtractionService
+    private static class DummyTargetExtractionService
     {
         public List<ExtractedTargetDto> computeTarget(TargetExtractionSpecDto targetExtractionSpecDto)
         {

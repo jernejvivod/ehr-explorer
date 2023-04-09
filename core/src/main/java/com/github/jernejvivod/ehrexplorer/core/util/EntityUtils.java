@@ -31,7 +31,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.github.jernejvivod.ehrexplorer.common.exception.ValidationCoreException;
 import com.github.jernejvivod.ehrexplorer.core.processing.spec.PropertySpec;
 import com.github.jernejvivod.ehrexplorer.core.processing.transform.CompositeColumnCreator;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextConfigDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 
 public final class EntityUtils
 {

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jernejvivod.ehrexplorer.mimiciii.targetextraction.service.TargetExtractionService;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.api.TargetApi;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TargetExtractionSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TargetExtractionSpecDto;
 
 @Stateless
 public class TargetEndpoint implements TargetApi

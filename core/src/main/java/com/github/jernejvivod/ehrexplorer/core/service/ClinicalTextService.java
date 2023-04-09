@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jernejvivod.ehrexplorer.core.manager.DbEntityManager;
 import com.github.jernejvivod.ehrexplorer.core.util.EntityUtils;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextConfigDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextResultDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextConfigDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextResultDto;
 
 @Stateless
 public class ClinicalTextService

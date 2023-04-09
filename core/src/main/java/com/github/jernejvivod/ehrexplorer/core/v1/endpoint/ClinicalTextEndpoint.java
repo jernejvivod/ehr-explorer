@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jernejvivod.ehrexplorer.core.service.ClinicalTextService;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.api.ClinicalTextApi;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextConfigDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 
 @Stateless
 public class ClinicalTextEndpoint implements ClinicalTextApi

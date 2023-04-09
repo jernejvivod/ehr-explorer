@@ -17,7 +17,7 @@ import com.github.jernejvivod.ehrexplorer.mimiciii.entity.AdmissionsEntity;
 import com.github.jernejvivod.ehrexplorer.mimiciii.entity.IcuStaysEntity;
 import com.github.jernejvivod.ehrexplorer.mimiciii.entity.PatientsEntity;
 import com.github.jernejvivod.ehrexplorer.mimiciii.targetextraction.manager.DbEntityManager;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ExtractedTargetDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ExtractedTargetDto;
 
 /**
  * Class containing target value extraction functionality.

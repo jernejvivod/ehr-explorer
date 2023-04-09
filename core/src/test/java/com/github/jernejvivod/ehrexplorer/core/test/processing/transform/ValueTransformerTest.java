@@ -1,10 +1,10 @@
 package com.github.jernejvivod.ehrexplorer.core.test.processing.transform;
 
-import static com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.FIFTEEN_YEARS;
-import static com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.FIVE_YEARS;
-import static com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.TEN_YEARS;
-import static com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.TWENTY_YEARS;
-import static com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.YEAR;
+import static com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.FIFTEEN_YEARS;
+import static com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.FIVE_YEARS;
+import static com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.TEN_YEARS;
+import static com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.TWENTY_YEARS;
+import static com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TransformDto.DateDiffRoundTypeEnum.YEAR;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -22,9 +22,9 @@ import com.github.jernejvivod.ehrexplorer.core.processing.transform.ValueTransfo
 import com.github.jernejvivod.ehrexplorer.core.test.ACoreTest;
 import com.github.jernejvivod.ehrexplorer.core.util.Constants;
 import com.github.jernejvivod.ehrexplorer.core.util.DtoConverter;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TransformDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ValueTransformationSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ValueTransformationSpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TransformDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ValueTransformationSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ValueTransformationSpecEntryDto;
 
 class ValueTransformerTest extends ACoreTest
 {

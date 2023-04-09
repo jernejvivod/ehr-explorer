@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import com.github.jernejvivod.ehrexplorer.common.exception.ValidationCoreException;
 import com.github.jernejvivod.ehrexplorer.core.service.StatsService;
 import com.github.jernejvivod.ehrexplorer.core.test.ACoreTest;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.EntityStatsDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.PropertyStatsDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.EntityStatsDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.PropertyStatsDto;
 
 class StatsServiceTest extends ACoreTest
 {
