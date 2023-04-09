@@ -13,10 +13,10 @@ import org.junit.jupiter.api.Timeout;
 
 import com.github.jernejvivod.ehrexplorer.core.service.ClinicalTextService;
 import com.github.jernejvivod.ehrexplorer.core.test.ACoreTest;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextConfigDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextResultDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.RootEntitiesSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextConfigDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextResultDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.RootEntitiesSpecDto;
 
 class ClinicalTextServiceTest extends ACoreTest
 {

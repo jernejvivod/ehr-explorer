@@ -17,8 +17,8 @@ import com.github.jernejvivod.ehrexplorer.common.exception.ValidationCoreExcepti
 import com.github.jernejvivod.ehrexplorer.core.manager.DbEntityManager;
 import com.github.jernejvivod.ehrexplorer.core.processing.util.OrderedEntityPropertyDescriptors;
 import com.github.jernejvivod.ehrexplorer.core.util.EntityUtils;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.EntityStatsDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.PropertyStatsDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.EntityStatsDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.PropertyStatsDto;
 
 @Stateless
 public class StatsService

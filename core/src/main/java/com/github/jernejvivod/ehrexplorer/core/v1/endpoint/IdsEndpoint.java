@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.jernejvivod.ehrexplorer.core.processing.IdRetrieval;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.api.IdsApi;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.IdRetrievalSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.IdRetrievalSpecDto;
 
 @Stateless
 public class IdsEndpoint implements IdsApi

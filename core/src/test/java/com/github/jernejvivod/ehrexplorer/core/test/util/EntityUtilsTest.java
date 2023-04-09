@@ -23,9 +23,9 @@ import com.github.jernejvivod.ehrexplorer.core.util.DtoConverter;
 import com.github.jernejvivod.ehrexplorer.core.util.EntityUtils;
 import com.github.jernejvivod.ehrexplorer.mimiciii.entity.AdmissionsEntity;
 import com.github.jernejvivod.ehrexplorer.mimiciii.entity.PatientsEntity;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextConfigDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.RootEntitiesSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextConfigDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.RootEntitiesSpecDto;
 
 class EntityUtilsTest extends ACoreTest
 {

@@ -24,9 +24,9 @@ import com.github.jernejvivod.ehrexplorer.core.processing.transform.CompositeCol
 import com.github.jernejvivod.ehrexplorer.core.processing.transform.ValueTransformer;
 import com.github.jernejvivod.ehrexplorer.core.util.DtoConverter;
 import com.github.jernejvivod.ehrexplorer.core.util.EntityUtils;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ConcatenationSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.WordificationConfigDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.WordificationResultDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ConcatenationSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.WordificationConfigDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.WordificationResultDto;
 
 @Stateless
 public class PropositionalizationService

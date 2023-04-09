@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jernejvivod.ehrexplorer.core.processing.spec.PropertySpec;
 import com.github.jernejvivod.ehrexplorer.core.util.DtoConverter;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.CompositePropertySpecEntryDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.PropertySpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.PropertySpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.CompositePropertySpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.PropertySpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.PropertySpecEntryDto;
 
 class DtoConverterTest
 {

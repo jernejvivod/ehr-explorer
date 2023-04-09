@@ -13,9 +13,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import com.github.jernejvivod.ehrexplorer.common.exception.ValidationCoreException;
 import com.github.jernejvivod.ehrexplorer.core.processing.IdRetrieval;
 import com.github.jernejvivod.ehrexplorer.core.test.ACoreTest;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.IdRetrievalFilterSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.IdRetrievalSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.IdRetrievalFilterSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.IdRetrievalSpecDto;
 
 class IdRetrievalTest extends ACoreTest
 {

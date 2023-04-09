@@ -15,14 +15,14 @@ import com.github.jernejvivod.ehrexplorer.core.processing.Wordification;
 import com.github.jernejvivod.ehrexplorer.core.processing.spec.PropertySpec;
 import com.github.jernejvivod.ehrexplorer.core.processing.transform.CompositeColumnCreator;
 import com.github.jernejvivod.ehrexplorer.core.processing.transform.ValueTransformer;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.CompositeColumnsSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.CompositeColumnsSpecEntryDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.CompositePropertySpecEntryDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.PropertySpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.PropertySpecEntryDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TransformDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ValueTransformationSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ValueTransformationSpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.CompositeColumnsSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.CompositeColumnsSpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.CompositePropertySpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.PropertySpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.PropertySpecEntryDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TransformDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ValueTransformationSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ValueTransformationSpecEntryDto;
 
 public final class DtoConverter
 {

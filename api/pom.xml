@@ -41,12 +41,12 @@
                         <configuration>
                             <modelNameSuffix>Dto</modelNameSuffix>
                             <inputSpec>
-                                ${project.basedir}/mimic-iii-explorer-api/doc/rest-spec/v1/mexplorer-openapi.yaml
+                                ${project.basedir}/ehr-explorer-api/doc/rest-spec/v1/ehr-explorer-openapi.yaml
                             </inputSpec>
                             <apiPackage>true</apiPackage>
                             <modelPackage>true</modelPackage>
                             <apiPackage>com.github.jernejvivod.ehrexplorer.processorapi.v1.api</apiPackage>
-                            <modelPackage>com.github.jernejvivod.ehrexplorerprocessorapi.v1.model</modelPackage>
+                            <modelPackage>com.github.jernejvivod.ehrexplorer.processorapi.v1.model</modelPackage>
                             <generatorName>jaxrs-spec</generatorName>
                             <generateApis>true</generateApis>
                             <generateModelTests>false</generateModelTests>

@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import com.github.jernejvivod.ehrexplorer.mimiciii.targetextraction.service.TargetExtractionService;
 import com.github.jernejvivod.ehrexplorer.mimiciii.targetextraction.test.ATargetExtractionTest;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ExtractedTargetDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.TargetExtractionSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ExtractedTargetDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.TargetExtractionSpecDto;
 
 class TargetExtractionServiceTest extends ATargetExtractionTest
 {

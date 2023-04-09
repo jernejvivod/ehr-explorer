@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 import com.github.jernejvivod.ehrexplorer.common.exception.ValidationCoreException;
 import com.github.jernejvivod.ehrexplorer.core.manager.DbEntityManager;
 import com.github.jernejvivod.ehrexplorer.core.util.EntityUtils;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.IdRetrievalFilterSpecDto;
-import com.github.jernejvivod.ehrexplorerprocessorapi.v1.model.IdRetrievalSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ForeignKeyPathIdRetrievalSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.IdRetrievalFilterSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.IdRetrievalSpecDto;
 
 @Stateless
 public class IdRetrieval
