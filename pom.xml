@@ -55,7 +55,7 @@
         <hibernate-core.version>5.3.24.Final</hibernate-core.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <weld-se.version>2.1.2.Final</weld-se.version>
-        <postgresql.version>42.4.0</postgresql.version>
+        <postgresql.version>42.5.1</postgresql.version>
         <resteasy-jaxrs.version>3.15.3.Final</resteasy-jaxrs.version>
     </properties>
 
@@ -272,6 +272,11 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
@@ -288,6 +293,32 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/deploy/wildfly/modules/org/postgres/main</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                    <version>${postgresql.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
