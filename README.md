@@ -21,7 +21,7 @@ $ sudo docker start mimic-db-container
 
 The database is now accessible at `jdbc:postgresql://localhost:5432/mimic` using the default Postgres username and password (postgres/postgres).
 
-### Deploying the Project Locally in a Docker Container
+## Deploying the Project Locally in a Docker Container
 
 The project can easily be deployed locally in a Docker container by first creating the artifacts using the `mvn package` goal.
 
@@ -40,4 +40,9 @@ The `--network host` option is necessary to allow our ehr-explorer deployment to
 We can then start our container using:
 ```
 $ sudo docker start ehr-explorer
+```
+
+We can check that our deployment is running with:
+```
+curl -X GET http://localhost:8080/ehr-explorer-core/ping
 ```
