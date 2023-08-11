@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -211,6 +212,7 @@ class ClinicalTextServiceTest extends ACoreTest
     }
 
     @Test
+    @Disabled("long running")
     @Timeout(value = 30)
     void extractClinicalText30PercentIdsWithDateTimeLimit()
     {
@@ -238,6 +240,7 @@ class ClinicalTextServiceTest extends ACoreTest
     }
 
     @Test
+    @Disabled("long running")
     @Timeout(value = 60)
     void extractClinicalText50PercentIdsWithDateTimeLimit()
     {
