@@ -28,7 +28,7 @@ public class DbEntityManager
                 WHERE (EXTRACT(DAY FROM (a.admitTime - a.patientsEntity.dob)) / 365.2425) >= :ageLim
                 """;
 
-        query += (ids != null ? " AND a.hadmId IN (:ids)" : "");
+        query += (ids != null ? " AND a.patientsEntity.subjectId IN (:ids)" : "");
 
         final TypedQuery<Object[]> q = em.createQuery(query, Object[].class).setParameter("ageLim", ageLim != null ? ageLim.doubleValue() : 0.0);
 

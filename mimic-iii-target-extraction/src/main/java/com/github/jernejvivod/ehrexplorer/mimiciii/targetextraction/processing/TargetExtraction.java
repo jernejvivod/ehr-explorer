@@ -181,6 +181,9 @@ public class TargetExtraction
 
     private static List<ExtractedTargetDto> extractHospitalReadmissionTargetFromAdmissionsForPatient(long subjectId, List<AdmissionsEntity> admissionsForPatient, @CheckForNull LocalDateTime dod, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
     {
+        if (admissionsForPatient.isEmpty())
+            return List.of();
+
         List<ExtractedTargetDto> extractedTargetDtos = new ArrayList<>(admissionsForPatient.size());
 
         // extract target for admissions for which there is a subsequent admission
