@@ -85,6 +85,9 @@ public class TargetExtraction
 
     private static List<ExtractedTargetDto> extractIcuReadmissionTargetFromAdmissionsForPatient(long subjectId, List<IcuStaysEntity> icuStaysForPatient, @CheckForNull LocalDateTime dod, int maxDaysBetweenAdmissionsConsiderPositive, int deathDaysAfterDischargeConsiderPositive)
     {
+        if (icuStaysForPatient.isEmpty())
+            return List.of();
+
         List<ExtractedTargetDto> extractedTargetDtos = new ArrayList<>(icuStaysForPatient.size());
 
         for (int i = 0; i < icuStaysForPatient.size() - 1; i++)
