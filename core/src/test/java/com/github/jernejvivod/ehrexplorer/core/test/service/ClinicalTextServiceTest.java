@@ -18,6 +18,7 @@ import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextConf
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextResultDto;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.RootEntitiesSpecDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.RootEntityDatetimePropertyForCutoffSpecDto;
 
 class ClinicalTextServiceTest extends ACoreTest
 {
@@ -278,7 +279,9 @@ class ClinicalTextServiceTest extends ACoreTest
                 SELECT n.text FROM NoteEventsEntity n
                 JOIN n.patientsEntity p
                 JOIN p.icuStaysEntitys icus
-                WHERE icus.icuStayId=:icuStayId AND ((n.chartTime IS NOT NULL AND n.chartTime < icus.outTime) OR (n.chartTime IS NULL AND n.chartDate IS NOT NULL AND n.chartDate < icus.outTime))
+                WHERE icus.icuStayId=:icuStayId AND
+                ((n.chartTime IS NOT NULL AND n.chartTime < icus.outTime) OR (n.chartTime IS NULL AND n.chartDate IS NOT NULL AND n.chartDate < icus.outTime)) AND
+                ((n.chartTime IS NOT NULL AND n.chartTime > icus.inTime) OR (n.chartTime IS NULL AND n.chartDate IS NOT NULL AND n.chartDate > icus.inTime))
                 ORDER BY n.chartTime, n.chartDate, n.rowId ASC
                 """;
 
@@ -287,7 +290,11 @@ class ClinicalTextServiceTest extends ACoreTest
         clinicalTextConfigDto.setTextPropertyName("text");
         clinicalTextConfigDto.setClinicalTextEntityIdPropertyName("rowId");
         clinicalTextConfigDto.setClinicalTextDateTimePropertiesNames(List.of("chartTime", "chartDate"));
-        clinicalTextConfigDto.setRootEntityDatetimePropertyForCutoff("outTime");
+        clinicalTextConfigDto.setRootEntityDatetimePropertyForCutoffSpec(
+                new RootEntityDatetimePropertyForCutoffSpecDto()
+                        .propertyForUpperLimit("outTime")
+                        .propertyForLowerLimit("inTime")
+        );
         RootEntitiesSpecDto rootEntitiesSpecDto = new RootEntitiesSpecDto();
         rootEntitiesSpecDto.setRootEntity("IcuStaysEntity");
         rootEntitiesSpecDto.setIdProperty("icuStayId");

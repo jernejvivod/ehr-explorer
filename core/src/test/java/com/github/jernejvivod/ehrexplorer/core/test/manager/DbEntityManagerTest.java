@@ -80,6 +80,7 @@ public class DbEntityManagerTest extends ACoreTest
                         "rowId",
                         "text",
                         null,
+                        null,
                         null
                 )
         );
@@ -98,6 +99,7 @@ public class DbEntityManagerTest extends ACoreTest
                 "rowId",
                 "text",
                 List.of("chartdate", "charttime"),
+                null,
                 null
         );
 
@@ -117,6 +119,7 @@ public class DbEntityManagerTest extends ACoreTest
                 "rowId",
                 "text",
                 List.of("chartDate", "chartTime"),
+                null,
                 null
         );
 
@@ -143,6 +146,7 @@ public class DbEntityManagerTest extends ACoreTest
                 "rowId",
                 "text",
                 List.of("chartDate", "chartTime"),
+                null,
                 null
         );
 
@@ -167,6 +171,7 @@ public class DbEntityManagerTest extends ACoreTest
                 "rowId",
                 "text",
                 List.of("chartDate", "chartTime"),
+                null,
                 null
         );
 
@@ -187,6 +192,7 @@ public class DbEntityManagerTest extends ACoreTest
                 "rowId",
                 "text",
                 List.of("chartdate", "charttime"),
+                null,
                 null
         );
 
@@ -206,6 +212,7 @@ public class DbEntityManagerTest extends ACoreTest
                 "rowId",
                 "text",
                 List.of("chartdate", "charttime"),
+                null,
                 null
         );
 

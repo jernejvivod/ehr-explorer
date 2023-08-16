@@ -39,7 +39,8 @@ public class DbEntityManager
     public record ClinicalTextExtractionQueryResult<T>(
             T clinicalTextEntityId,
             String clinicalText,
-            LocalDateTime rootEntityDatetimePropertyForCutoffValue,
+            LocalDateTime rootEntityDatetimePropertyForCutoffValueUpper,
+            LocalDateTime rootEntityDatetimePropertyForCutoffValueLower,
             List<LocalDateTime> dateTimeColumnValues
     )
     {
@@ -65,7 +66,8 @@ public class DbEntityManager
             String endEntityIdPropertyName,
             String textPropertyName,
             @CheckForNull List<String> dateTimePropertiesNames,
-            @CheckForNull String rootEntityDatetimePropertyForCutoff
+            @CheckForNull String rootEntityDatetimePropertyForCutoffUpper,
+            @CheckForNull String rootEntityDatetimePropertyForCutoffLower
     )
     {
         if (rootEntityIds != null && (rootEntityIds.isEmpty() || foreignKeyPath.isEmpty()))
@@ -96,11 +98,18 @@ public class DbEntityManager
         queryTemplateArgs.add(queryVars.get(queryVars.size() - 1));
         queryTemplateArgs.add(textPropertyName);
 
-        // if specified, add property containing the time value to be used as cutoff for extracting clinical text
-        if (rootEntityDatetimePropertyForCutoff != null)
+        // if specified, add property containing the time value to be used as upper cutoff for extracting clinical text
+        if (rootEntityDatetimePropertyForCutoffUpper != null)
         {
-            EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(0), rootEntityDatetimePropertyForCutoff, em.getMetamodel());
-            queryTemplateArgs.add(rootEntityDatetimePropertyForCutoff);
+            EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(0), rootEntityDatetimePropertyForCutoffUpper, em.getMetamodel());
+            queryTemplateArgs.add(rootEntityDatetimePropertyForCutoffUpper);
+        }
+
+        // if specified, add property containing the time value to be used as lower cutoff for extracting clinical text
+        if (rootEntityDatetimePropertyForCutoffLower != null)
+        {
+            EntityUtils.assertEntityAndPropertyValid(foreignKeyPath.get(0), rootEntityDatetimePropertyForCutoffLower, em.getMetamodel());
+            queryTemplateArgs.add(rootEntityDatetimePropertyForCutoffLower);
         }
 
         // add query template arguments for selecting clinical entity datetime columns values
@@ -131,21 +140,41 @@ public class DbEntityManager
         queryTemplateArgs.add(queryVars.get(queryVars.size() - 1));
 
         // construct dynamic query
-        final String dynamicQuery = ("SELECT a.%s, %s.%s, %s.%s" +                                      // SELECT root entity IDs, clinical text entity ids, text from clinical text entity
-                                     (rootEntityDatetimePropertyForCutoff != null ? ", a.%s" : "") +    // SELECT root entity property value for cutoff if specified
-                                     ", %s.%s".repeat(dateTimePropertiesNames.size()) +                 // SELECT clinical text entity datetime column values
-                                     " FROM %s a" +                                                     // FROM root entity table
-                                     " JOIN %s.%s %s".repeat(foreignKeyPath.size() - 1) +               // construct foreign key path using JOINs
-                                     (rootEntityIds != null ? " WHERE a.%1$s IN (:ids)" : "") +         // for specified root entity IDs
-                                     " ORDER BY " +                                                     // order by specified clinical text entity datetime column values
+        final String dynamicQuery = ("SELECT a.%s, %s.%s, %s.%s" +                                         // SELECT root entity IDs, clinical text entity ids, text from clinical text entity
+                                     (rootEntityDatetimePropertyForCutoffUpper != null ? ", a.%s" : "") +  // SELECT root entity property value for cutoff if specified
+                                     (rootEntityDatetimePropertyForCutoffLower != null ? ", a.%s" : "") +  // SELECT root entity property value for cutoff if specified
+                                     ", %s.%s".repeat(dateTimePropertiesNames.size()) +             // SELECT clinical text entity datetime column values
+                                     " FROM %s a" +                                                        // FROM root entity table
+                                     " JOIN %s.%s %s".repeat(foreignKeyPath.size() - 1) +           // construct foreign key path using JOINs
+                                     (rootEntityIds != null ? " WHERE a.%1$s IN (:ids)" : "") +           // for specified root entity IDs
+                                     " ORDER BY " +                                                       // order by specified clinical text entity datetime column values
                                      StringUtils.repeat("%s.%s", ", ", dateTimePropertiesNames.size()) +
                                      (!dateTimePropertiesNames.isEmpty() ? ", " : "") + "%s.%3$s ASC")
                 .formatted(queryTemplateArgs.toArray());
 
+        // how many data to skip when collecting results for text time column values (depends on whether we are extracting cutoff property values)
+        long nSkipResultsForDateTimeColumnValues = Stream.of(rootEntityDatetimePropertyForCutoffUpper, rootEntityDatetimePropertyForCutoffLower)
+                .filter(Objects::nonNull)
+                .count() + 3; // add 3 to account for other data
+
         return em.createQuery(dynamicQuery, Object[].class)
                 .setParameter("ids", rootEntityIds)
                 .getResultStream()
-                .collect(Collectors.groupingBy(e -> (T) e[0], Collectors.mapping(e -> new ClinicalTextExtractionQueryResult<>((S) e[1], (String) e[2], rootEntityDatetimePropertyForCutoff != null ? (LocalDateTime) e[3] : null, Arrays.stream(e).skip(rootEntityDatetimePropertyForCutoff != null ? 4 : 3).map(LocalDateTime.class::cast).toList()), Collectors.toList())));
+                .collect(
+                        Collectors.groupingBy(
+                                e -> (T) e[0],
+                                Collectors.mapping(
+                                        e -> new ClinicalTextExtractionQueryResult<>(
+                                                (S) e[1],
+                                                (String) e[2],
+                                                rootEntityDatetimePropertyForCutoffUpper != null ? (LocalDateTime) e[3] : null,
+                                                rootEntityDatetimePropertyForCutoffLower != null ? (LocalDateTime) e[4] : null,
+                                                Arrays.stream(e).skip(nSkipResultsForDateTimeColumnValues).map(LocalDateTime.class::cast).toList()
+                                        ),
+                                        Collectors.toList()
+                                )
+                        )
+                );
     }
 
     /**
