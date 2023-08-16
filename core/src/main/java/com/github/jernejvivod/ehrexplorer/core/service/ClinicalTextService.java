@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ import com.github.jernejvivod.ehrexplorer.core.util.EntityUtils;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextConfigDto;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextExtractionDurationSpecDto;
 import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.ClinicalTextResultDto;
+import com.github.jernejvivod.ehrexplorer.processorapi.v1.model.RootEntityDatetimePropertyForCutoffSpecDto;
 
 @Stateless
 public class ClinicalTextService
@@ -61,7 +63,10 @@ public class ClinicalTextService
                 clinicalTextConfigDto.getClinicalTextEntityIdPropertyName(),
                 clinicalTextConfigDto.getTextPropertyName(),
                 clinicalTextConfigDto.getClinicalTextDateTimePropertiesNames(),
-                clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoff()
+                Optional.ofNullable(clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoffSpec())
+                        .map(RootEntityDatetimePropertyForCutoffSpecDto::getPropertyForUpperLimit).orElse(null),
+                Optional.ofNullable(clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoffSpec())
+                        .map(RootEntityDatetimePropertyForCutoffSpecDto::getPropertyForLowerLimit).orElse(null)
         );
 
         // if range of data limited, filter
@@ -70,10 +75,12 @@ public class ClinicalTextService
             filterToSpecifiedTimeRange(rootEntityIdToClinicalTextData, clinicalTextExtractionDurationSpec.getFirstMinutes());
         }
 
-        // if property containing cut-off value specified, apply cut-off
-        if (clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoff() != null)
+        // if cutoff properties specified, apply cut-off
+        if (clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoffSpec() != null)
         {
-            applyTimeRangeCutoffFromProperty(rootEntityIdToClinicalTextData);
+            boolean applyingUpperCutoff = clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoffSpec().getPropertyForUpperLimit() != null;
+            boolean applyingLowerCutoff = clinicalTextConfigDto.getRootEntityDatetimePropertyForCutoffSpec().getPropertyForLowerLimit() != null;
+            applyTimeRangeCutoffFromProperties(rootEntityIdToClinicalTextData, applyingUpperCutoff, applyingLowerCutoff);
         }
 
         // convert results to a set of ClinicalTextResultDto instances and return
@@ -109,14 +116,15 @@ public class ClinicalTextService
         });
     }
 
-    private static void applyTimeRangeCutoffFromProperty(Map<Long, List<DbEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData)
+    private static void applyTimeRangeCutoffFromProperties(Map<Long, List<DbEntityManager.ClinicalTextExtractionQueryResult<Long>>> rootEntityIdToClinicalTextData, boolean applyingUpperCutoff, boolean applyingLowerCutoff)
     {
         rootEntityIdToClinicalTextData.replaceAll((id, values) -> {
 
             // filter out clinical text where all date/time values are null
             var valuesWithDateTime = values.stream()
                     .filter(v -> !v.dateTimeColumnValues().stream().allMatch(Objects::isNull))
-                    .filter(v -> v.rootEntityDatetimePropertyForCutoffValue() != null)
+                    .filter(v -> !applyingUpperCutoff || v.rootEntityDatetimePropertyForCutoffValueUpper() != null)
+                    .filter(v -> !applyingLowerCutoff || v.rootEntityDatetimePropertyForCutoffValueLower() != null)
                     .toList();
 
             // filter to specified cutoff time
@@ -125,7 +133,17 @@ public class ClinicalTextService
                         .filter(Objects::nonNull)
                         .findFirst()
                         .orElseThrow(() -> new InternalServerErrorException("No associated LocalDateTime found."));
-                return dateTimeNxt.isBefore(d.rootEntityDatetimePropertyForCutoffValue());
+
+                // make sure datetime is not after specified upper cutoff
+                if (d.rootEntityDatetimePropertyForCutoffValueUpper() != null && !dateTimeNxt.isBefore(d.rootEntityDatetimePropertyForCutoffValueUpper()))
+                    return false;
+
+                // make sure datetime is not before specified lower cutoff
+                if (d.rootEntityDatetimePropertyForCutoffValueLower() != null && (!dateTimeNxt.isAfter(d.rootEntityDatetimePropertyForCutoffValueLower())))
+                    return false;
+
+                return true;
+
             }).toList();
         });
     }
